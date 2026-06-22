@@ -2,18 +2,37 @@
 
 import { useState, useEffect, useRef } from "react";
 
+interface SpeechRecognitionErrorEvent {
+  error: string;
+}
+
+interface SpeechRecognitionEvent {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
 export function useSpeech(onTranscript: (text: string) => void) {
   const [isListening, setIsListening] = useState(false);
   const [browserSupportsSpeech, setBrowserSupportsSpeech] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       
       if (SpeechRecognition) {
-        setBrowserSupportsSpeech(true);
+        // Tránh lỗi gọi setState đồng bộ trực tiếp trong effect body (react-hooks/set-state-in-effect)
+        setTimeout(() => {
+          setBrowserSupportsSpeech(true);
+        }, 0);
+
         const rec = new SpeechRecognition();
         rec.continuous = false; // Nhận dạng từng câu ngắn
         rec.interimResults = false; // Chỉ trả về kết quả cuối cùng
@@ -27,12 +46,12 @@ export function useSpeech(onTranscript: (text: string) => void) {
           setIsListening(false);
         };
 
-        rec.onerror = (event: any) => {
+        rec.onerror = (event: SpeechRecognitionErrorEvent) => {
           console.error("Lỗi Speech Recognition: ", event.error);
           setIsListening(false);
         };
 
-        rec.onresult = (event: any) => {
+        rec.onresult = (event: SpeechRecognitionEvent) => {
           const resultText = event.results[0][0].transcript;
           onTranscript(resultText);
         };

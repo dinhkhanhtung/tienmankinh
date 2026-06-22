@@ -86,8 +86,8 @@ export function useDailyLog() {
     const [bedH, bedM] = bedTime.split(":").map(Number);
     const [wakeH, wakeM] = wakeTime.split(":").map(Number);
     
-    let bedDate = new Date(2020, 0, 1, bedH, bedM);
-    let wakeDate = new Date(2020, 0, 1, wakeH, wakeM);
+    const bedDate = new Date(2020, 0, 1, bedH, bedM);
+    const wakeDate = new Date(2020, 0, 1, wakeH, wakeM);
     
     // Nếu giờ thức dậy nhỏ hơn giờ đi ngủ, tức là đã ngủ qua ngày hôm sau
     if (wakeDate < bedDate) {
