@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tien-man-kinh-v2';
+const CACHE_NAME = 'tien-man-kinh-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
