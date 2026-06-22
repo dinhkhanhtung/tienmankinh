@@ -307,27 +307,24 @@ export default function ProfilePage() {
           {/* Card Summary & BMI */}
           <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden rounded-[28px] p-5 relative">
             <div className="text-center pb-4 border-b border-border/40 relative flex flex-col items-center">
-              {/* Avatar với viền kép gradient phát sáng */}
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-tr from-primary to-accent rounded-full blur-[3px] opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div 
-                  onClick={handleAvatarClick}
-                  className="relative w-20 h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-3xl shadow-inner cursor-pointer overflow-hidden border-2 border-background active:scale-95 transition-transform duration-300"
-                  title="Nhấn vào đây để đổi ảnh đại diện"
-                >
-                  {uploading ? (
-                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                  ) : profile.photoURL ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  ) : (
-                    profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
-                  )}
-                  
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Camera className="w-5 h-5 text-white" />
-                  </div>
+              {/* Avatar đơn giản tinh tế */}
+              <div 
+                onClick={handleAvatarClick}
+                className="w-20 h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-3xl shadow-sm border border-border cursor-pointer overflow-hidden relative group active:scale-95 transition-all duration-300"
+                title="Nhấn vào đây để đổi ảnh đại diện"
+              >
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                ) : profile.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                ) : (
+                  profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
+                )}
+                
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Camera className="w-5 h-5 text-white" />
                 </div>
               </div>
 
