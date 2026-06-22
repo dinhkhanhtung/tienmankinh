@@ -126,19 +126,40 @@ export async function POST(req: NextRequest) {
       systemInstruction: systemInstruction
     });
 
-    // Chuyển đổi lịch sử chat và lọc bỏ tin nhắn chào mừng tĩnh "welcome"
-    // Gemini API bắt buộc tin nhắn đầu tiên của contents phải có role là 'user'
-    const contents = messages
-      .filter((msg: any, index: number) => {
-        // Lọc bỏ tin nhắn welcome bằng ID hoặc nếu nó là tin nhắn đầu tiên có role assistant (phòng hờ client ko gửi ID)
-        if (msg.id === "welcome") return false;
-        if (index === 0 && msg.role === "assistant") return false;
-        return true;
-      })
-      .map((msg: any) => ({
-        role: msg.role === "assistant" ? "model" : "user",
-        parts: [{ text: msg.content }]
-      }));
+    // Chuẩn hóa và gộp các tin nhắn trùng role liên tiếp để đảm bảo cấu trúc đan xen hợp lệ cho Gemini API
+    const sanitizedContents: any[] = [];
+    let lastRole: string | null = null;
+
+    messages.forEach((msg: any) => {
+      // Bỏ qua tin nhắn welcome
+      if (msg.id === "welcome") return;
+
+      const role = msg.role === "assistant" ? "model" : "user";
+      const text = msg.content?.trim() || "";
+      if (!text) return;
+
+      if (role === lastRole && sanitizedContents.length > 0) {
+        // Gộp tin nhắn trùng role liên tiếp
+        sanitizedContents[sanitizedContents.length - 1].parts[0].text += "\n" + text;
+      } else {
+        sanitizedContents.push({
+          role,
+          parts: [{ text }]
+        });
+        lastRole = role;
+      }
+    });
+
+    // Đảm bảo tin nhắn đầu tiên bắt buộc phải có role là 'user'
+    while (sanitizedContents.length > 0 && sanitizedContents[0].role !== "user") {
+      sanitizedContents.shift();
+    }
+
+    if (sanitizedContents.length === 0) {
+      return NextResponse.json({ error: "Lịch sử trò chuyện không chứa tin nhắn hợp lệ từ người dùng." }, { status: 400 });
+    }
+
+    const contents = sanitizedContents;
 
     const result = await model.generateContent({
       contents: contents,
@@ -154,8 +175,9 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Lỗi API Chat: ", error);
+    const errorMessage = error?.message || "Lỗi máy chủ không xác định";
     return NextResponse.json(
-      { error: "Không thể kết nối với AI Coach lúc này. Vui lòng thử lại sau ít phút." },
+      { error: `Không thể kết nối với AI Coach lúc này. Chi tiết: ${errorMessage}` },
       { status: 500 }
     );
   }

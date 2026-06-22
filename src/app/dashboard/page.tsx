@@ -316,7 +316,9 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
               <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-extrabold text-sm shrink-0">
                 {profile?.displayName ? profile.displayName.charAt(0).toUpperCase() : "C"}
               </span>
-              Chào chị, <span className="text-primary">{profile?.displayName || "Thành viên"}</span>
+              <span className="flex-1 min-w-0">
+                Chào chị, <span className="text-primary">{profile?.displayName || "Thành viên"}</span>
+              </span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg">
               Hôm nay là {format(new Date(), "EEEE, 'ngày' d 'tháng' M, yyyy", { locale: vi })}. Chúc chị một ngày tràn đầy năng lượng và an lành!
