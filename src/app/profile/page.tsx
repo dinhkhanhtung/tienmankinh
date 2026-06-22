@@ -183,16 +183,20 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
                   <div className="text-[10px] text-muted-foreground font-bold uppercase">Chiều cao</div>
-                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">{profile.height} cm</div>
+                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">
+                    {profile.height ? `${profile.height} cm` : "Chưa cập nhật"}
+                  </div>
                 </div>
                 <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
                   <div className="text-[10px] text-muted-foreground font-bold uppercase">Cân nặng</div>
-                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">{profile.weight} kg</div>
+                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">
+                    {profile.weight ? `${profile.weight} kg` : "Chưa cập nhật"}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {profile.bmi && (
+            {profile.bmi && profile.bmi > 0 ? (
               <div className="space-y-2.5 pt-4 border-t border-border/40">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Chỉ số BMI hiện tại</span>
                 <div className="flex items-center justify-between">
@@ -213,7 +217,7 @@ export default function ProfilePage() {
                   * Chỉ số khối cơ thể (BMI) bình thường dao động từ 18.5 - 24.9.
                 </p>
               </div>
-            )}
+            ) : null}
           </CardContent>
         </Card>
 
@@ -229,7 +233,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-4 p-4 sm:p-5">
             {/* Nhắc nhở ghi log */}
-            <div className="flex items-center justify-between py-1">
+            <div className="flex items-center justify-between py-1 cursor-pointer">
               <div className="space-y-0.5 max-w-[70%]">
                 <Label htmlFor="notify-switch" className="text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer">
                   <Bell className="w-4 h-4 text-primary" /> Nhắc nhở mỗi ngày
@@ -242,7 +246,7 @@ export default function ProfilePage() {
                 id="notify-switch"
                 checked={notificationsEnabled}
                 onCheckedChange={handleNotificationToggle}
-                className="data-[state=checked]:bg-primary"
+                className="data-[state=checked]:bg-primary cursor-pointer"
               />
             </div>
 

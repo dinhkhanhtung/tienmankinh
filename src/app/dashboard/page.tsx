@@ -222,7 +222,9 @@ export default function DashboardPage() {
       default:
         return {
           title: "Dưỡng sinh & Chăm sóc toàn diện 40+",
-          description: "Chúc mừng thể trạng của chị khá ổn định! Hãy duy trì lối sống lành mạnh để bảo vệ sức khỏe và kéo dài tuổi thanh xuân.",
+          description: stats.loggedDaysCount > 0
+            ? "Chúc mừng thể trạng của chị khá ổn định! Hãy duy trì lối sống lành mạnh để bảo vệ sức khỏe và kéo dài tuổi thanh xuân."
+            : "Chị chưa ghi chép nhật ký sức khỏe thời gian gần đây. Hãy bắt đầu ghi nhật ký hàng ngày để AI Coach có thể phân tích chính xác và đưa ra lời khuyên phù hợp nhất.",
           tips: [
             "Dinh dưỡng bổ sung: Bổ sung nhiều rau xanh đậm, các loại hạt (hạnh nhân, óc chó) giàu phytoestrogen tự nhiên để bảo vệ xương khớp.",
             "Vận động nhẹ nhàng: Đi bộ nhanh, tập dưỡng sinh hoặc yoga từ 30 phút mỗi ngày giúp duy trì sự dẻo dai và khí huyết thông suốt.",
@@ -536,7 +538,9 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
               <MessageCircle className="w-5 h-5 text-primary" /> Tham vấn Chuyên gia Sức khỏe
             </CardTitle>
             <CardDescription className="text-xs leading-relaxed mt-1 font-semibold">
-              Chị đã ghi chép sức khỏe đều đặn. Hãy tham vấn chuyên gia sức khỏe để được hỗ trợ thiết lập lộ trình cải thiện thể trạng phù hợp nhất.
+              {stats.loggedDaysCount > 0 
+                ? "Chị đã ghi chép sức khỏe đều đặn. Hãy tham vấn chuyên gia sức khỏe để được hỗ trợ thiết lập lộ trình cải thiện thể trạng phù hợp nhất."
+                : "Hãy bắt đầu cập nhật nhật ký sức khỏe hàng ngày và tham vấn chuyên gia để thiết lập lộ trình cải thiện thể trạng phù hợp nhất."}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-4 relative z-10 flex-1">
