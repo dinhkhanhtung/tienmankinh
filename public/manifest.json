@@ -1,0 +1,28 @@
+{
+  "name": "Tiền Mãn Kinh - Theo Dõi Sức Khỏe Phụ Nữ",
+  "short_name": "Tiền Mãn Kinh",
+  "description": "Ứng dụng theo dõi chu kỳ, triệu chứng, giấc ngủ, tâm trạng và chỉ số PeriScore dành cho phụ nữ trung niên.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF9FC",
+  "theme_color": "#D96C9D",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

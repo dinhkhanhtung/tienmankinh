@@ -1,0 +1,428 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/use-auth-store";
+import { useUserStore } from "@/store/use-user-store";
+import { db } from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
+
+export default function ProfilePage() {
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const { profile, updateProfile } = useUserStore();
+  
+  const [loading, setLoading] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  
+  // Local Form states
+  const [displayName, setDisplayName] = useState("");
+  const [birthYear, setBirthYear] = useState("");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [periodAge, setPeriodAge] = useState("");
+  const [childrenCount, setChildrenCount] = useState("");
+
+  // Sync cài đặt thông báo từ localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const enabled = localStorage.getItem("notificationsEnabled") === "true";
+      setNotificationsEnabled(enabled);
+    }
+  }, []);
+
+  const handleNotificationToggle = async (checked: boolean) => {
+    if (checked) {
+      if (!("Notification" in window)) {
+        toast.error("Trình duyệt không hỗ trợ thông báo đẩy.");
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        setNotificationsEnabled(true);
+        localStorage.setItem("notificationsEnabled", "true");
+        toast.success("Đã bật nhắc nhở ghi nhật ký sức khỏe lúc 21:00 hàng tối.");
+      } else {
+        toast.error("Vui lòng cấp quyền thông báo trong cài đặt trình duyệt để bật nhắc nhở.");
+        setNotificationsEnabled(false);
+        localStorage.setItem("notificationsEnabled", "false");
+      }
+    } else {
+      setNotificationsEnabled(false);
+      localStorage.setItem("notificationsEnabled", "false");
+      toast.info("Đã tắt thông báo nhắc nhở.");
+    }
+  };
+
+  // Sync state từ store
+  useEffect(() => {
+    if (profile) {
+      setDisplayName(profile.displayName || "");
+      setBirthYear(profile.birthYear?.toString() || "");
+      setHeight(profile.height?.toString() || "");
+      setWeight(profile.weight?.toString() || "");
+      setPeriodAge(profile.periodAge?.toString() || "");
+      setChildrenCount(profile.childrenCount?.toString() || "");
+    }
+  }, [profile]);
+
+  // Tính toán BMI thời gian thực
+  const heightNum = parseFloat(height);
+  const weightNum = parseFloat(weight);
+  const bmi = heightNum && weightNum ? parseFloat((weightNum / ((heightNum / 100) * (heightNum / 100))).toFixed(1)) : 0;
+
+  const getBmiCategory = (val: number) => {
+    if (val < 18.5) return { label: "Gầy", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" };
+    if (val < 25) return { label: "Bình thường", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" };
+    if (val < 30) return { label: "Thừa cân", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" };
+    return { label: "Béo phì", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" };
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !profile) return;
+
+    if (!displayName.trim()) {
+      toast.error("Vui lòng nhập họ và tên.");
+      return;
+    }
+
+    const birthYearNum = parseInt(birthYear);
+    if (!birthYear || birthYearNum < 1930 || birthYearNum > new Date().getFullYear()) {
+      toast.error("Vui lòng nhập năm sinh hợp lệ.");
+      return;
+    }
+
+    const heightVal = parseFloat(height);
+    if (!height || heightVal < 100 || heightVal > 250) {
+      toast.error("Vui lòng nhập chiều cao hợp lệ (100 - 250 cm).");
+      return;
+    }
+
+    const weightVal = parseFloat(weight);
+    if (!weight || weightVal < 30 || weightVal > 200) {
+      toast.error("Vui lòng nhập cân nặng hợp lệ (30 - 200 kg).");
+      return;
+    }
+
+    const periodAgeNum = parseInt(periodAge);
+    if (!periodAge || periodAgeNum < 8 || periodAgeNum > 25) {
+      toast.error("Vui lòng nhập tuổi bắt đầu có kinh hợp lệ (8 - 25).");
+      return;
+    }
+
+    const childrenNum = parseInt(childrenCount);
+    if (!childrenCount || childrenNum < 0 || childrenNum > 20) {
+      toast.error("Vui lòng nhập số lượng con hợp lệ.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const updates = {
+        displayName: displayName.trim(),
+        birthYear: birthYearNum,
+        height: heightVal,
+        weight: weightVal,
+        bmi: bmi,
+        periodAge: periodAgeNum,
+        childrenCount: childrenNum,
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Cập nhật Firestore
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, updates);
+
+      // Cập nhật Zustand Store
+      updateProfile(updates);
+
+      toast.success("Cập nhật thông tin hồ sơ sức khỏe thành công!");
+    } catch (error) {
+      console.error("Lỗi cập nhật profile: ", error);
+      toast.error("Có lỗi xảy ra khi lưu thay đổi. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!profile) return null;
+
+  const bmiCat = bmi > 0 ? getBmiCategory(bmi) : null;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Hồ sơ sức khỏe</h1>
+        <p className="text-sm sm:text-base text-muted-foreground mt-1">
+          Quản lý thông tin thể chất và sinh học để tối ưu hóa dự báo sức khỏe
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left side Card: Summary & BMI */}
+        <Card className="border-border shadow-sm h-fit">
+          <CardHeader className="text-center pb-4">
+            <div className="mx-auto w-20 h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-3xl mb-3 shadow-inner">
+              {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+            </div>
+            <CardTitle className="text-lg font-bold">{profile.displayName}</CardTitle>
+            <CardDescription className="text-sm font-medium">{profile.email}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 pt-0 border-t border-border/50 p-6">
+            <div className="space-y-1">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Thông số thể hình</span>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div className="bg-muted/40 p-3 rounded-xl border border-border/50 text-center">
+                  <div className="text-xs text-muted-foreground font-semibold">Chiều cao</div>
+                  <div className="text-lg font-extrabold text-foreground mt-0.5">{profile.height} cm</div>
+                </div>
+                <div className="bg-muted/40 p-3 rounded-xl border border-border/50 text-center">
+                  <div className="text-xs text-muted-foreground font-semibold">Cân nặng</div>
+                  <div className="text-lg font-extrabold text-foreground mt-0.5">{profile.weight} kg</div>
+                </div>
+              </div>
+            </div>
+
+            {profile.bmi && (
+              <div className="space-y-2 mt-4 pt-4 border-t border-border/40">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Chỉ số BMI hiện tại</span>
+                <div className="flex items-center justify-between mt-2">
+                  <div className="text-2xl font-black text-primary">{profile.bmi}</div>
+                  {bmiCat && (
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${bmiCat.color}`}>
+                      {bmiCat.label}
+                    </span>
+                  )}
+                </div>
+                <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden mt-2 relative">
+                  {/* Một thanh BMI đơn giản */}
+                  <div 
+                    className="bg-primary h-full rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min((profile.bmi / 40) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  * BMI = Cân nặng (kg) / [Chiều cao (m)]². BMI bình thường dao động từ 18.5 - 24.9.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="border-border shadow-sm h-fit">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-bold flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" /> Báo cáo & Thiết lập
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Xuất dữ liệu sức khỏe và cài đặt thông báo nhắc nhở.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 p-6 pt-0 border-t border-border/40">
+            {/* Nhắc nhở ghi log */}
+            <div className="flex items-center justify-between py-2">
+              <div className="space-y-0.5 max-w-[70%]">
+                <Label htmlFor="notify-switch" className="text-sm font-semibold flex items-center gap-1.5 cursor-pointer">
+                  <Bell className="w-4 h-4 text-primary" /> Nhắc nhở hàng ngày
+                </Label>
+                <p className="text-[10px] text-muted-foreground leading-normal">
+                  Gửi thông báo nhắc nhở ghi nhật ký lúc 21:00 mỗi tối
+                </p>
+              </div>
+              <Switch
+                id="notify-switch"
+                checked={notificationsEnabled}
+                onCheckedChange={handleNotificationToggle}
+                className="data-[state=checked]:bg-primary"
+              />
+            </div>
+
+            {/* Xuất báo cáo */}
+            <div className="space-y-2 pt-4 border-t border-border/40">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">Xuất báo cáo sức khỏe</span>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => router.push("/report?range=3")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 3 tháng qua
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+                
+                <Button
+                  onClick={() => router.push("/report?range=6")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 6 tháng qua
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+
+                <Button
+                  onClick={() => router.push("/report?range=12")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 12 tháng qua
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right side Form: Edit Profile */}
+        <Card className="lg:col-span-2 border-border shadow-sm">
+          <CardHeader className="bg-muted/10 border-b border-border/40 pb-4">
+            <CardTitle className="text-lg font-bold flex items-center gap-2">
+              <User className="w-5 h-5 text-primary" /> Thông tin cá nhân
+            </CardTitle>
+            <CardDescription className="text-sm">
+              Cập nhật thông tin chi tiết để các thuật toán phân tích chính xác hơn.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="p-6">
+            <form onSubmit={handleSave} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Tên */}
+                <div className="space-y-2">
+                  <Label htmlFor="displayName" className="text-sm font-semibold text-foreground">Họ và Tên</Label>
+                  <Input
+                    id="displayName"
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    required
+                  />
+                </div>
+
+                {/* Năm sinh */}
+                <div className="space-y-2">
+                  <Label htmlFor="birthYear" className="text-sm font-semibold text-foreground">Năm sinh</Label>
+                  <Input
+                    id="birthYear"
+                    type="number"
+                    value={birthYear}
+                    onChange={(e) => setBirthYear(e.target.value)}
+                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    required
+                  />
+                </div>
+
+                {/* Chiều cao */}
+                <div className="space-y-2">
+                  <Label htmlFor="height" className="text-sm font-semibold text-foreground">Chiều cao (cm)</Label>
+                  <div className="relative">
+                    <Scale className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="height"
+                      type="number"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Cân nặng */}
+                <div className="space-y-2">
+                  <Label htmlFor="weight" className="text-sm font-semibold text-foreground">Cân nặng (kg)</Label>
+                  <div className="relative">
+                    <Activity className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="weight"
+                      type="number"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Tuổi có kinh */}
+                <div className="space-y-2">
+                  <Label htmlFor="periodAge" className="text-sm font-semibold text-foreground">Tuổi có kinh lần đầu</Label>
+                  <div className="relative">
+                    <Sparkles className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="periodAge"
+                      type="number"
+                      value={periodAge}
+                      onChange={(e) => setPeriodAge(e.target.value)}
+                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Số con */}
+                <div className="space-y-2">
+                  <Label htmlFor="childrenCount" className="text-sm font-semibold text-foreground">Số con đã sinh</Label>
+                  <div className="relative">
+                    <Baby className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="childrenCount"
+                      type="number"
+                      value={childrenCount}
+                      onChange={(e) => setChildrenCount(e.target.value)}
+                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {bmi > 0 && (
+                <div className="p-4 bg-muted border border-border rounded-xl flex items-center justify-between text-sm">
+                  <div>
+                    <span className="text-muted-foreground font-semibold">BMI ước tính: </span>
+                    <span className="font-bold text-foreground">{bmi}</span>
+                  </div>
+                  {bmiCat && (
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${bmiCat.color}`}>
+                      {bmiCat.label}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full sm:w-auto h-12 px-8 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center transition-colors"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-2" /> Đang cập nhật...
+                  </>
+                ) : (
+                  "Lưu thay đổi"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
