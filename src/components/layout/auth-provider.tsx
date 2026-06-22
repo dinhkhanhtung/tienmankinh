@@ -105,14 +105,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, profile, authLoading, pathname, router]);
 
-  // Hiển thị màn hình loading lúc xác thực lần đầu
-  if (authLoading) {
+  // Kiểm tra xem trang hiện tại có phải tuyến đường được bảo vệ không
+  const isProtectedRoute = ["/dashboard", "/tracker", "/log", "/chat", "/profile", "/onboarding"].some(
+    (route) => pathname.startsWith(route)
+  );
+
+  // Hiển thị màn hình loading lúc xác thực lần đầu hoặc khi đã đăng xuất và đang chờ chuyển hướng từ tuyến đường được bảo vệ
+  if (authLoading || (!user && isProtectedRoute)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-12 h-12 animate-spin text-primary" />
           <h2 className="text-lg font-semibold text-foreground">Tiền Mãn Kinh</h2>
-          <p className="text-sm text-muted-foreground">Đang kết nối dữ liệu an toàn...</p>
+          <p className="text-sm text-muted-foreground">
+            {!user && isProtectedRoute ? "Đang chuyển hướng an toàn..." : "Đang kết nối dữ liệu an toàn..."}
+          </p>
         </div>
       </div>
     );
