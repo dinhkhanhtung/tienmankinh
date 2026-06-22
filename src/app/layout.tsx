@@ -4,6 +4,7 @@ import "./globals.css";
 import { PwaProvider } from "@/components/layout/pwa-provider";
 import { AuthProvider } from "@/components/layout/auth-provider";
 import { Navigation } from "@/components/layout/navigation";
+import { ZaloBrowserDetector } from "@/components/layout/zalo-browser-detector";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         <PwaProvider>
           <AuthProvider>
+            <ZaloBrowserDetector />
             <Navigation>{children}</Navigation>
           </AuthProvider>
         </PwaProvider>
