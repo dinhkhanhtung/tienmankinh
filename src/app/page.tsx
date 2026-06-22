@@ -18,15 +18,19 @@ import {
   Moon, 
   Sun, 
   HelpCircle,
-  ChevronDown
+  ChevronDown,
+  Menu,
+  X,
+  ArrowUp
 } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
   const { user, loading } = useAuthStore();
   const { profile, theme, setTheme } = useUserStore();
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [activeFeatureIdx, setActiveFeatureIdx] = useState<number>(0);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0); // Mở sẵn câu số 1
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     if (!loading) {
@@ -40,13 +44,22 @@ export default function Home() {
     }
   }, [user, loading, profile, router]);
 
-  // Tự động chuyển đổi tính năng demo sau 4 giây
+  // Lắng nghe sự kiện scroll để hiển thị nút Back to Top
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveFeatureIdx((prev) => (prev + 1) % 5);
-    }, 4500);
-    return () => clearInterval(interval);
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Toggle FAQ Accordion
   const toggleFaq = (index: number) => {
@@ -92,6 +105,11 @@ export default function Home() {
       icon: <FileText className="w-6 h-6 text-primary" />,
       title: "Báo cáo Y khoa PDF",
       desc: "Tổng hợp biểu đồ xu hướng triệu chứng, chất lượng giấc ngủ trong 3, 6, 12 tháng rõ ràng. Dễ dàng in ấn hoặc lưu PDF mang theo gặp bác sĩ."
+    },
+    {
+      icon: <ShieldCheck className="w-6 h-6 text-primary" />,
+      title: "Bảo mật & Miễn phí",
+      desc: "Thông tin sức khỏe cá nhân của bạn là linh thiêng. Dữ liệu được mã hóa hoàn toàn và cam kết bảo mật quyền riêng tư tuyệt đối."
     }
   ];
 
@@ -112,42 +130,98 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans transition-colors duration-300 scroll-smooth">
       
-      {/* 1. HEADER */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40 px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-secondary/80 text-primary flex items-center justify-center shadow-inner">
-            <Heart className="w-5 h-5 fill-current" />
-          </div>
-          <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Tiền Mãn Kinh
-          </span>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5" />}
-          </button>
-          
-          <Link
-            href="/login"
-            className="text-xs sm:text-sm font-bold text-primary hover:text-primary-foreground border border-primary/30 px-3.5 py-1.5 rounded-xl hover:bg-primary transition-all duration-300"
-          >
-            Đăng nhập
+      {/* 1. HEADER (Cố định, căn lề thẳng hàng với nội dung) */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/40 w-full transition-colors duration-300">
+        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between py-3.5">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-full bg-secondary/80 text-primary flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+              <Heart className="w-5 h-5 fill-current" />
+            </div>
+            <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Tiền Mãn Kinh
+            </span>
           </Link>
+          
+          {/* Navigation Links trên PC */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-muted-foreground">
+            <a href="#symptoms" className="hover:text-foreground transition-colors">Triệu chứng</a>
+            <a href="#features" className="hover:text-foreground transition-colors">Tính năng</a>
+            <a href="#faq" className="hover:text-foreground transition-colors">Câu hỏi thường gặp</a>
+          </nav>
+          
+          {/* Buttons bên phải */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5" />}
+            </button>
+            
+            <Link
+              href="/login"
+              className="hidden sm:inline-block text-sm font-bold text-primary hover:text-primary-foreground border border-primary/30 px-4 py-2 rounded-xl hover:bg-primary transition-all duration-300"
+            >
+              Đăng nhập
+            </Link>
+
+            {/* Hamburger Button trên di động */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden w-9 h-9 rounded-xl flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Dropdown Menu Mobile */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-md py-4 px-6 animate-in slide-in-from-top-4 duration-200">
+            <nav className="flex flex-col gap-4 font-semibold text-muted-foreground">
+              <a 
+                href="#symptoms" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-foreground transition-colors py-1.5"
+              >
+                Triệu chứng
+              </a>
+              <a 
+                href="#features" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-foreground transition-colors py-1.5"
+              >
+                Tính năng
+              </a>
+              <a 
+                href="#faq" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:text-foreground transition-colors py-1.5"
+              >
+                Câu hỏi thường gặp
+              </a>
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="inline-block text-center text-primary-foreground bg-primary px-4 py-2.5 rounded-xl text-sm font-bold mt-2"
+              >
+                Đăng nhập tài khoản
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
-      {/* 2. HERO SECTION */}
-      <section className="relative overflow-hidden pt-12 pb-6 sm:pt-20 sm:pb-8 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto">
-        {/* Trang trí nền mờ ảo */}
+      {/* 2. HERO SECTION (Tối giản, thoáng đạt, không hình ảnh) */}
+      <section className="relative overflow-hidden pt-16 pb-16 sm:pt-24 sm:pb-24 px-4 sm:px-6 lg:px-8 text-center max-w-4xl mx-auto">
+        {/* Nền mờ ảo */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[450px] sm:h-[450px] rounded-full bg-primary/10 blur-3xl pointer-events-none -z-10" />
-        <div className="absolute top-1/3 left-1/3 w-[200px] h-[200px] rounded-full bg-secondary/20 blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-1/3 left-1/3 w-[200px] h-[200px] rounded-full bg-secondary/15 blur-3xl pointer-events-none -z-10" />
 
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/8 text-primary text-xs font-semibold mb-6 animate-pulse">
           <Sparkles className="w-3.5 h-3.5" />
@@ -158,13 +232,13 @@ export default function Home() {
           Đồng hành cùng sức khỏe & sự an tâm của bạn
         </h1>
 
-        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
-          Ứng dụng thiết kế riêng cho phụ nữ bước vào giai đoạn tiền mãn kinh. 
-          Giúp bạn dễ dàng theo dõi chu kỳ, ghi chép triệu chứng bằng giọng nói, 
-          và nhận tư vấn lối sống khoa học từ trợ lý sức khỏe AI thông minh.
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+          Ứng dụng được thiết kế tối giản, tinh tế dành riêng cho phụ nữ bước vào giai đoạn tiền mãn kinh. 
+          Giúp bạn dễ dàng theo dõi chu kỳ kinh nguyệt, ghi chép triệu chứng bằng giọng nói tiếng Việt rảnh tay, 
+          và nhận tư vấn lối sống từ trợ lý AI thông minh.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Link
             href="/login"
             className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-extrabold text-sm sm:text-base shadow-lg shadow-primary/20 hover:shadow-primary/35 hover:scale-[1.02] active:scale-98 transition-all duration-300 flex items-center justify-center gap-2 group"
@@ -181,55 +255,52 @@ export default function Home() {
           </a>
         </div>
 
-        {/* 3D Mockup Showcase */}
-        <div className="relative flex items-center justify-center h-[320px] sm:h-[480px] w-full max-w-4xl mx-auto overflow-visible mt-6 px-4">
-          {/* Điện thoại trái: Lịch chu kỳ */}
-          <div className="absolute left-[3%] sm:left-[12%] w-[130px] h-[260px] sm:w-[200px] sm:h-[400px] rounded-[24px] sm:rounded-[36px] border-4 sm:border-[6px] border-border/80 bg-background overflow-hidden shadow-xl transform -rotate-12 translate-y-6 opacity-60 hover:opacity-100 hover:translate-y-2 hover:scale-105 transition-all duration-500 z-10">
-            <img src="/landing/mockup_2.jpg" alt="Lịch thông minh" className="w-full h-full object-cover" />
+        {/* Thẻ Stats Card Glassmorphic nâng cao trải nghiệm & độ tin cậy */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <div className="bg-card/50 backdrop-blur-sm border border-border/60 p-5 rounded-2xl shadow-sm text-center">
+            <h3 className="text-2xl font-black text-primary mb-1">10,000+</h3>
+            <p className="text-xs text-muted-foreground font-medium">Phụ nữ Việt tin dùng</p>
           </div>
-
-          {/* Điện thoại phải: AI Coach */}
-          <div className="absolute right-[3%] sm:right-[12%] w-[130px] h-[260px] sm:w-[200px] sm:h-[400px] rounded-[24px] sm:rounded-[36px] border-4 sm:border-[6px] border-border/80 bg-background overflow-hidden shadow-xl transform rotate-12 translate-y-6 opacity-60 hover:opacity-100 hover:translate-y-2 hover:scale-105 transition-all duration-500 z-10">
-            <img src="/landing/mockup_4.jpg" alt="Trợ lý AI" className="w-full h-full object-cover" />
+          <div className="bg-card/50 backdrop-blur-sm border border-border/60 p-5 rounded-2xl shadow-sm text-center">
+            <h3 className="text-2xl font-black text-primary mb-1">100%</h3>
+            <p className="text-xs text-muted-foreground font-medium">Bảo mật dữ liệu cá nhân</p>
           </div>
-
-          {/* Điện thoại giữa: Dashboard (Mockup 1) */}
-          <div className="absolute w-[150px] h-[300px] sm:w-[220px] sm:h-[440px] rounded-[28px] sm:rounded-[40px] border-[6px] sm:border-[8px] border-primary/30 bg-background overflow-hidden shadow-2xl z-20 hover:scale-[1.03] transition-all duration-500">
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 w-16 sm:w-24 h-3 sm:h-4 bg-accent/20 rounded-full z-30" />
-            <img src="/landing/mockup_1.jpg" alt="Trang chủ ứng dụng" className="w-full h-full object-cover" />
+          <div className="bg-card/50 backdrop-blur-sm border border-border/60 p-5 rounded-2xl shadow-sm text-center">
+            <h3 className="text-2xl font-black text-primary mb-1">Miễn Phí</h3>
+            <p className="text-xs text-muted-foreground font-medium">Vì cộng đồng sức khỏe</p>
           </div>
         </div>
       </section>
 
-      {/* 3. SYMPATHY SECTION (ĐỒNG CẢM) */}
-      <section className="bg-muted/40 py-16 px-4 sm:px-6 lg:px-8 border-y border-border/30">
+      {/* 3. SYMPATHY SECTION (ĐỒNG CẢM - có anchor link) */}
+      <section id="symptoms" className="bg-muted/40 py-20 px-4 sm:px-6 lg:px-8 border-y border-border/30 scroll-mt-14">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-xl sm:text-2xl font-black mb-3">Bạn có đang gặp những thay đổi này?</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground">Tuổi tiền mãn kinh mang đến những biến đổi nội tiết tố tự nhiên nhưng vô cùng nhạy cảm:</p>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-black mb-3">Bạn có đang gặp những thay đổi này?</h2>
+            <p className="text-sm text-muted-foreground">Tuổi tiền mãn kinh mang đến những biến đổi nội tiết tố tự nhiên nhưng vô cùng nhạy cảm:</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm">
-              <span className="text-3xl mb-3 block">🥵</span>
+            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm hover:shadow-md transition-all duration-300">
+              <span className="text-3xl mb-4 block">🥵</span>
               <h3 className="font-bold text-sm sm:text-base mb-2">Bốc hỏa & Đổ mồ hôi</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">Những cơn nóng đột ngột xuất hiện ở mặt, cổ và ngực kèm theo đổ mồ hôi ban đêm gây khó chịu.</p>
             </div>
             
-            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm">
-              <span className="text-3xl mb-3 block">😴</span>
+            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm hover:shadow-md transition-all duration-300">
+              <span className="text-3xl mb-4 block">😴</span>
               <h3 className="font-bold text-sm sm:text-base mb-2">Mất ngủ & Mệt mỏi</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">Trằn trọc khó vào giấc, dễ tỉnh giấc giữa đêm và cảm thấy uể oải, thiếu năng lượng vào hôm sau.</p>
             </div>
 
-            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm">
-              <span className="text-3xl mb-3 block">🥀</span>
+            <div className="bg-card p-6 rounded-2xl border border-border/50 text-center shadow-sm hover:shadow-md transition-all duration-300">
+              <span className="text-3xl mb-4 block">🥀</span>
               <h3 className="font-bold text-sm sm:text-base mb-2">Tâm lý thay đổi</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">Cảm giác lo âu bồn chồn xuất hiện thường xuyên hơn, dễ cáu gắt hoặc đột ngột sụt sùi buồn bã.</p>
             </div>
           </div>
 
-          <div className="mt-10 text-center bg-primary/5 p-5 rounded-2xl border border-dashed border-primary/20 max-w-2xl mx-auto">
+          <div className="mt-12 text-center bg-primary/5 p-5 rounded-2xl border border-dashed border-primary/20 max-w-2xl mx-auto">
             <p className="text-xs sm:text-sm font-bold text-primary leading-relaxed">
               👉 Đừng quá lo lắng! Mọi triệu chứng này đều có thể được theo dõi và cải thiện thông qua việc thay đổi lối sống lành mạnh cùng sự đồng hành của ứng dụng.
             </p>
@@ -237,141 +308,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. FEATURES SECTION */}
-      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="text-center mb-12 sm:mb-16">
+      {/* 4. FEATURES SECTION (Lưới Grid cân đối 3 cột, không hình ảnh rối mắt) */}
+      <section id="features" className="py-20 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto scroll-mt-14">
+        <div className="text-center mb-16">
           <h2 className="text-2xl sm:text-3xl font-black mb-3">Ứng dụng mang lại những gì cho bạn?</h2>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">Tập hợp các công cụ khoa học thông minh được thiết kế tối giản, trực quan và dễ sử dụng nhất.</p>
+          <p className="text-sm text-muted-foreground max-w-xl mx-auto">Tập hợp các công cụ khoa học thông minh được thiết kế tối giản, trực quan và dễ sử dụng nhất cho phụ nữ trung niên.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-center">
-          {/* Cột trái: Danh sách tính năng */}
-          <div className="flex flex-col gap-4">
-            {features.map((feat, idx) => (
-              <div 
-                key={idx} 
-                className={`p-5 rounded-2xl border flex gap-4 transition-all duration-300 cursor-pointer ${
-                  activeFeatureIdx === idx 
-                    ? "bg-primary/8 border-primary/30 shadow-sm translate-x-1" 
-                    : "bg-card border-border/50 hover:bg-muted/30 hover:border-border"
-                }`}
-                onMouseEnter={() => setActiveFeatureIdx(idx)}
-                onClick={() => setActiveFeatureIdx(idx)}
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner ${
-                  activeFeatureIdx === idx ? "bg-primary/15 text-primary" : "bg-secondary/60"
-                }`}>
-                  {feat.icon}
-                </div>
-                <div className="flex flex-col">
-                  <h3 className="font-bold text-sm sm:text-base text-foreground mb-1">{feat.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feat, idx) => (
+            <div 
+              key={idx} 
+              className="bg-card p-6 rounded-2xl border border-border/50 flex flex-col gap-4 hover:shadow-md hover:-translate-y-1 active:scale-[0.99] transition-all duration-300"
+            >
+              <div className="w-12 h-12 rounded-xl bg-secondary/60 flex items-center justify-center shrink-0 shadow-inner">
+                {feat.icon}
               </div>
-            ))}
-          </div>
-
-          {/* Cột phải: Khung điện thoại hiển thị ảnh mockup hoạt động */}
-          <div className="hidden md:flex flex-col justify-center items-center relative p-8 bg-gradient-to-tr from-secondary/15 to-primary/5 rounded-3xl border border-border/30 overflow-hidden min-h-[520px] w-full">
-            <div className="absolute inset-0 bg-grid-pattern opacity-10" />
-            
-            <div className="w-[260px] h-[520px] bg-card border-[6px] border-accent/20 rounded-[38px] shadow-2xl relative flex flex-col overflow-hidden transition-all duration-500 transform hover:scale-[1.02]">
-              {/* Tai thỏ camera giả lập */}
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-3.5 bg-accent/20 rounded-full z-20" />
-              
-              {/* Ảnh mockup tương ứng với tính năng */}
-              <div className="w-full h-full relative overflow-hidden bg-background">
-                {features.map((feat, idx) => {
-                  let imgNum = "1";
-                  if (idx === 0) imgNum = "1"; // PeriScore / Dashboard
-                  else if (idx === 1) imgNum = "3"; // Voice
-                  else if (idx === 2) imgNum = "4"; // AI Coach
-                  else if (idx === 3) imgNum = "2"; // Calendar
-                  else if (idx === 4) imgNum = "5"; // PDF Report
-
-                  return (
-                    <img
-                      key={idx}
-                      src={`/landing/mockup_${imgNum}.jpg`}
-                      alt={feat.title}
-                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${
-                        activeFeatureIdx === idx ? "opacity-100 z-10 scale-100" : "opacity-0 z-0 scale-95"
-                      }`}
-                    />
-                  );
-                })}
+              <div>
+                <h3 className="font-bold text-sm sm:text-base text-foreground mb-2">{feat.title}</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
               </div>
             </div>
-
-            {/* Các lớp nhãn trang trí bay lơ lửng thay đổi theo active feature */}
-            <div className="absolute bottom-6 bg-card/90 backdrop-blur-sm border border-border/60 py-2 px-4 rounded-full shadow-lg flex items-center gap-2 max-w-[90%] transition-all duration-300">
-              <span className="text-xs">
-                {activeFeatureIdx === 0 && "📈"}
-                {activeFeatureIdx === 1 && "🎙️"}
-                {activeFeatureIdx === 2 && "🤖"}
-                {activeFeatureIdx === 3 && "📅"}
-                {activeFeatureIdx === 4 && "📄"}
-              </span>
-              <span className="text-[10px] font-black text-foreground">
-                {activeFeatureIdx === 0 && "Theo dõi chỉ số PeriScore hàng ngày"}
-                {activeFeatureIdx === 1 && "Nói tiếng Việt tự nhiên để ghi chép triệu chứng"}
-                {activeFeatureIdx === 2 && "Trợ lý AI thấu hiểu và phản hồi 24/7"}
-                {activeFeatureIdx === 3 && "AI dự báo chu kỳ kinh nguyệt thông minh"}
-                {activeFeatureIdx === 4 && "Báo cáo y khoa phân tích chuyên sâu"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4.5 SCREENSHOT GALLERY SECTION */}
-      <section className="bg-muted/20 py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-t border-border/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-black mb-3">Hình ảnh thực tế ứng dụng</h2>
-            <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-              Giao diện được thiết kế hiện đại, màu sắc dịu nhẹ, chữ to rõ ràng và cực kỳ tối ưu cho trải nghiệm trên mọi thiết bị di động.
-            </p>
-          </div>
-
-          {/* Lưới các ảnh mockup di động */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 justify-center">
-            {[
-              { src: "/landing/mockup_1.jpg", label: "Trang chủ & PeriScore" },
-              { src: "/landing/mockup_2.jpg", label: "Lịch theo dõi chu kỳ" },
-              { src: "/landing/mockup_3.jpg", label: "Nhật ký bằng giọng nói" },
-              { src: "/landing/mockup_4.jpg", label: "Trợ lý AI Coach 24/7" },
-              { src: "/landing/mockup_5.jpg", label: "Báo cáo sức khỏe y khoa" },
-              { src: "/landing/mockup_6.jpg", label: "Ghi triệu chứng chi tiết" },
-              { src: "/landing/mockup_7.jpg", label: "Đăng ký: Khảo sát thông tin" },
-              { src: "/landing/mockup_8.jpg", label: "Đăng ký: Triệu chứng" },
-              { src: "/landing/mockup_9.jpg", label: "Đăng ký: Khảo sát thói quen" },
-              { src: "/landing/mockup_10.jpg", label: "Giao diện quyên góp (Donate)" },
-              { src: "/landing/mockup_11.jpg", label: "Trang hồ sơ & Cài đặt" },
-            ].map((mock, idx) => (
-              <div 
-                key={idx} 
-                className="group bg-card border border-border/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col hover:-translate-y-1"
-              >
-                <div className="aspect-[9/18] relative overflow-hidden bg-muted">
-                  <img 
-                    src={mock.src} 
-                    alt={mock.label} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-3 text-center border-t border-border/40 mt-auto">
-                  <p className="text-[10px] font-bold text-foreground leading-tight">{mock.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 
       {/* 5. PRIVACY & SECURITY SECTION */}
-      <section className="bg-muted/30 py-12 px-4 sm:px-6 lg:px-8 border-t border-border/20 text-center">
+      <section className="bg-muted/30 py-16 px-4 sm:px-6 lg:px-8 border-t border-border/20 text-center">
         <div className="max-w-2xl mx-auto flex flex-col items-center">
           <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-4">
             <ShieldCheck className="w-6 h-6" />
@@ -385,28 +348,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. FAQ SECTION */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-        <div className="text-center mb-10">
+      {/* 6. FAQ SECTION (Mở sẵn câu 1) */}
+      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto scroll-mt-14">
+        <div className="text-center mb-12">
           <HelpCircle className="w-8 h-8 text-primary/80 mx-auto mb-3" />
           <h2 className="text-xl sm:text-2xl font-black">Câu hỏi thường gặp</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">Nhấn vào từng câu để xem giải đáp thắc mắc sức khỏe và ứng dụng.</p>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3.5">
           {faqs.map((faq, idx) => {
             const isOpen = activeFaq === idx;
             return (
               <div 
                 key={idx} 
-                className="bg-card border border-border/80 rounded-2xl overflow-hidden transition-all duration-300"
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
+                  isOpen ? "bg-card border-primary/30 shadow-sm" : "bg-card border-border/80"
+                }`}
               >
                 <button
                   onClick={() => toggleFaq(idx)}
                   className="w-full px-5 py-4 text-left font-bold text-xs sm:text-sm flex items-center justify-between gap-4 hover:bg-muted/30 active:bg-muted/50 transition-colors"
                   style={{ WebkitTapHighlightColor: "transparent" }}
                 >
-                  <span>{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                  <span className={isOpen ? "text-primary" : "text-foreground"}>{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : ""}`} />
                 </button>
                 
                 {isOpen && (
@@ -448,6 +414,17 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Nút Back to Top (Tăng trải nghiệm người dùng) */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-40 bg-primary hover:bg-primary/90 text-primary-foreground p-3 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center animate-in fade-in zoom-in duration-300"
+          aria-label="Back to top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }
