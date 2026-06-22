@@ -166,10 +166,9 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Lỗi API Chat: ", error);
-    const errorMessage = error?.message || "Lỗi máy chủ không xác định";
     
     return NextResponse.json({ 
-      reply: `Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do gặp sự cố kỹ thuật. Chi tiết lỗi: "${errorMessage}". Chị vui lòng chụp lại lỗi này để kỹ thuật hỗ trợ nhé!`
+      reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện cùng chị lúc này do dịch vụ kết nối máy chủ gặp sự cố kỹ thuật. Chị vui lòng thử lại sau hoặc thông báo bộ phận kỹ thuật hỗ trợ kiểm tra lại đường truyền kết nối nhé!" 
     });
   }
 }
