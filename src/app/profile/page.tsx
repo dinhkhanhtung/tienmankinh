@@ -481,7 +481,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Phản hồi góp ý */}
-            <div className="space-y-2.5 pt-4 border-t border-border/40">
+            <div className="space-y-2.5 pt-4 border-t border-border/40 md:hidden">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Góp ý cải tiến</span>
               <FeedbackDialog trigger={
                 <Button

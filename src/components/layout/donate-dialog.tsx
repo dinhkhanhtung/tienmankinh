@@ -145,7 +145,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
 
       <div className="flex flex-col items-center gap-4 py-1">
         {/* QR Code container */}
-        <div className="relative p-2.5 bg-white rounded-2xl shadow-inner border border-border/60 max-w-[160px] w-full aspect-square flex items-center justify-center overflow-hidden group">
+        <div className="relative p-2.5 bg-white rounded-2xl shadow-inner border border-border/60 max-w-[220px] w-full aspect-square flex items-center justify-center overflow-hidden group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrUrl}

@@ -176,7 +176,7 @@ export default function LogPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-8 page-transition max-w-3xl mx-auto px-4 sm:px-0">
+    <div className="space-y-6 pb-8 page-transition max-w-5xl mx-auto px-4 sm:px-0">
       {/* Title & Date Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
