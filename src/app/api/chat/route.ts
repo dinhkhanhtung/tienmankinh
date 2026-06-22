@@ -166,23 +166,10 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Lỗi API Chat: ", error);
-    const errorMessage = error?.message || "";
+    const errorMessage = error?.message || "Lỗi máy chủ không xác định";
     
-    // Nếu lỗi do API Key không hợp lệ hoặc hết hạn
-    if (
-      errorMessage.includes("API key not valid") || 
-      errorMessage.includes("API_KEY_INVALID") ||
-      errorMessage.includes("invalid_api_key") ||
-      errorMessage.includes("incorrect API key")
-    ) {
-      return NextResponse.json({ 
-        reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện cùng chị lúc này do dịch vụ kết nối máy chủ gặp sự cố kỹ thuật. Chị vui lòng thử lại sau hoặc thông báo bộ phận kỹ thuật hỗ trợ kiểm tra lại đường truyền kết nối nhé!" 
-      });
-    }
-
-    return NextResponse.json(
-      { error: `Không thể kết nối với AI Coach lúc này. Chi tiết: ${errorMessage || "Lỗi máy chủ không xác định"}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ 
+      reply: `Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do gặp sự cố kỹ thuật. Chi tiết lỗi: "${errorMessage}". Chị vui lòng chụp lại lỗi này để kỹ thuật hỗ trợ nhé!`
+    });
   }
 }
