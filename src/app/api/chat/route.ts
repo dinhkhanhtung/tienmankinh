@@ -175,9 +175,17 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error("Lỗi API Chat: ", error);
-    const errorMessage = error?.message || "Lỗi máy chủ không xác định";
+    const errorMessage = error?.message || "";
+    
+    // Nếu lỗi do API Key không hợp lệ hoặc hết hạn
+    if (errorMessage.includes("API key not valid") || errorMessage.includes("API_KEY_INVALID")) {
+      return NextResponse.json({ 
+        reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do khóa kết nối API (GEMINI_API_KEY) được cấu hình trên máy chủ hiện không hợp lệ hoặc đã hết hạn. Chị vui lòng kiểm tra và cập nhật lại khóa API chính xác trên trang cấu hình Vercel để kích hoạt lại nhé!" 
+      });
+    }
+
     return NextResponse.json(
-      { error: `Không thể kết nối với AI Coach lúc này. Chi tiết: ${errorMessage}` },
+      { error: `Không thể kết nối với AI Coach lúc này. Chi tiết: ${errorMessage || "Lỗi máy chủ không xác định"}` },
       { status: 500 }
     );
   }
