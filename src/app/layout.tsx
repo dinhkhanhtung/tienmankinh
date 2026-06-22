@@ -71,6 +71,21 @@ export default function RootLayout({
       className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.addEventListener('error', function(e) {
+                var target = e.target;
+                if (target && target.tagName === 'SCRIPT' && target.src && target.src.indexOf('/_next/static/') !== -1) {
+                  console.warn('Next.js script load failed, reloading page...', target.src);
+                  window.location.reload();
+                }
+              }, true);
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         <PwaProvider>
           <AuthProvider>
