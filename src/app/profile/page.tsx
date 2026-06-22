@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight } from "lucide-react";
+import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart } from "lucide-react";
 import { toast } from "sonner";
+import { DonateDialog } from "@/components/layout/donate-dialog";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -303,6 +304,23 @@ export default function ProfilePage() {
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </Button>
               </div>
+            </div>
+
+            {/* Đồng hành cùng dự án */}
+            <div className="space-y-2.5 pt-4 border-t border-border/40">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Đồng hành cùng dự án</span>
+              <DonateDialog trigger={
+                <Button
+                  variant="outline"
+                  className="w-full h-11 rounded-xl justify-between border-dashed border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10 text-xs font-bold text-primary transition-all duration-300"
+                >
+                  <span className="flex items-center gap-2">
+                    <Heart className="w-4 h-4 fill-current text-primary animate-pulse" />
+                    Ủng hộ duy trì ứng dụng
+                  </span>
+                  <span className="text-[9px] bg-primary/15 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-wider">Tự nguyện</span>
+                </Button>
+              } />
             </div>
           </CardContent>
         </Card>

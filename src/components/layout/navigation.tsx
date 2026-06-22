@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { DonateDialog } from "@/components/layout/donate-dialog";
+
 export function Navigation({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -121,6 +123,19 @@ export function Navigation({ children }: { children: React.ReactNode }) {
               </button>
             </div>
           )}
+
+          {/* Quyên góp tự nguyện */}
+          <div className="px-1 mb-2.5">
+            <DonateDialog trigger={
+              <button
+                type="button"
+                className="flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl font-bold text-xs text-primary bg-primary/5 hover:bg-primary/10 border border-dashed border-primary/20 hover:border-primary/50 transition-all active:scale-98 text-left cursor-pointer"
+              >
+                <Heart className="w-4 h-4 fill-current shrink-0 text-primary animate-pulse" />
+                <span className="truncate">Ủng hộ duy trì app</span>
+              </button>
+            } />
+          </div>
 
           {/* User info info - Click to toggle menu */}
           {profile && (
