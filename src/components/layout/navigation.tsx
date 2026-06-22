@@ -74,17 +74,17 @@ export function Navigation({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen w-full flex-col md:flex-row bg-background overflow-hidden">
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border h-full p-6 text-foreground">
+      <aside className="hidden md:flex flex-col w-66 bg-card/85 backdrop-blur-md border-r border-border h-full p-6 text-foreground shadow-lg shadow-black/[0.01]">
         {/* Brand */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-full bg-secondary text-primary flex items-center justify-center shadow-sm">
-            <Heart className="w-5 h-5 fill-current" />
+        <div className="flex items-center gap-3 mb-8 px-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary/20 text-primary flex items-center justify-center shadow-inner group cursor-pointer">
+            <Heart className="w-5 h-5 fill-current group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="font-bold text-lg text-primary">Tiền Mãn Kinh</span>
+          <span className="font-black text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">Tiền Mãn Kinh</span>
         </div>
 
         {/* Menu Items */}
-        <nav className="flex-1 flex flex-col gap-2">
+        <nav className="flex-1 flex flex-col gap-2.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -92,13 +92,13 @@ export function Navigation({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl font-semibold text-base transition-colors ${
+                className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-sm tracking-tight transition-all duration-300 active:scale-98 ${
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md shadow-primary/25"
+                    : "hover:bg-muted/70 text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Icon className={`w-5 h-5 ${item.highlight && !isActive ? "text-primary" : ""}`} />
+                <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? "scale-105" : "group-hover:scale-105"} ${item.highlight && !isActive ? "text-primary" : ""}`} />
                 {item.name}
               </Link>
             );
@@ -201,7 +201,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* MOBILE BOTTOM NAVIGATION */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-lg border-t border-border/80 h-16 flex items-center justify-around z-50 text-foreground shadow-lg shadow-black/5 pb-safe" style={{ touchAction: "manipulation" }}>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-xl border-t border-border/60 h-16.5 flex items-center justify-around z-50 text-foreground shadow-xl shadow-black/10 pb-safe" style={{ touchAction: "manipulation" }}>
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -210,7 +210,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           let mobileLabel = "";
           if (item.name === "Tổng quan") mobileLabel = "Trang chủ";
           else if (item.name === "Lịch chu kỳ") mobileLabel = "Lịch";
-          else if (item.name === "AI Coach") mobileLabel = "AI Coach";
+          else if (item.name === "AI Coach") mobileLabel = "Trợ lý";
           else if (item.name === "Hồ sơ") mobileLabel = "Hồ sơ";
 
           if (item.highlight) {
@@ -218,17 +218,17 @@ export function Navigation({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center justify-center flex-1 select-none relative -top-3 h-full"
+                className="flex flex-col items-center justify-center flex-1 select-none relative -top-4 h-full"
                 style={{ WebkitTapHighlightColor: "transparent" }}
               >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-md active:scale-95 ${
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ring-4 ring-background/95 active:scale-90 ${
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-primary/30"
-                    : "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-primary/20 hover:opacity-95"
+                    ? "bg-gradient-to-tr from-primary via-primary to-accent text-primary-foreground shadow-primary/40 scale-105"
+                    : "bg-gradient-to-tr from-primary via-primary to-[#B05581] text-primary-foreground shadow-primary/30 hover:shadow-primary/45"
                 }`}>
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-6.5 h-6.5 stroke-[2.25]" />
                 </div>
-                <span className="text-[10px] font-bold text-primary mt-1 select-none">Ghi chép</span>
+                <span className="text-[10px] font-black text-primary mt-1.5 select-none tracking-tight">Ghi chép</span>
               </Link>
             );
           }
@@ -237,19 +237,19 @@ export function Navigation({ children }: { children: React.ReactNode }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] font-bold select-none transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground"
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] font-bold select-none transition-all active:scale-95 ${
+                isActive ? "text-primary scale-102" : "text-muted-foreground hover:text-foreground"
               }`}
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
-              <div className={`p-1.5 rounded-xl transition-all ${
+              <div className={`p-1.5 px-3 rounded-2xl transition-all duration-300 ${
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "hover:bg-muted"
+                  ? "bg-primary/12 text-primary"
+                  : "hover:bg-muted/40"
               }`}>
-                <Icon className="w-5 h-5" />
+                <Icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? "scale-110" : ""}`} />
               </div>
-              <span className="mt-0.5 tracking-tight">{mobileLabel}</span>
+              <span className="mt-0.5 tracking-tight font-black">{mobileLabel}</span>
             </Link>
           );
         })}

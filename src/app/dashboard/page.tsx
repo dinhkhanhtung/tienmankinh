@@ -336,7 +336,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
       {/* Grid: 4 Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: PeriScore */}
-        <Card className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm transition-all hover:shadow-md">
+        <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
             <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate">
               <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -350,14 +350,14 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
               <span className="text-xl sm:text-2xl md:text-3xl font-black text-primary">{currentPeriScore}</span>
               <span className="text-[10px] sm:text-xs text-muted-foreground">/100</span>
             </div>
-            <span className={`inline-block text-[9px] sm:text-[10px] md:text-[11px] font-extrabold px-2 py-0.5 rounded-full mt-1.5 border ${periScoreCat.color}`}>
+            <span className={`inline-block text-[9px] sm:text-[10px] md:text-[11px] font-extrabold px-2.5 py-0.5 rounded-full mt-1.5 border ${periScoreCat.color}`}>
               {periScoreCat.label}
             </span>
           </CardContent>
         </Card>
 
         {/* Card 2: Next Period */}
-        <Card className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm transition-all hover:shadow-md">
+        <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
             <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate">
               <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -370,14 +370,14 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
             <div className="text-base sm:text-lg md:text-xl font-black text-foreground truncate leading-tight">
               {daysUntilNextPeriod}
             </div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2 font-semibold truncate">
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2.5 font-semibold truncate">
               {isCurrentlyInPeriod ? "Hãy chăm sóc bản thân" : `Chu kỳ TB: ${averageCycleLength} ngày`}
             </p>
           </CardContent>
         </Card>
 
         {/* Card 3: Avg Sleep */}
-        <Card className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm transition-all hover:shadow-md">
+        <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
             <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate">
               <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -390,14 +390,14 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
             <div className="text-base sm:text-lg md:text-xl font-black text-foreground truncate leading-tight">
               {stats.avgSleep} giờ
             </div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2 font-semibold truncate">
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2.5 font-semibold truncate">
               Chất lượng: <span className="font-bold text-primary">{stats.avgSleepQuality}</span> / 10
             </p>
           </CardContent>
         </Card>
 
         {/* Card 4: Avg Hot Flashes */}
-        <Card className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm transition-all hover:shadow-md">
+        <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
             <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate">
               <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -410,7 +410,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
             <div className="text-base sm:text-lg md:text-xl font-black text-foreground truncate leading-tight">
               {stats.avgHotFlashes} / 3.0
             </div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2 font-semibold truncate">
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2.5 font-semibold truncate">
               Trong 30 ngày qua
             </p>
           </CardContent>
@@ -421,10 +421,10 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* PeriScore Detail Card */}
-        <Card className="border-border shadow-sm bg-gradient-to-br from-card via-card to-secondary/5">
+        <Card className="border-border shadow-sm glass-card">
           <CardHeader className="p-4 pb-2 sm:p-6">
             <CardTitle className="text-base font-extrabold flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" /> Chỉ số PeriScore (30 ngày)
+              <Activity className="w-5 h-5 text-primary animate-pulse" /> Chỉ số PeriScore (30 ngày)
             </CardTitle>
             <CardDescription className="text-xs">
               Điểm số phản ánh mức độ ảnh hưởng của các triệu chứng tiền mãn kinh
@@ -432,9 +432,38 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
           </CardHeader>
           
           <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-4">
-            <div className="text-center py-4 bg-muted/20 rounded-2xl border border-border/40">
-              <div className="text-5xl font-black text-primary">{stats.avgPeriScore}</div>
-              <p className="text-xs text-muted-foreground mt-1 font-semibold">Chỉ số PeriScore trung bình</p>
+            {/* SVG Circular Progress Ring */}
+            <div className="relative flex flex-col items-center justify-center py-4 bg-muted/10 rounded-2xl border border-border/30">
+              <div className="relative w-32 h-32 flex items-center justify-center">
+                <svg className="w-full h-full transform -rotate-90">
+                  {/* Background Circle */}
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="48"
+                    className="stroke-muted/40"
+                    strokeWidth="8"
+                    fill="transparent"
+                  />
+                  {/* Progress Circle with Gradient */}
+                  <circle
+                    cx="64"
+                    cy="64"
+                    r="48"
+                    className="stroke-primary"
+                    strokeWidth="8"
+                    fill="transparent"
+                    strokeDasharray={2 * Math.PI * 48}
+                    strokeDashoffset={2 * Math.PI * 48 - (stats.avgPeriScore / 100) * (2 * Math.PI * 48)}
+                    strokeLinecap="round"
+                    style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
+                  />
+                </svg>
+                <div className="absolute flex flex-col items-center justify-center">
+                  <span className="text-3xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{stats.avgPeriScore}</span>
+                  <span className="text-[8px] font-black text-muted-foreground uppercase tracking-wider">Trung bình</span>
+                </div>
+              </div>
               
               <span className={`inline-block text-xs font-extrabold px-3 py-1 rounded-full mt-3 border ${avgPeriScoreCat.color}`}>
                 {avgPeriScoreCat.label}
@@ -445,10 +474,10 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
               <p className="font-bold text-foreground flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
                 <Info className="w-3.5 h-3.5 text-primary" /> Giải thích chỉ số PeriScore
               </p>
-              <ul className="list-disc pl-4 space-y-1 font-medium">
-                <li><span className="font-bold text-foreground">0 - 30 (Thấp):</span> Các triệu chứng nhẹ, ít ảnh hưởng tiêu cực đến chất lượng sống.</li>
-                <li><span className="font-bold text-foreground">31 - 60 (Trung bình):</span> Bắt đầu có bốc hỏa, mất ngủ rõ rệt. Cần điều chỉnh lối sống và dinh dưỡng.</li>
-                <li><span className="font-bold text-foreground">61 - 100 (Cao):</span> Các triệu chứng nghiêm trọng. Chị nên tham khảo ý kiến của bác sĩ sản phụ khoa.</li>
+              <ul className="list-disc pl-4 space-y-1 font-semibold">
+                <li><span className="font-bold text-foreground">0 - 30 (Thấp):</span> Triệu chứng nhẹ, ít ảnh hưởng chất lượng sống.</li>
+                <li><span className="font-bold text-foreground">31 - 60 (Trung bình):</span> Bốc hỏa, mất ngủ rõ rệt. Cần điều chỉnh lối sống.</li>
+                <li><span className="font-bold text-foreground">61 - 100 (Cao):</span> Các triệu chứng nghiêm trọng. Nên gặp bác sĩ.</li>
               </ul>
             </div>
 
@@ -463,31 +492,37 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </Card>
 
         {/* AI Coach Suggestion Quick Card */}
-        <Card className="lg:col-span-2 border-border shadow-sm flex flex-col justify-between">
+        <Card className="lg:col-span-2 border-border shadow-sm flex flex-col justify-between glass-card">
           <CardHeader className="p-4 pb-2 sm:p-6">
             <CardTitle className="text-base font-extrabold flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary fill-current" /> AI Coach của chị nói gì?
+              <Sparkles className="w-5 h-5 text-primary fill-current" /> AI Coach khuyên chị
             </CardTitle>
             <CardDescription className="text-xs">
               Lời khuyên cá nhân hóa dựa trên dữ liệu sức khỏe 7 ngày qua của chị
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-3 flex-1 flex flex-col justify-center">
-            <div className="p-4 bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-2xl relative">
-              <p className="text-xs sm:text-sm leading-relaxed font-semibold italic text-foreground relative z-10">
-                {stats.loggedDaysCount === 0 
-                  ? "Chào chị! Hãy ghi nhận nhật ký triệu chứng tối thiểu 1 ngày để tôi có cơ sở phân tích thể trạng và đưa ra các lời khuyên dinh dưỡng, vận động cá nhân hóa dành riêng cho chị."
-                  : stats.avgPeriScore > 50 
-                    ? "Gần đây chỉ số bốc hỏa và mất ngủ của chị khá cao. Chị nên thử uống một ly trà hoa cúc ấm trước khi ngủ, ngâm chân nước ấm và duy trì phòng ngủ thoáng mát khoảng 22-24°C để giấc ngủ sâu hơn nhé."
-                    : "Thể trạng của chị trong 30 ngày qua khá ổn định. Hãy duy trì đi bộ nhẹ nhàng 30 phút mỗi ngày và tăng cường các thực phẩm giàu phytoestrogen như đậu nành, hạt lanh chị nhé."}
-              </p>
-              {/* Bóng hội thoại trang trí */}
-              <div className="absolute top-4 left-4 w-8 h-8 bg-primary/5 rounded-full blur-sm"></div>
+          <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-3 flex-1 flex items-center">
+            {/* Native-like Coach Suggestion Bubble */}
+            <div className="flex items-start gap-4 w-full">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-secondary to-primary/30 text-primary flex items-center justify-center font-bold shadow-md shrink-0 border border-primary/10">
+                <Sparkles className="w-6 h-6 fill-current animate-pulse" />
+              </div>
+              <div className="flex-1 p-4 bg-muted/30 border border-border/55 rounded-2xl rounded-tl-sm relative shadow-inner">
+                <p className="text-xs sm:text-sm leading-relaxed font-bold italic text-foreground">
+                  {stats.loggedDaysCount === 0 
+                    ? "Chào chị! Hãy ghi nhận nhật ký triệu chứng tối thiểu 1 ngày để tôi có cơ sở phân tích thể trạng và đưa ra các lời khuyên dinh dưỡng, vận động cá nhân hóa dành riêng cho chị."
+                    : stats.avgPeriScore > 50 
+                      ? "Gần đây chỉ số bốc hỏa và mất ngủ của chị khá cao. Chị nên thử uống một ly trà hoa cúc ấm trước khi ngủ, ngâm chân nước ấm và duy trì phòng ngủ thoáng mát khoảng 22-24°C để giấc ngủ sâu hơn nhé."
+                      : "Thể trạng của chị trong 30 ngày qua khá ổn định. Hãy duy trì đi bộ nhẹ nhàng 30 phút mỗi ngày và tăng cường các thực phẩm giàu phytoestrogen như đậu nành, hạt lanh chị nhé."}
+                </p>
+                {/* Speech Bubble Arrow */}
+                <div className="absolute top-4 -left-2 w-0 h-0 border-t-[8px] border-t-transparent border-r-[8px] border-r-border/50 border-b-[8px] border-b-transparent"></div>
+              </div>
             </div>
           </CardContent>
-          <CardFooter className="p-4 pt-0 sm:p-6 flex justify-end">
+          <CardFooter className="p-4 pt-0 sm:p-6 flex justify-end border-t border-border/20 mt-4">
             <Link href="/chat" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto h-10 rounded-xl border-border hover:bg-muted text-xs font-extrabold flex items-center justify-center gap-1.5 text-primary">
+              <Button variant="outline" className="w-full sm:w-auto h-10 rounded-xl border-border hover:bg-muted text-xs font-black flex items-center justify-center gap-1.5 text-primary active:scale-95 transition-all">
                 Trò chuyện với AI Coach <ChevronRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -498,7 +533,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
       {/* Grid: Gợi ý cải thiện & Đăng ký Tư vấn */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Card 1: Gợi ý cải thiện tự nhiên (takes 2 cols) */}
-        <Card className="lg:col-span-2 border-border shadow-sm bg-gradient-to-br from-card via-card to-primary/5 flex flex-col justify-between">
+        <Card className="lg:col-span-2 border-border shadow-sm glass-card flex flex-col justify-between">
           <CardHeader className="p-4 pb-2 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <CardTitle className="text-base font-extrabold flex items-center gap-2">
@@ -532,7 +567,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </Card>
 
         {/* Card 2: Zalo consultation CTA (takes 1 col) */}
-        <Card className="border-primary/20 shadow-md bg-gradient-to-br from-primary/5 via-card to-secondary/15 relative overflow-hidden flex flex-col justify-between">
+        <Card className="border-primary/20 shadow-md bg-gradient-to-br from-primary/5 via-card to-secondary/15 relative overflow-hidden flex flex-col justify-between glass-card">
           <CardHeader className="p-4 pb-2 sm:p-6 relative z-10">
             <CardTitle className="text-base font-extrabold flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-primary" /> Tham vấn Chuyên gia Sức khỏe
@@ -544,7 +579,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-4 relative z-10 flex-1">
-            <div className="p-3 bg-card/90 rounded-2xl border border-border/50 text-[10px] text-muted-foreground space-y-1 font-semibold leading-relaxed">
+            <div className="p-3 bg-card/90 rounded-2xl border border-border/55 text-[10px] text-muted-foreground space-y-1 font-semibold leading-relaxed">
               <p className="font-bold text-foreground flex items-center gap-1">
                 <Info className="w-3.5 h-3.5 text-primary" /> Báo cáo sẽ gửi đi gồm:
               </p>
@@ -570,7 +605,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
       </div>
 
       {/* Section: Analytics Charts (30 days) */}
-      <Card className="border-border shadow-sm overflow-hidden">
+      <Card className="border-border shadow-sm overflow-hidden glass-card">
         <CardHeader className="p-4 sm:p-6">
           <CardTitle className="text-base font-extrabold flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary" /> Xu hướng & Phân tích sức khỏe (30 ngày gần nhất)
@@ -596,14 +631,24 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
                     <div className="h-60 sm:h-64 min-w-[550px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <defs>
+                            <linearGradient id="colorHotFlashes" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#D96C9D" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="#D96C9D" stopOpacity={0}/>
+                            </linearGradient>
+                            <linearGradient id="colorInsomnia" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#7A4E6D" stopOpacity={0.2}/>
+                              <stop offset="95%" stopColor="#7A4E6D" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
-                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} stroke="#7A4E6D" interval={2} />
-                          <YAxis domain={[0, 3]} tickCount={4} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
-                          <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
-                          <Legend wrapperStyle={{ fontSize: 11 }} />
-                          <Line type="monotone" dataKey="Bốc hỏa" stroke="#D96C9D" strokeWidth={3} activeDot={{ r: 5 }} />
-                          <Line type="monotone" dataKey="Mất ngủ" stroke="#7A4E6D" strokeWidth={3} />
-                          <Line type="monotone" dataKey="Đổ mồ hôi đêm" stroke="#ED8EB9" strokeWidth={2} strokeDasharray="5 5" />
+                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" interval={2} />
+                          <YAxis domain={[0, 3]} tickCount={4} tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" />
+                          <Tooltip contentStyle={{ borderRadius: "16px", borderColor: "#F1DDE7", fontSize: 11, fontWeight: "bold", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05)" }} />
+                          <Legend wrapperStyle={{ fontSize: 11, fontWeight: "bold" }} />
+                          <Line type="monotone" dataKey="Bốc hỏa" stroke="#D96C9D" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="Mất ngủ" stroke="#7A4E6D" strokeWidth={3} dot={{ r: 3 }} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="Đổ mồ hôi đêm" stroke="#ED8EB9" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
@@ -619,14 +664,14 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
                       <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
-                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} stroke="#7A4E6D" interval={2} />
-                          <YAxis yAxisId="left" domain={[0, 10]} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
-                          <YAxis yAxisId="right" orientation="right" domain={[0, 5]} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
-                          <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
-                          <Legend wrapperStyle={{ fontSize: 11 }} />
-                          <Bar yAxisId="left" dataKey="Thời gian ngủ (giờ)" fill="#F8D7E6" radius={[4, 4, 0, 0]} />
-                          <Line yAxisId="left" type="monotone" dataKey="Chất lượng ngủ" stroke="#B05581" strokeWidth={2} dot={{ r: 2 }} />
-                          <Line yAxisId="right" type="monotone" dataKey="Tâm trạng" stroke="#D96C9D" strokeWidth={2} dot={{ r: 3 }} />
+                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" interval={2} />
+                          <YAxis yAxisId="left" domain={[0, 10]} tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" />
+                          <YAxis yAxisId="right" orientation="right" domain={[0, 5]} tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" />
+                          <Tooltip contentStyle={{ borderRadius: "16px", borderColor: "#F1DDE7", fontSize: 11, fontWeight: "bold", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05)" }} />
+                          <Legend wrapperStyle={{ fontSize: 11, fontWeight: "bold" }} />
+                          <Bar yAxisId="left" dataKey="Thời gian ngủ (giờ)" fill="#F8D7E6" radius={[6, 6, 0, 0]} barSize={16} />
+                          <Line yAxisId="left" type="monotone" dataKey="Chất lượng ngủ" stroke="#B05581" strokeWidth={2.5} dot={{ r: 2 }} />
+                          <Line yAxisId="right" type="monotone" dataKey="Tâm trạng" stroke="#D96C9D" strokeWidth={2.5} dot={{ r: 3 }} />
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>

@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Smile, Frown, Meh, AlertCircle, Mic, MicOff, Info, 
   Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2, ArrowRight,
-  Check
+  Check, Sparkles
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ export default function LogPage() {
   const [symptoms, setSymptoms] = useState(DEFAULT_SYMPTOMS);
   const [sleep, setSleep] = useState(DEFAULT_SLEEP);
   const [mood, setMood] = useState(DEFAULT_MOOD);
+  const [isSaved, setIsSaved] = useState(false);
 
   // Sync local state chỉ khi người dùng chọn ngày khác
   useEffect(() => {
@@ -34,6 +35,29 @@ export default function LogPage() {
     setMood(log.mood);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
+
+  // Tính điểm PeriScore real-time trên giao diện trước khi lưu
+  const livePeriScore = React.useMemo(() => {
+    let raw = 0;
+    raw += symptoms.hotFlashes * 2;
+    raw += symptoms.insomnia * 2;
+    raw += symptoms.nightSweats;
+    raw += symptoms.palpitations;
+    raw += symptoms.anxiety;
+    raw += symptoms.irritability;
+    raw += symptoms.depression;
+    raw += symptoms.jointPain;
+    raw += symptoms.fatigue;
+    raw += symptoms.weightGain;
+    raw += symptoms.drySkin;
+    raw += symptoms.vaginalDryness;
+    raw += symptoms.lowLibido;
+    
+    const maxRawScore = 45;
+    return Math.round((raw / maxRawScore) * 100);
+  }, [symptoms]);
+
+  const livePeriCat = getPeriScoreCategory(livePeriScore);
 
   // Thiết lập Voice Recognition cho ghi chú tâm trạng
   const handleTranscript = (text: string) => {
@@ -63,48 +87,46 @@ export default function LogPage() {
     }));
   };
 
-  // Định nghĩa các loại triệu chứng để render cho khoa học
+  // Định nghĩa các loại triệu chứng để render kèm icon trực quan
   const symptomGroups = [
     {
       title: "Triệu chứng Vận mạch (Vasomotor)",
       description: "Có hệ số tác động lớn đến chỉ số PeriScore",
       items: [
-        { key: "hotFlashes" as const, label: "Bốc hỏa", desc: "Cảm giác nóng đột ngột ở mặt, cổ, ngực" },
-        { key: "nightSweats" as const, label: "Đổ mồ hôi đêm", desc: "Mồ hôi ra nhiều khi ngủ" },
-        { key: "palpitations" as const, label: "Tim đập nhanh", desc: "Hồi hộp, tim đập thình thịch" },
+        { key: "hotFlashes" as const, label: "Bốc hỏa", desc: "Cảm giác nóng đột ngột ở mặt, cổ, ngực", icon: "🔥" },
+        { key: "nightSweats" as const, label: "Đổ mồ hôi đêm", desc: "Mồ hôi ra nhiều khi ngủ", icon: "💦" },
+        { key: "palpitations" as const, label: "Tim đập nhanh", desc: "Hồi hộp, tim đập thình thịch", icon: "💓" },
       ]
     },
     {
       title: "Triệu chứng Thần kinh & Cảm xúc",
       description: "Thay đổi về tâm lý và hệ thống thần kinh",
       items: [
-        { key: "insomnia" as const, label: "Mất ngủ", desc: "Khó đi vào giấc ngủ, ngủ chập chờn" },
-        { key: "anxiety" as const, label: "Lo âu", desc: "Cảm giác bồn chồn, lo lắng vô cớ" },
-        { key: "irritability" as const, label: "Cáu gắt", desc: "Dễ nổi nóng, bực bội với xung quanh" },
-        { key: "depression" as const, label: "Trầm buồn", desc: "Tâm trạng buồn bã, uể oải, suy sụp" },
+        { key: "insomnia" as const, label: "Mất ngủ", desc: "Khó đi vào giấc ngủ, ngủ chập chờn", icon: "🌙" },
+        { key: "anxiety" as const, label: "Lo âu", desc: "Cảm giác bồn chồn, lo lắng vô cớ", icon: "😰" },
+        { key: "irritability" as const, label: "Cáu gắt", desc: "Dễ nổi nóng, bực bội với xung quanh", icon: "😠" },
+        { key: "depression" as const, label: "Trầm buồn", desc: "Tâm trạng buồn bã, uể oải, suy sụp", icon: "😢" },
       ]
     },
     {
       title: "Biến đổi Thể chất",
       description: "Ảnh hưởng cơ khớp và bề ngoài",
       items: [
-        { key: "jointPain" as const, label: "Đau khớp", desc: "Nhức mỏi cơ xương khớp" },
-        { key: "fatigue" as const, label: "Mệt mỏi", desc: "Thiếu năng lượng, suy nhược cơ thể" },
-        { key: "weightGain" as const, label: "Tăng cân", desc: "Tích mỡ vùng bụng, tăng cân không rõ lý do" },
-        { key: "drySkin" as const, label: "Khô da", desc: "Da khô ráp, ngứa, rụng tóc" },
+        { key: "jointPain" as const, label: "Đau khớp", desc: "Nhức mỏi cơ xương khớp", icon: "🦴" },
+        { key: "fatigue" as const, label: "Mệt mỏi", desc: "Thiếu năng lượng, suy nhược cơ thể", icon: "🔋" },
+        { key: "weightGain" as const, label: "Tăng cân", desc: "Tích mỡ vùng bụng, tăng cân không rõ lý do", icon: "⚖️" },
+        { key: "drySkin" as const, label: "Khô da", desc: "Da khô ráp, ngứa, rụng tóc", icon: "🍂" },
       ]
     },
     {
       title: "Hệ thống Sinh dục & Nội tiết",
       description: "Do suy giảm nồng độ Estrogen",
       items: [
-        { key: "vaginalDryness" as const, label: "Khô âm đạo", desc: "Gây đau rát khi quan hệ" },
-        { key: "lowLibido" as const, label: "Giảm ham muốn", desc: "Không còn hứng thú trong chuyện chăn gối" },
+        { key: "vaginalDryness" as const, label: "Khô âm đạo", desc: "Gây đau rát khi quan hệ", icon: "🌵" },
+        { key: "lowLibido" as const, label: "Giảm ham muốn", desc: "Không còn hứng thú trong chuyện chăn gối", icon: "💔" },
       ]
     }
   ];
-
-  const [isSaved, setIsSaved] = useState(false);
 
   const handleSaveLog = async () => {
     try {
@@ -131,7 +153,7 @@ export default function LogPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-6 pb-6 page-transition">
       {/* Title & Date Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -156,6 +178,28 @@ export default function LogPage() {
         </div>
       </div>
 
+      {/* Real-time PeriScore Indicator widget */}
+      <div className="p-4 rounded-2xl glass-card flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm border border-primary/10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shadow-inner">
+            <Sparkles className="w-5 h-5 fill-current animate-pulse" />
+          </div>
+          <div>
+            <h4 className="text-xs sm:text-sm font-extrabold text-foreground">Điểm PeriScore ước tính hôm nay</h4>
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-semibold">Tự động cập nhật tức thì khi chị thay đổi triệu chứng bên dưới</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl sm:text-3xl font-black text-primary animate-in zoom-in duration-200">{livePeriScore}</span>
+            <span className="text-xs text-muted-foreground font-bold">/100</span>
+          </div>
+          <span className={`inline-block text-[10px] font-black px-2.5 py-1 rounded-full border transition-all ${livePeriCat.color}`}>
+            {livePeriCat.label}
+          </span>
+        </div>
+      </div>
+
       {/* Main Forms Layout */}
       <Tabs defaultValue="symptoms" className="w-full">
         <TabsList className="grid grid-cols-3 w-full max-w-md h-11 bg-muted/60 p-1 rounded-xl mb-6 shadow-inner">
@@ -171,19 +215,22 @@ export default function LogPage() {
         </TabsList>
 
         {/* TAB 1: Symptoms Form */}
-        <TabsContent value="symptoms" className="space-y-4 outline-none">
+        <TabsContent value="symptoms" className="space-y-4 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
           {symptomGroups.map((group, groupIdx) => (
-            <Card key={groupIdx} className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm">
+            <Card key={groupIdx} className="border-border shadow-sm overflow-hidden glass-card">
               <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
                 <CardTitle className="text-sm sm:text-base font-extrabold">{group.title}</CardTitle>
                 <CardDescription className="text-[11px] sm:text-xs font-semibold text-muted-foreground">{group.description}</CardDescription>
               </CardHeader>
               <CardContent className="p-0 divide-y divide-border/40">
                 {group.items.map((item) => (
-                  <div key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-3">
-                    <div className="space-y-0.5 max-w-md">
-                      <Label className="text-xs sm:text-sm font-extrabold text-foreground">{item.label}</Label>
-                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed font-semibold">{item.desc}</p>
+                  <div key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-3 hover:bg-muted/5 transition-colors">
+                    <div className="flex items-start gap-3 max-w-md">
+                      <span className="text-2xl mt-0.5 shrink-0 select-none">{item.icon}</span>
+                      <div className="space-y-0.5">
+                        <Label className="text-xs sm:text-sm font-extrabold text-foreground">{item.label}</Label>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed font-semibold">{item.desc}</p>
+                      </div>
                     </div>
 
                     {/* Selector thang điểm 0-3 */}
@@ -259,8 +306,8 @@ export default function LogPage() {
         </TabsContent>
 
         {/* TAB 2: Sleep Form */}
-        <TabsContent value="sleep" className="outline-none">
-          <Card className="border-border shadow-sm max-w-2xl bg-card/75 backdrop-blur-sm">
+        <TabsContent value="sleep" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <Card className="border-border shadow-sm max-w-2xl glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
                 <Moon className="w-4 h-4 text-primary" /> Thông tin giấc ngủ ban đêm
@@ -363,8 +410,8 @@ export default function LogPage() {
         </TabsContent>
 
         {/* TAB 3: Mood Form */}
-        <TabsContent value="mood" className="outline-none">
-          <Card className="border-border shadow-sm max-w-2xl bg-card/75 backdrop-blur-sm">
+        <TabsContent value="mood" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <Card className="border-border shadow-sm max-w-2xl glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
                 <MoodIcon className="w-4 h-4 text-primary" /> Cảm xúc & Ghi chú tự do
@@ -387,14 +434,14 @@ export default function LogPage() {
                         key={opt.level}
                         type="button"
                         onClick={() => setMood((prev) => ({ ...prev, level: opt.level }))}
-                        className={`flex flex-col items-center justify-center p-1.5 sm:p-3 rounded-xl border transition-all active:scale-95 ${
+                        className={`flex flex-col items-center justify-center p-1.5 sm:p-3 rounded-xl border transition-all duration-300 active:scale-95 ${
                           isSelected 
-                            ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20 font-bold"
+                            ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20 font-black scale-102"
                             : "bg-background border-border text-muted-foreground hover:bg-muted"
                         }`}
                         style={{ WebkitTapHighlightColor: "transparent" }}
                       >
-                        <Icon className={`w-5 h-5 sm:w-7 sm:h-7 mb-1 ${isSelected ? "text-primary-foreground" : "text-primary"}`} />
+                        <Icon className={`w-5 h-5 sm:w-7 sm:h-7 mb-1 ${isSelected ? "text-primary-foreground scale-105" : "text-primary"}`} />
                         <span className="text-[9px] sm:text-[10px] font-bold tracking-tight text-center truncate w-full">{opt.label}</span>
                       </button>
                     );
@@ -407,28 +454,36 @@ export default function LogPage() {
                 <div className="flex justify-between items-center">
                   <Label htmlFor="note" className="text-xs font-bold text-muted-foreground uppercase">Ghi chú tự do (Nhập hoặc Nói)</Label>
                   
-                  {/* Speech to text button */}
+                  {/* Speech to text button with Ripple wave animations */}
                   {browserSupportsSpeech && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={toggleListening}
-                      className={`h-8 px-3 rounded-lg flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 ${
-                        isListening 
-                          ? "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900 animate-pulse" 
-                          : "hover:bg-muted text-primary border-border"
-                      }`}
-                    >
-                      {isListening ? (
+                    <div className="relative">
+                      {isListening && (
                         <>
-                          <MicOff className="w-3.5 h-3.5" /> Dừng nghe
-                        </>
-                      ) : (
-                        <>
-                          <Mic className="w-3.5 h-3.5" /> Nói tiếng Việt
+                          <div className="voice-wave voice-wave-1"></div>
+                          <div className="voice-wave voice-wave-2"></div>
                         </>
                       )}
-                    </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={toggleListening}
+                        className={`h-8 px-3 rounded-xl flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 relative z-10 ${
+                          isListening 
+                            ? "bg-red-500 text-white border-red-500 shadow-md shadow-red-500/20" 
+                            : "hover:bg-muted text-primary border-border"
+                        }`}
+                      >
+                        {isListening ? (
+                          <>
+                            <MicOff className="w-3.5 h-3.5" /> Dừng nghe
+                          </>
+                        ) : (
+                          <>
+                            <Mic className="w-3.5 h-3.5" /> Nói tiếng Việt
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   )}
                 </div>
                 

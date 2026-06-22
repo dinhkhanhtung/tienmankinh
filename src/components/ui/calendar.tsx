@@ -11,6 +11,8 @@ import {
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
+import { useLogStore } from "@/store/use-log-store"
+import { format } from "date-fns"
 
 function Calendar({
   className,
@@ -194,8 +196,21 @@ function CalendarDayButton({
     if (modifiers.focused) ref.current?.focus()
   }, [modifiers.focused])
 
+  // Lấy dữ liệu nhật ký từ Zustand
+  const { dailyLogs } = useLogStore()
+  let dateStr = ""
+  try {
+    dateStr = format(day.date, "yyyy-MM-dd")
+  } catch (e) {}
+
+  const log = dateStr ? dailyLogs[dateStr] : null
+  const hasLog = !!log
+  const isPeriHigh = log && log.periScore > 30
+  const isHappy = log && (log.mood.level === "very-good" || log.mood.level === "good")
+
   return (
     <Button
+      ref={ref}
       variant="ghost"
       size="icon"
       data-day={day.date.toLocaleDateString(locale?.code)}
@@ -209,12 +224,29 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
+        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-semibold group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70 pb-2.5 active:scale-90 transition-transform duration-150",
         defaultClassNames.day,
         className
       )}
       {...props}
-    />
+    >
+      {props.children}
+      {/* Symptom Dots Indicator */}
+      <div className="absolute bottom-1.5 left-0 right-0 flex justify-center gap-0.5 pointer-events-none">
+        {/* Chấm đỏ: Ngày hành kinh thực tế */}
+        {modifiers.period && (
+          <span className="w-1 h-1 rounded-full bg-rose-500 animate-pulse"></span>
+        )}
+        {/* Chấm tím: Có triệu chứng trung bình/nặng */}
+        {hasLog && isPeriHigh && (
+          <span className="w-1 h-1 rounded-full bg-[#7A4E6D]"></span>
+        )}
+        {/* Chấm vàng: Tâm trạng tốt */}
+        {hasLog && isHappy && (
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+        )}
+      </div>
+    </Button>
   )
 }
 
