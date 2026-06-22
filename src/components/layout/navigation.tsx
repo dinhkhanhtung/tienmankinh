@@ -15,11 +15,13 @@ import {
   User,
   LogOut,
   Moon,
-  Sun
+  Sun,
+  MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { DonateDialog } from "@/components/layout/donate-dialog";
+import { FeedbackDialog } from "@/components/layout/feedback-dialog";
 
 export function Navigation({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -137,6 +139,19 @@ export function Navigation({ children }: { children: React.ReactNode }) {
             } />
           </div>
 
+          {/* Góp ý ứng dụng */}
+          <div className="px-1 mb-2.5">
+            <FeedbackDialog trigger={
+              <button
+                type="button"
+                className="flex items-center gap-3 w-full px-3.5 py-2 rounded-xl font-bold text-xs text-muted-foreground hover:bg-muted/70 hover:text-foreground border border-transparent transition-all active:scale-98 text-left cursor-pointer"
+              >
+                <MessageSquare className="w-4 h-4 shrink-0 text-primary" />
+                <span className="truncate">Góp ý ứng dụng</span>
+              </button>
+            } />
+          </div>
+
           {/* User info info - Click to toggle menu */}
           {profile && (
             <button
@@ -202,6 +217,16 @@ export function Navigation({ children }: { children: React.ReactNode }) {
                     <span className="text-xs font-black text-foreground truncate">{profile.displayName}</span>
                     <span className="text-[10px] text-muted-foreground truncate">{profile.email}</span>
                   </div>
+                  
+                  <FeedbackDialog trigger={
+                    <button
+                      onClick={() => setShowMobileMenu(false)}
+                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-xs text-foreground hover:bg-muted transition-colors w-full text-left cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-primary" /> Gửi góp ý ứng dụng
+                    </button>
+                  } />
+                  
                   <button
                     onClick={() => {
                       handleLogout();

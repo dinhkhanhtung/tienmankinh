@@ -106,38 +106,46 @@ function ReportContent() {
       }
     }
 
-    const message = `BÁO CÁO SỨC KHỎE CÁ NHÂN (${rangeMonths} THÁNG QUA)
----------------------------------
+    const message = `📋 BÁO CÁO SỨC KHỎE CHI TIẾT (${rangeMonths} THÁNG QUA)
+═════════════════════════════════
+👤 THÔNG TIN CỦA TÔI:
 - Họ và tên: ${name} (${age} tuổi)
-- Chiều cao/Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
+- Chiều cao / Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
 - Chỉ số BMI: ${bmiVal} (${bmiCategory})
+
+🩺 CHỈ SỐ SỨC KHỎE TRUNG BÌNH:
 - Điểm PeriScore trung bình: ${avgPeriScore}/100 (${periScoreCat.label})
-- Dữ liệu nhật ký ${rangeMonths} tháng qua (Ghi chép ${totalDays} ngày):
-  + Số ngày mất ngủ nặng (mức 2, 3): ${severeInsomniaCount} ngày
-  + Số ngày bốc hỏa nặng (mức 2, 3): ${severeHotFlashesCount} ngày
-  + Cường độ bốc hỏa TB: ${avgHotFlashes} / 3.0
-  + Cường độ mất ngủ TB: ${avgInsomnia} / 3.0
-  + Mức độ lo âu TB: ${avgAnxiety} / 3.0
-  + Thời gian ngủ TB: ${avgSleep} giờ / đêm
-- Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Thời gian hành kinh TB: ${averagePeriodDuration} ngày)
+- Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Hành kinh TB: ${averagePeriodDuration} ngày)
 - Số chu kỳ đã ghi nhận: ${filteredCycles.length} (Chu kỳ bất thường: ${filteredCycles.filter((c) => c.isAbnormal).length})
 - Ghi chú sức khỏe gần nhất: "${lastLogNote || "Không có ghi chú"}"
----------------------------------
-Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
+
+📊 TÓM TẮT TRIỆU CHỨNG ${rangeMonths} THÁNG QUA (Ghi chép ${totalDays} ngày):
+- Số ngày mất ngủ nặng (mức 2, 3): ${severeInsomniaCount} ngày
+- Số ngày bốc hỏa nặng (mức 2, 3): ${severeHotFlashesCount} ngày
+- Cường độ bốc hỏa trung bình: ${avgHotFlashes} / 3.0
+- Cường độ mất ngủ trung bình: ${avgInsomnia} / 3.0
+- Mức độ lo âu trung bình: ${avgAnxiety} / 3.0
+- Thời gian ngủ trung bình: ${avgSleep} giờ / đêm
+═════════════════════════════════
+💬 Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(message)
         .then(() => {
-          toast.success("Đã tự động gom và sao chép tóm tắt báo cáo sức khỏe của chị!");
-          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Chuyên gia.", { duration: 6000 });
+          toast.success("Đã tự động sao chép báo cáo sức khỏe!", {
+            description: "Chị hãy chạm giữ vào ô nhập tin nhắn trong Zalo và chọn \"Dán\" (hoặc nhấn Ctrl+V / chuột phải chọn Dán) để gửi báo cáo.",
+            duration: 8000,
+          });
           
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
-          }, 1500);
+          }, 2000);
         })
         .catch((err) => {
           console.error("Lỗi sao chép: ", err);
-          toast.error("Không thể tự động sao chép. Đang mở Zalo tham vấn chuyên gia: 0982581222.");
+          toast.error("Không thể tự động sao chép.", {
+            description: "Đang chuyển hướng Zalo tham vấn chuyên gia: 0982581222.",
+          });
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
           }, 1500);

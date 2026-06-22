@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useCycles } from "@/hooks/use-cycles";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,12 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDays, AlertTriangle, CheckCircle, Info, Plus, Calendar as CalendarIcon, Trash2, Check, Heart } from "lucide-react";
+import { CalendarDays, AlertTriangle, CheckCircle, Info, Plus, Calendar as CalendarIcon, Trash2, Check, Heart, Loader2 } from "lucide-react";
 import { format, differenceInDays, addDays, isWithinInterval, startOfDay, parseISO } from "date-fns";
 import { vi } from "date-fns/locale";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function TrackerPage() {
+function TrackerContent() {
   const { 
     sortedCycles, 
     averageCycleLength, 
@@ -33,6 +35,19 @@ export default function TrackerPage() {
   const [showEndForm, setShowEndForm] = useState(false);
   const [endDate, setEndDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [endNotes, setEndNotes] = useState("");
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const action = searchParams.get("action");
+    if (action === "start") {
+      setShowAddForm(true);
+      setShowEndForm(false);
+    } else if (action === "end") {
+      setShowEndForm(true);
+      setShowAddForm(false);
+    }
+  }, [searchParams]);
 
   const latestCycle = sortedCycles[0];
   const isCurrentlyInPeriod = latestCycle && latestCycle.endDate === null;
@@ -271,111 +286,32 @@ export default function TrackerPage() {
               />
             </div>
 
-            {/* Form Panels */}
+            {/* Hướng dẫn ghi nhận chu kỳ */}
             <div className="flex-1 w-full max-w-sm space-y-4 self-stretch flex flex-col justify-center">
-              {/* Form Bắt đầu kỳ kinh */}
-              {showAddForm && (
-                <form onSubmit={handleAddSubmit} className="bg-muted/30 p-4 border border-border rounded-2xl space-y-4 shadow-inner animate-in fade-in slide-in-from-bottom-2 duration-200">
-                  <h3 className="font-extrabold text-xs sm:text-sm text-foreground">Bắt đầu kỳ kinh mới</h3>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="startDate" className="text-[11px] font-bold text-muted-foreground uppercase">Ngày bắt đầu</Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="notes" className="text-[11px] font-bold text-muted-foreground uppercase">Ghi chú (tùy chọn)</Label>
-                    <Input
-                      id="notes"
-                      placeholder="Cảm xúc, triệu chứng khởi đầu..."
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
-                    />
-                  </div>
-                  <div className="flex gap-2 pt-1.5">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setShowAddForm(false)}
-                      className="flex-1 h-9.5 text-xs rounded-xl font-bold border-border"
-                    >
-                      Hủy
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      className="flex-1 h-9.5 text-xs rounded-xl font-bold bg-primary text-primary-foreground"
-                      disabled={loading}
-                    >
-                      Ghi nhận
-                    </Button>
-                  </div>
-                </form>
-              )}
-
-              {/* Form Kết thúc kỳ kinh */}
-              {showEndForm && (
-                <form onSubmit={handleEndSubmit} className="bg-muted/30 p-4 border border-border rounded-2xl space-y-4 shadow-inner animate-in fade-in slide-in-from-bottom-2 duration-200">
-                  <h3 className="font-extrabold text-xs sm:text-sm text-foreground">Kết thúc kỳ kinh nguyệt</h3>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="endDate" className="text-[11px] font-bold text-muted-foreground uppercase">Ngày kết thúc</Label>
-                    <Input
-                      id="endDate"
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="endNotes" className="text-[11px] font-bold text-muted-foreground uppercase">Ghi chú (tùy chọn)</Label>
-                    <Input
-                      id="endNotes"
-                      placeholder="Lượng máu, triệu chứng đi kèm..."
-                      value={endNotes}
-                      onChange={(e) => setEndNotes(e.target.value)}
-                      className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
-                    />
-                  </div>
-                  <div className="flex gap-2 pt-1.5">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setShowEndForm(false)}
-                      className="flex-1 h-9.5 text-xs rounded-xl font-bold border-border"
-                    >
-                      Hủy
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      className="flex-1 h-9.5 text-xs rounded-xl font-bold bg-accent text-accent-foreground"
-                      disabled={loading}
-                    >
-                      Hoàn thành
-                    </Button>
-                  </div>
-                </form>
-              )}
-
-              {/* Hướng dẫn khi chưa mở form */}
-              {!showAddForm && !showEndForm && (
-                <div className="p-4 bg-muted/10 border border-dashed border-border/70 rounded-2xl text-center space-y-3 py-6 shadow-sm">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto shadow-inner">
-                    <Info className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-semibold max-w-[280px] mx-auto">
-                    {isCurrentlyInPeriod 
-                      ? "Chị đang trong kỳ kinh. Hãy cập nhật ngày kết thúc ngay khi kỳ kinh kết thúc để cải thiện độ chính xác của dự báo chu kỳ."
-                      : "Hãy ghi nhận ngày bắt đầu ngay khi chị có kinh trở lại để hệ thống tự động tính toán vòng chu kỳ tiếp theo."}
-                  </p>
+              <div 
+                onClick={() => {
+                  if (isCurrentlyInPeriod) {
+                    setShowEndForm(true);
+                  } else {
+                    setShowAddForm(true);
+                  }
+                }}
+                className="p-5 bg-primary/5 border border-dashed border-primary/30 rounded-2xl text-center space-y-3 py-8 shadow-sm cursor-pointer hover:bg-primary/10 hover:border-primary/50 active:scale-98 transition-all group"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto shadow-inner group-hover:scale-110 transition-transform duration-300">
+                  <Info className="w-5 h-5 animate-pulse" />
                 </div>
-              )}
+                <p className="text-xs text-muted-foreground leading-relaxed font-semibold max-w-[280px] mx-auto group-hover:text-foreground transition-colors">
+                  {isCurrentlyInPeriod 
+                    ? "Chị đang trong kỳ kinh. Hãy cập nhật ngày kết thúc ngay khi kỳ kinh kết thúc để cải thiện độ chính xác của dự báo chu kỳ."
+                    : "Hãy ghi nhận ngày bắt đầu ngay khi chị có kinh trở lại để hệ thống tự động tính toán vòng chu kỳ tiếp theo."}
+                </p>
+                <div className="pt-1.5">
+                  <span className="text-[10px] font-black text-primary px-3.5 py-1.5 rounded-full bg-primary-foreground border border-primary/20 shadow-sm uppercase tracking-wider group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    {isCurrentlyInPeriod ? "Cập nhật ngày kết thúc" : "Ghi nhận bắt đầu"}
+                  </span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -464,6 +400,123 @@ export default function TrackerPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialog Bắt đầu kỳ kinh */}
+      <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+        <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)]">
+          <DialogHeader>
+            <DialogTitle className="font-extrabold text-base text-foreground">Bắt đầu kỳ kinh mới</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Ghi nhận ngày bắt đầu kỳ kinh nguyệt mới của chị để hệ thống tính toán chu kỳ.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddSubmit} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="startDate" className="text-[11px] font-bold text-muted-foreground uppercase">Ngày bắt đầu</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="notes" className="text-[11px] font-bold text-muted-foreground uppercase">Ghi chú (tùy chọn)</Label>
+              <Input
+                id="notes"
+                placeholder="Cảm xúc, triệu chứng khởi đầu..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
+              />
+            </div>
+            <div className="flex gap-2 pt-2 border-t border-border/40 mt-4 -mx-4 -mb-4 bg-muted/30 p-4 rounded-b-xl">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowAddForm(false)}
+                className="flex-1 h-10 text-xs rounded-xl font-bold border-border"
+              >
+                Hủy
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1 h-10 text-xs rounded-xl font-bold bg-primary text-primary-foreground"
+                disabled={loading}
+              >
+                Ghi nhận
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Kết thúc kỳ kinh */}
+      <Dialog open={showEndForm} onOpenChange={setShowEndForm}>
+        <DialogContent className="sm:max-w-md max-w-[calc(100%-2rem)]">
+          <DialogHeader>
+            <DialogTitle className="font-extrabold text-base text-foreground">Kết thúc kỳ kinh nguyệt</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Ghi nhận ngày kết thúc kỳ kinh nguyệt của chị để cải thiện dự báo sức khỏe.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEndSubmit} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="endDate" className="text-[11px] font-bold text-muted-foreground uppercase">Ngày kết thúc</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="endNotes" className="text-[11px] font-bold text-muted-foreground uppercase">Ghi chú (tùy chọn)</Label>
+              <Input
+                id="endNotes"
+                placeholder="Lượng máu, triệu chứng đi kèm..."
+                value={endNotes}
+                onChange={(e) => setEndNotes(e.target.value)}
+                className="h-10 rounded-xl bg-background border-border text-sm font-semibold focus-visible:ring-primary/20"
+              />
+            </div>
+            <div className="flex gap-2 pt-2 border-t border-border/40 mt-4 -mx-4 -mb-4 bg-muted/30 p-4 rounded-b-xl">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowEndForm(false)}
+                className="flex-1 h-10 text-xs rounded-xl font-bold border-border"
+              >
+                Hủy
+              </Button>
+              <Button 
+                type="submit" 
+                className="flex-1 h-10 text-xs rounded-xl font-bold bg-accent text-accent-foreground"
+                disabled={loading}
+              >
+                Hoàn thành
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+}
+
+export default function TrackerPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex-1 flex flex-col items-center justify-center p-6 min-h-[400px] page-transition">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-xs text-muted-foreground mt-2 font-semibold animate-pulse">Đang tải lịch chu kỳ...</p>
+      </div>
+    }>
+      <TrackerContent />
+    </Suspense>
   );
 }

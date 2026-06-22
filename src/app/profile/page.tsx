@@ -11,9 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart, Camera } from "lucide-react";
+import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart, Camera, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { DonateDialog } from "@/components/layout/donate-dialog";
+import { FeedbackDialog } from "@/components/layout/feedback-dialog";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -448,6 +449,22 @@ export default function ProfilePage() {
                     <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   </Button>
                 </div>
+              </div>
+
+              {/* Góp ý ứng dụng */}
+              <div className="space-y-2.5 pt-4 border-t border-border/40">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Góp ý & Phản hồi</span>
+                <FeedbackDialog trigger={
+                  <Button
+                    variant="outline"
+                    className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-primary" /> Gửi góp ý phản hồi
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                } />
               </div>
             </CardContent>
           </Card>

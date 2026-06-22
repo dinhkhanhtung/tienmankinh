@@ -276,34 +276,42 @@ export default function DashboardPage() {
       }
     }
 
-    const message = `BÁO CÁO SỨC KHỎE CÁ NHÂN - TIỀN MÃN KINH
----------------------------------
+    const message = `📋 BÁO CÁO SỨC KHỎE CÁ NHÂN (TIỀN MÃN KINH)
+═════════════════════════════════
+👤 THÔNG TIN CỦA TÔI:
 - Họ và tên: ${name} (${age} tuổi)
-- Chiều cao/Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
+- Chiều cao / Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
 - Chỉ số BMI: ${bmiVal} (${bmiCategory})
+
+🩺 CHỈ SỐ SỨC KHỎE GẦN NHẤT:
 - Chỉ số PeriScore hôm nay: ${currentPeriScore}/100 (${periScoreCat.label})
-- Dữ liệu nhật ký 30 ngày qua (Ghi chép ${loggedDaysCount} ngày):
-  + Số ngày mất ngủ nặng: ${severeInsomniaDays} ngày
-  + Số ngày bốc hỏa/đổ mồ hôi đêm nặng: ${severeHotFlashDays} ngày
-  + Số ngày lo âu/căng thẳng nặng: ${severeAnxietyDays} ngày
-- Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Thời gian hành kinh TB: ${averagePeriodDuration} ngày)
+- Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Hành kinh TB: ${averagePeriodDuration} ngày)
 - Ghi chú sức khỏe gần nhất: "${lastLogNote || "Không có ghi chú"}"
----------------------------------
-Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
+
+📊 TÓM TẮT TRIỆU CHỨNG 30 NGÀY QUA (Ghi chép ${loggedDaysCount} ngày):
+- Số ngày mất ngủ nặng: ${severeInsomniaDays} ngày
+- Số ngày bốc hỏa/đổ mồ hôi đêm nặng: ${severeHotFlashDays} ngày
+- Số ngày lo âu/căng thẳng nặng: ${severeAnxietyDays} ngày
+═════════════════════════════════
+💬 Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(message)
         .then(() => {
-          toast.success("Đã tự động gom và sao chép tóm tắt sức khỏe của chị!");
-          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Chuyên gia.", { duration: 6000 });
+          toast.success("Đã tự động sao chép báo cáo sức khỏe!", {
+            description: "Chị hãy chạm giữ vào ô nhập tin nhắn trong Zalo và chọn \"Dán\" (hoặc nhấn Ctrl+V / chuột phải chọn Dán) để gửi báo cáo.",
+            duration: 8000,
+          });
           
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
-          }, 1500);
+          }, 2000);
         })
         .catch((err) => {
           console.error("Lỗi sao chép: ", err);
-          toast.error("Không thể tự động sao chép. Đang mở Zalo tham vấn chuyên gia: 0982581222.");
+          toast.error("Không thể tự động sao chép.", {
+            description: "Đang chuyển hướng Zalo tham vấn chuyên gia: 0982581222.",
+          });
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
           }, 1500);
@@ -371,24 +379,27 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </Card>
 
         {/* Card 2: Next Period */}
-        <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-          <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
-            <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate">
-              <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Calendar className="w-3.5 h-3.5" />
-              </span>
-              Kỳ kinh tiếp theo
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-3 pt-1 sm:p-4 sm:pt-1">
-            <div className="text-base sm:text-lg md:text-xl font-black text-foreground truncate leading-tight">
-              {daysUntilNextPeriod}
-            </div>
-            <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2.5 font-semibold truncate">
-              {isCurrentlyInPeriod ? "Hãy chăm sóc bản thân" : `Chu kỳ TB: ${averageCycleLength} ngày`}
-            </p>
-          </CardContent>
-        </Card>
+        <Link href={isCurrentlyInPeriod ? "/tracker?action=end" : "/tracker?action=start"} className="block group">
+          <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md group-hover:border-primary/30 cursor-pointer h-full">
+            <CardHeader className="p-3 pb-1 sm:p-4 sm:pb-1.5">
+              <CardDescription className="text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-muted-foreground truncate group-hover:text-primary transition-colors">
+                <span className="w-6 h-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                  <Calendar className="w-3.5 h-3.5" />
+                </span>
+                Kỳ kinh tiếp theo
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-3 pt-1 sm:p-4 sm:pt-1">
+              <div className="text-base sm:text-lg md:text-xl font-black text-foreground truncate leading-tight flex items-center justify-between gap-1">
+                <span>{daysUntilNextPeriod}</span>
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
+              </div>
+              <p className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground mt-2.5 font-bold group-hover:text-primary transition-colors truncate">
+                {isCurrentlyInPeriod ? "Cập nhật ngày kết thúc ➔" : `Chu kỳ TB: ${averageCycleLength} ngày ➔`}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Card 3: Avg Sleep */}
         <Card className="border-border shadow-sm overflow-hidden glass-card transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
