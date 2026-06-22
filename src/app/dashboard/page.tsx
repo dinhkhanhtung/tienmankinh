@@ -31,13 +31,20 @@ export default function DashboardPage() {
 
   // Đảm bảo Recharts và responsive state chỉ render phía client
   useEffect(() => {
-    setIsMounted(true);
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
+    
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 640);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   const latestCycle = sortedCycles[0];
@@ -630,8 +637,8 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
                   <h4 className="text-xs sm:text-sm font-extrabold text-foreground uppercase tracking-wider">Xu hướng Bốc hỏa & Mất ngủ</h4>
                   <p className="text-[10px] sm:text-xs text-muted-foreground">Theo dõi cường độ từ 0 (Không bị) đến 3 (Nặng)</p>
                   <div className="w-full overflow-x-auto pb-2 scrollbar-none">
-                    <div className="h-60 sm:h-64 min-w-[550px] w-full">
-                      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                    <div className="h-60 sm:h-64 min-w-[550px] w-full" style={{ minWidth: "550px", minHeight: "240px" }}>
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <defs>
                             <linearGradient id="colorHotFlashes" x1="0" y1="0" x2="0" y2="1">
@@ -662,8 +669,8 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
                   <h4 className="text-xs sm:text-sm font-extrabold text-foreground uppercase tracking-wider">Mối tương quan giữa Giấc ngủ & Cảm xúc</h4>
                   <p className="text-[10px] sm:text-xs text-muted-foreground leading-normal">So sánh số giờ ngủ thực tế, chất lượng ngủ (1-10) và mức cảm xúc (1: Rất buồn đến 5: Rất tốt)</p>
                   <div className="w-full overflow-x-auto pb-2 scrollbar-none">
-                    <div className="h-60 sm:h-64 min-w-[550px] w-full">
-                      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                    <div className="h-60 sm:h-64 min-w-[550px] w-full" style={{ minWidth: "550px", minHeight: "240px" }}>
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
                           <XAxis dataKey="dateLabel" tick={{ fontSize: 10, fontWeight: "bold" }} stroke="#7A4E6D" interval={2} />
