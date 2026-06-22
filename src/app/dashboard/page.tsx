@@ -566,8 +566,6 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
       </div>
 
       {/* Section: Analytics Charts (30 days) */}
-
-      {/* Section: Analytics Charts (30 days) */}
       <Card className="border-border shadow-sm overflow-hidden">
         <CardHeader className="p-4 sm:p-6">
           <CardTitle className="text-base font-extrabold flex items-center gap-2">
@@ -590,19 +588,21 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
                 <div className="space-y-2">
                   <h4 className="text-xs sm:text-sm font-extrabold text-foreground uppercase tracking-wider">Xu hướng Bốc hỏa & Mất ngủ</h4>
                   <p className="text-[10px] sm:text-xs text-muted-foreground">Theo dõi cường độ từ 0 (Không bị) đến 3 (Nặng)</p>
-                  <div className="h-60 sm:h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={chartData} margin={{ top: 10, right: 10, left: isMobile ? -30 : -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
-                        <XAxis dataKey="dateLabel" tick={{ fontSize: isMobile ? 8 : 10 }} stroke="#7A4E6D" interval={isMobile ? 5 : 2} />
-                        <YAxis domain={[0, 3]} tickCount={4} tick={{ fontSize: isMobile ? 8 : 10 }} stroke="#7A4E6D" />
-                        <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
-                        <Legend wrapperStyle={{ fontSize: isMobile ? 9 : 11 }} />
-                        <Line type="monotone" dataKey="Bốc hỏa" stroke="#D96C9D" strokeWidth={isMobile ? 2 : 3} activeDot={{ r: 5 }} />
-                        <Line type="monotone" dataKey="Mất ngủ" stroke="#7A4E6D" strokeWidth={isMobile ? 2 : 3} />
-                        <Line type="monotone" dataKey="Đổ mồ hôi đêm" stroke="#ED8EB9" strokeWidth={isMobile ? 1.5 : 2} strokeDasharray="5 5" />
-                      </LineChart>
-                    </ResponsiveContainer>
+                  <div className="w-full overflow-x-auto pb-2 scrollbar-none">
+                    <div className="h-60 sm:h-64 min-w-[550px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
+                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} stroke="#7A4E6D" interval={2} />
+                          <YAxis domain={[0, 3]} tickCount={4} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
+                          <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Line type="monotone" dataKey="Bốc hỏa" stroke="#D96C9D" strokeWidth={3} activeDot={{ r: 5 }} />
+                          <Line type="monotone" dataKey="Mất ngủ" stroke="#7A4E6D" strokeWidth={3} />
+                          <Line type="monotone" dataKey="Đổ mồ hôi đêm" stroke="#ED8EB9" strokeWidth={2} strokeDasharray="5 5" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
 

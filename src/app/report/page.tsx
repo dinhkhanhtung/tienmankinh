@@ -200,7 +200,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
         </div>
 
         {/* Thông tin bệnh nhân / người dùng */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm print:bg-gray-100">
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm print:bg-gray-100">
           <div>
             <span className="text-gray-500 block text-xs font-semibold uppercase">Họ và tên</span>
             <span className="font-bold text-gray-900">{profile.displayName}</span>
@@ -242,7 +242,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
             <h3 className="font-bold text-sm text-gray-800 flex items-center gap-1.5 border-b border-gray-200 pb-2">
               <Calendar className="w-4 h-4 text-primary" /> Tóm tắt chu kỳ kinh nguyệt
             </h3>
-            <div className="grid grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
                 <span className="text-gray-500 font-semibold block">Vòng chu kỳ trung bình:</span>
                 <span className="text-base font-bold text-gray-900">{averageCycleLength} ngày</span>
@@ -270,9 +270,8 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
           <h3 className="font-bold text-sm text-gray-800 flex items-center gap-1.5 border-b border-gray-200 pb-2">
             <Activity className="w-4 h-4 text-primary" /> Thống kê mức độ Triệu chứng & Giấc ngủ
           </h3>
-          
-          <div className="overflow-hidden border border-gray-300 rounded-xl">
-            <table className="min-w-full divide-y divide-gray-200 text-left text-xs">
+          <div className="overflow-x-auto pb-1 border border-gray-300 rounded-xl scrollbar-none">
+            <table className="min-w-[600px] w-full divide-y divide-gray-200 text-left text-xs">
               <thead className="bg-gray-100 font-bold text-gray-700">
                 <tr>
                   <th className="px-4 py-3">Chỉ số sức khỏe phân tích</th>
