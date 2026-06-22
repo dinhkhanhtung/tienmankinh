@@ -49,9 +49,12 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      toast.success("Đăng xuất thành công.");
-      router.push("/login");
+      // Điều hướng về Landing Page trước để tránh bị AuthProvider chặn trên trang protected
+      router.push("/");
+      setTimeout(async () => {
+        await signOut(auth);
+        toast.success("Đăng xuất thành công.");
+      }, 100);
     } catch (error) {
       toast.error("Không thể đăng xuất. Vui lòng thử lại.");
     }
