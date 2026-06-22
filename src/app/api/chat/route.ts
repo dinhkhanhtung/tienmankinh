@@ -11,6 +11,12 @@ export async function POST(req: NextRequest) {
   try {
     const { messages, userId } = await req.json();
 
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ 
+        reply: "Chào chị! Em là AI Coach của chị. Hiện tại hệ thống chưa được cấu hình khóa API (GEMINI_API_KEY) trong tệp `.env.local` ở máy chủ. Chị vui lòng mở tệp `.env.local`, điền khóa API của chị vào dòng `GEMINI_API_KEY=your_key_here` và khởi động lại dự án để bắt đầu trò chuyện cùng em nhé!" 
+      });
+    }
+
     if (!userId) {
       return NextResponse.json({ error: "Không tìm thấy thông tin định danh người dùng." }, { status: 400 });
     }
@@ -118,11 +124,14 @@ export async function POST(req: NextRequest) {
       systemInstruction: systemInstruction
     });
 
-    // Chuyển đổi lịch sử chat cho đúng định dạng cấu trúc của Gemini API
-    const contents = messages.map((msg: any) => ({
-      role: msg.role === "assistant" ? "model" : "user",
-      parts: [{ text: msg.content }]
-    }));
+    // Chuyển đổi lịch sử chat và lọc bỏ tin nhắn chào mừng tĩnh "welcome"
+    // Gemini API bắt buộc tin nhắn đầu tiên của contents phải có role là 'user'
+    const contents = messages
+      .filter((msg: any) => msg.id !== "welcome")
+      .map((msg: any) => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }]
+      }));
 
     const result = await model.generateContent({
       contents: contents,
