@@ -49,12 +49,8 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
   const handleLogout = async () => {
     try {
-      // Điều hướng về Landing Page trước để tránh bị AuthProvider chặn trên trang protected
-      router.push("/");
-      setTimeout(async () => {
-        await signOut(auth);
-        toast.success("Đăng xuất thành công.");
-      }, 100);
+      // Chuyển hướng cứng sang Landing Page kèm tham số hành động để xử lý đăng xuất ở trang chủ
+      window.location.href = "/?action=logout";
     } catch (error) {
       toast.error("Không thể đăng xuất. Vui lòng thử lại.");
     }

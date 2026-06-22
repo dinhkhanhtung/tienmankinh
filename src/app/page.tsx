@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/use-auth-store";
 import { useUserStore } from "@/store/use-user-store";
-import { 
-  Loader2, 
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { toast } from "sonner";
+import {   Loader2, 
   Heart, 
   CalendarDays, 
   Mic, 
@@ -32,8 +34,31 @@ export default function Home() {
   const [activeFeatureIdx, setActiveFeatureIdx] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Xử lý đăng xuất từ tham số URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("action") === "logout") {
+      setIsLoggingOut(true);
+      const doSignOut = async () => {
+        try {
+          await signOut(auth);
+          router.replace("/");
+          setIsLoggingOut(false);
+          toast.success("Đăng xuất thành công.");
+        } catch (error) {
+          console.error("Lỗi đăng xuất:", error);
+          setIsLoggingOut(false);
+        }
+      };
+      doSignOut();
+    }
+  }, [router]);
 
   useEffect(() => {
+    if (isLoggingOut) return;
+
     if (!loading) {
       if (user) {
         if (profile?.isOnboarded) {
@@ -43,7 +68,7 @@ export default function Home() {
         }
       }
     }
-  }, [user, loading, profile, router]);
+  }, [user, loading, profile, router, isLoggingOut]);
 
   // Tự động chuyển đổi tính năng demo sau 4 giây
   useEffect(() => {
