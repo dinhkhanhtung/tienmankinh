@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/use-auth-store";
 import { useUserStore } from "@/store/use-user-store";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart } from "lucide-react";
+import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { DonateDialog } from "@/components/layout/donate-dialog";
 
@@ -22,6 +22,8 @@ export default function ProfilePage() {
   
   const [loading, setLoading] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
   
   // Local Form states
   const [displayName, setDisplayName] = useState("");
@@ -74,6 +76,90 @@ export default function ProfilePage() {
       setChildrenCount(profile.childrenCount?.toString() || "");
     }
   }, [profile]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Kích thước ảnh phải nhỏ hơn 5MB.");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Vui lòng chọn file hình ảnh hợp lệ.");
+      return;
+    }
+
+    setUploading(true);
+    const toastId = toast.loading("Đang tải ảnh đại diện lên...");
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+      if (!apiKey) {
+        throw new Error("Không tìm thấy cấu hình IMGBB API Key.");
+      }
+
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Tải ảnh lên ImgBB thất bại.");
+      }
+
+      const data = await res.json();
+      if (!data.success || !data.data?.url) {
+        throw new Error(data.error?.message || "Tải ảnh lên ImgBB thất bại.");
+      }
+
+      const imageUrl = data.data.url;
+
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          photoURL: imageUrl,
+          updatedAt: new Date().toISOString(),
+        });
+
+        updateProfile({ photoURL: imageUrl });
+
+        fetch("/api/customer-notification", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+            photoURL: imageUrl,
+            displayName: profile?.displayName,
+            action: "update_avatar",
+          }),
+        }).catch((err) => {
+          console.error("Lỗi gửi thông báo tích hợp ngầm khi cập nhật avatar:", err);
+        });
+
+        toast.success("Cập nhật ảnh đại diện thành công!", { id: toastId });
+      }
+    } catch (err: any) {
+      console.error("Lỗi upload avatar:", err);
+      toast.error(err.message || "Có lỗi xảy ra khi tải ảnh lên. Vui lòng thử lại.", { id: toastId });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   // Tính toán BMI thời gian thực
   const heightNum = parseFloat(height);
@@ -189,10 +275,36 @@ export default function ProfilePage() {
         <div className="space-y-6 lg:col-span-1">
           {/* Left side Card: Summary & BMI */}
           <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden">
-            <CardHeader className="text-center pb-4 bg-muted/10 border-b border-border/40">
-              <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner">
-                {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+            <CardHeader className="text-center pb-4 bg-muted/10 border-b border-border/40 relative">
+              <div 
+                onClick={handleAvatarClick}
+                className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner cursor-pointer group overflow-hidden border-2 border-border/40 hover:border-primary/50 transition-all duration-300"
+                title="Nhấn để thay đổi ảnh đại diện"
+              >
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                ) : profile.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                ) : (
+                  profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
+                )}
+                
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Camera className="w-5 h-5 text-white" />
+                </div>
               </div>
+
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                accept="image/*" 
+                className="hidden" 
+                disabled={uploading}
+              />
+
               <CardTitle className="text-base sm:text-lg font-extrabold mt-2">{profile.displayName}</CardTitle>
               <CardDescription className="text-xs font-semibold text-muted-foreground">{profile.email}</CardDescription>
             </CardHeader>

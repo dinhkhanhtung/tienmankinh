@@ -145,8 +145,13 @@ export function Navigation({ children }: { children: React.ReactNode }) {
               style={{ WebkitTapHighlightColor: "transparent" }}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-inner group-hover:scale-105 transition-transform">
-                  {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+                <div className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-inner group-hover:scale-105 transition-transform overflow-hidden">
+                  {profile.photoURL ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover" />
+                  ) : (
+                    profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
+                  )}
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-sm font-bold text-foreground truncate">{profile.displayName}</span>
@@ -180,10 +185,15 @@ export function Navigation({ children }: { children: React.ReactNode }) {
             <div ref={mobileMenuRef} className="relative">
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-sm shrink-0 border border-primary/20 shadow-inner active:scale-95 transition-all"
+                className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-sm shrink-0 border border-primary/20 shadow-inner active:scale-95 transition-all overflow-hidden"
                 style={{ WebkitTapHighlightColor: "transparent" }}
               >
-                {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+                {profile.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover" />
+                ) : (
+                  profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
+                )}
               </button>
               
               {showMobileMenu && (

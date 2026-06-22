@@ -320,8 +320,13 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-xl sm:text-2xl font-black text-foreground flex items-center gap-2">
-              <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-extrabold text-sm shrink-0">
-                {profile?.displayName ? profile.displayName.charAt(0).toUpperCase() : "C"}
+              <span className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-extrabold text-sm shrink-0 overflow-hidden">
+                {profile?.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover" />
+                ) : (
+                  profile?.displayName ? profile.displayName.charAt(0).toUpperCase() : "C"
+                )}
               </span>
               <span className="flex-1 min-w-0">
                 Chào chị, <span className="text-primary">{profile?.displayName || "Thành viên"}</span>

@@ -58,14 +58,8 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
   // Tính số tiền thực tế
   const actualAmount = selectedAmount > 0 ? selectedAmount : (Number(customAmount) || 0);
 
-  // Xử lý nội dung chuyển khoản: DUY TRI TMK <TEN_KHONG_DAU>
-  const displayName = profile?.displayName || "Thanh vien";
-  const cleanName = removeVietnameseTones(displayName)
-    .replace(/[^a-zA-Z0-9 ]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  const rawInfo = `DUY TRI TMK ${cleanName}`.toUpperCase();
-  const addInfo = rawInfo.substring(0, 25); // Limit to 25 chars for safety
+  // Xử lý nội dung chuyển khoản cố định
+  const addInfo = "DUY TRI TIEN MAN KINH";
 
   // Reset status when dialog is closed/opened
   useEffect(() => {
