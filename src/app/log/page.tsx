@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Smile, Frown, Meh, AlertCircle, Mic, MicOff, Info, 
-  Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2, ArrowRight
+  Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2, ArrowRight,
+  Check
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -103,8 +104,18 @@ export default function LogPage() {
     }
   ];
 
+  const [isSaved, setIsSaved] = useState(false);
+
   const handleSaveLog = async () => {
-    await saveLog(selectedDate, symptoms, sleep, mood);
+    try {
+      await saveLog(selectedDate, symptoms, sleep, mood);
+      setIsSaved(true);
+      setTimeout(() => {
+        setIsSaved(false);
+      }, 2500);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const sleepDurMinutes = calculateSleepDuration(sleep.bedTime, sleep.wakeTime);
@@ -176,31 +187,42 @@ export default function LogPage() {
                     </div>
 
                     {/* Selector thang điểm 0-3 */}
-                    <div className="flex items-center gap-2 self-start sm:self-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div className="flex items-center gap-3 self-start sm:self-center w-full sm:w-auto justify-between sm:justify-end">
                       <div className="flex items-center gap-1.5">
-                        {[0, 1, 2, 3].map((val) => (
-                          <button
-                            key={val}
-                            type="button"
-                            onClick={() => handleSymptomChange(item.key, val)}
-                            className={`w-9 h-9 sm:w-11 sm:h-11 rounded-lg font-bold text-xs border transition-all active:scale-95 ${
-                              symptoms[item.key] === val
-                                ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/10"
-                                : "bg-background border-border text-muted-foreground hover:bg-muted"
-                            }`}
-                          >
-                            {val === 0 ? "0" : `+${val}`}
-                          </button>
-                        ))}
+                        {[0, 1, 2, 3].map((val) => {
+                          const isSelected = symptoms[item.key] === val;
+                          let activeStyle = "";
+                          if (isSelected) {
+                            if (val === 0) activeStyle = "bg-zinc-500 text-white border-zinc-500 shadow-sm shadow-zinc-500/10";
+                            else if (val === 1) activeStyle = "bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/20";
+                            else if (val === 2) activeStyle = "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20";
+                            else activeStyle = "bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-500/20";
+                          }
+                          return (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => handleSymptomChange(item.key, val)}
+                              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl font-extrabold text-xs sm:text-sm border transition-all duration-200 active:scale-90 ${
+                                isSelected
+                                  ? `${activeStyle} scale-105`
+                                  : "bg-background border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                              }`}
+                              style={{ WebkitTapHighlightColor: "transparent" }}
+                            >
+                              {val === 0 ? "0" : `+${val}`}
+                            </button>
+                          );
+                        })}
                       </div>
-                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-lg border shrink-0 ${
+                      <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border shrink-0 text-center min-w-[54px] transition-all ${
                         symptoms[item.key] === 0 
                           ? "text-muted-foreground bg-muted/40 border-border/60" 
                           : symptoms[item.key] === 1 
-                            ? "text-green-600 bg-green-50 dark:bg-green-950/20 border-green-200" 
+                            ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200" 
                             : symptoms[item.key] === 2 
-                              ? "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200" 
-                              : "text-red-500 bg-red-50 dark:bg-red-950/20 border-red-200"
+                              ? "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-200" 
+                              : "text-rose-500 bg-rose-50 dark:bg-rose-950/20 border-rose-200"
                       }`}>
                         {symptoms[item.key] === 0 ? "Không" :
                          symptoms[item.key] === 1 ? "Nhẹ" :
@@ -217,11 +239,21 @@ export default function LogPage() {
           <div className="flex justify-end pt-2">
             <Button
               onClick={handleSaveLog}
-              className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
+              className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
+                isSaved 
+                  ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
+                  : "bg-primary text-primary-foreground hover:bg-primary/95"
+              }`}
               disabled={loading}
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-              Lưu nhật ký triệu chứng
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : isSaved ? (
+                <Check className="w-5 h-5" />
+              ) : (
+                <Save className="w-5 h-5" />
+              )}
+              {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký triệu chứng"}
             </Button>
           </div>
         </TabsContent>
@@ -310,11 +342,21 @@ export default function LogPage() {
             <CardFooter className="flex justify-end p-4 border-t border-border/40">
               <Button
                 onClick={handleSaveLog}
-                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
+                className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
+                  isSaved 
+                    ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
+                    : "bg-primary text-primary-foreground hover:bg-primary/95"
+                }`}
                 disabled={loading}
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                Lưu nhật ký giấc ngủ
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : isSaved ? (
+                  <Check className="w-5 h-5" />
+                ) : (
+                  <Save className="w-5 h-5" />
+                )}
+                {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký giấc ngủ"}
               </Button>
             </CardFooter>
           </Card>
@@ -414,11 +456,21 @@ export default function LogPage() {
             <CardFooter className="flex justify-end p-4 border-t border-border/40">
               <Button
                 onClick={handleSaveLog}
-                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
+                className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
+                  isSaved 
+                    ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
+                    : "bg-primary text-primary-foreground hover:bg-primary/95"
+                }`}
                 disabled={loading}
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                Lưu nhật ký cảm xúc
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : isSaved ? (
+                  <Check className="w-5 h-5" />
+                ) : (
+                  <Save className="w-5 h-5" />
+                )}
+                {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký cảm xúc"}
               </Button>
             </CardFooter>
           </Card>

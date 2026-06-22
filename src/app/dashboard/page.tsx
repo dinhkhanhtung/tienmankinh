@@ -176,52 +176,52 @@ export default function DashboardPage() {
 
   const symptomProfile = getSymptomProfile();
 
-  // Nội dung tư vấn Đông y tương ứng từng nhóm
-  const getEasternMedicineAdvice = (code: string) => {
+  // Nội dung tư vấn dưỡng sinh tự nhiên tương ứng từng nhóm
+  const getNaturalAdvice = (code: string) => {
     switch (code) {
       case "A":
         return {
-          title: "Chăm sóc giấc ngủ & An thần Đông y",
-          description: "Thể trạng của chị ghi nhận tần suất mất ngủ khá cao. Trong Đông y, mất ngủ tuổi trung niên thường do âm hư hỏa vượng, tâm thận bất giao.",
+          title: "Liệu pháp cải thiện giấc ngủ tự nhiên",
+          description: "Thể trạng của chị ghi nhận tần suất mất ngủ khá cao. Tình trạng mất ngủ tuổi trung niên thường do mất cân bằng thể trạng và căng thẳng kéo dài gây ra.",
           tips: [
-            "Bài thuốc ngâm chân dưỡng tâm: Ngâm chân nước ấm pha gừng tươi và muối hạt 15 phút trước khi ngủ giúp dẫn hỏa quy nguyên, hỗ trợ ngủ sâu giấc.",
-            "Bấm huyệt an thần trước khi ngủ: Xoa bóp nhẹ nhàng huyệt Dũng Tuyền (lòng bàn chân) và huyệt Nội Quan (cổ tay) từ 3-5 phút.",
-            "Trà thảo dược hỗ trợ: Nên dùng trà Lạc Tiên, trà Tâm Sen, hoặc trà Táo Nhân ấm vào buổi tối để dưỡng tâm an thần."
+            "Ngâm chân thảo mộc dưỡng tâm: Ngâm chân nước ấm pha gừng tươi và muối hạt 15 phút trước khi ngủ giúp máu huyết lưu thông, hỗ trợ ngủ sâu giấc.",
+            "Bấm huyệt thư giãn trước khi ngủ: Xoa bóp nhẹ nhàng huyệt Dũng Tuyền (lòng bàn chân) và huyệt Nội Quan (cổ tay) từ 3-5 phút.",
+            "Trà thảo mộc hỗ trợ: Nên dùng trà Lạc Tiên, trà Tâm Sen, hoặc trà Táo Nhân ấm vào buổi tối để điều hòa giấc ngủ."
           ]
         };
       case "B":
         return {
-          title: "Thanh nhiệt, tư âm & Dịu bốc hỏa",
-          description: "Cơn bốc hỏa đột ngột là triệu chứng điển hình của suy giảm Estrogen (tương đương thận thủy bất túc, hư hỏa bốc lên trong Đông y).",
+          title: "Thanh nhiệt & Dịu cơn bốc hỏa",
+          description: "Cơn bốc hỏa đột ngột là triệu chứng điển hình của sự suy giảm nội tiết tố Estrogen tự nhiên tuổi trung niên.",
           tips: [
-            "Liệu pháp thanh nhiệt tư âm: Uống nước sắn dây khuấy chín hoặc trà hoa cúc trắng vào ban ngày để thanh can nhiệt, làm mát cơ thể.",
+            "Liệu pháp thanh nhiệt tự nhiên: Uống nước sắn dây khuấy chín hoặc trà hoa cúc trắng vào ban ngày để thanh nhiệt, làm mát cơ thể.",
             "Chế độ dinh dưỡng mát: Tăng cường ăn đậu nành, mộc nhĩ trắng, râu ngô. Tuyệt đối hạn chế đồ cay nóng (ớt, tiêu, tỏi) sau 16h chiều.",
             "Mẹo hạ hỏa nhanh: Tập thở chậm bằng bụng (hít vào 4s, thở ra 6s) và dùng khăn mát chườm nhẹ sau gáy khi xuất hiện cơn bốc hỏa."
           ]
         };
       case "C":
         return {
-          title: "Sơ can giải uất & Thư giãn thần trí",
-          description: "Biến động cảm xúc lo âu, dễ cáu gắt là biểu hiện của tình trạng Can khí uất kết, ảnh hưởng đến tạng phủ trong Đông y.",
+          title: "Thư giãn tinh thần & Giảm căng thẳng",
+          description: "Biến động cảm xúc lo âu, dễ cáu gắt là biểu hiện của sự thay đổi nội tiết tố đột ngột, ảnh hưởng trực tiếp đến hệ thần kinh.",
           tips: [
-            "Trà thảo mộc thông khí giải uất: Trà hoa hồng hoặc trà hoa nhài ấm giúp hành khí, giải tỏa căng thẳng và điều hòa kinh mạch.",
+            "Trà thảo mộc thông khí giải tỏa: Trà hoa hồng hoặc trà hoa nhài ấm giúp hành khí, giải tỏa căng thẳng và điều hòa kinh mạch.",
             "Bài tập thở điều hòa khí huyết: Luyện tập thiền hoặc yoga nhẹ nhàng 15-20 phút hàng ngày, chú trọng hơi thở sâu bằng bụng.",
-            "Bấm huyệt xoa dịu lo âu: Day nhẹ huyệt Thái Xung (ở mu bàn chân) và huyệt Hợp Cốc (kẽ ngón tay cái và trỏ) giúp sơ thông can khí."
+            "Xoa bóp xoa dịu lo âu: Day nhẹ điểm giữa khe ngón chân cái và ngón thứ hai (huyệt Thái Xung) giúp xoa dịu thần kinh."
           ]
         };
       case "D":
         return {
-          title: "Bổ huyết, điều kinh & Cân bằng nội tiết",
-          description: "Chu kỳ rối loạn, thất thường báo hiệu sự bất ổn của hai mạch Nhâm - Đốc và tạng Thận trong Đông y cận tuổi mãn kinh.",
+          title: "Cân bằng thể trạng & Điều hòa kinh nguyệt",
+          description: "Chu kỳ rối loạn, thất thường báo hiệu sự thay đổi sinh lý tự nhiên của cơ thể khi bước vào giai đoạn cận mãn kinh.",
           tips: [
-            "Trà thảo dược hoạt huyết điều kinh: Sử dụng trà Ích Mẫu hoặc trà Đương Quy, kết hợp táo đỏ đun ấm uống hàng ngày.",
-            "Vận động thông kinh lạc: Tập các tư thế yoga mở hông nhẹ nhàng (tư thế đứa trẻ, tư thế con bướm) để kích thích máu lưu thông vùng chậu.",
+            "Trà thảo mộc điều hòa kinh nguyệt: Sử dụng trà Ích Mẫu hoặc trà Đương Quy, kết hợp táo đỏ đun ấm uống hàng ngày.",
+            "Vận động thông kinh lạc: Tập các tư thế yoga mở hông nhẹ nhàng (tư thế đứa trẻ, tư thế con bướm) để kích thích khí huyết lưu thông vùng chậu.",
             "Giữ ấm cơ thể: Tránh nhiễm lạnh vùng bụng dưới và lòng bàn chân, đặc biệt là trong những ngày chuẩn bị hành kinh."
           ]
         };
       default:
         return {
-          title: "Lối sống dưỡng sinh & Chăm sóc toàn diện 40+",
+          title: "Dưỡng sinh & Chăm sóc toàn diện 40+",
           description: "Chúc mừng thể trạng của chị khá ổn định! Hãy duy trì lối sống lành mạnh để bảo vệ sức khỏe và kéo dài tuổi thanh xuân.",
           tips: [
             "Dinh dưỡng bổ sung: Bổ sung nhiều rau xanh đậm, các loại hạt (hạnh nhân, óc chó) giàu phytoestrogen tự nhiên để bảo vệ xương khớp.",
@@ -232,7 +232,7 @@ export default function DashboardPage() {
     }
   };
 
-  const advice = getEasternMedicineAdvice(symptomProfile.code);
+  const advice = getNaturalAdvice(symptomProfile.code);
 
   // Logic sao chép dữ liệu sức khỏe và chuyển hướng Zalo tư vấn
   const handleZaloConsult = () => {
@@ -493,9 +493,9 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </Card>
       </div>
 
-      {/* Grid: Gợi ý Đông y & Đăng ký Tư vấn */}
+      {/* Grid: Gợi ý cải thiện & Đăng ký Tư vấn */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Card 1: Gợi ý Đông y (takes 2 cols) */}
+        {/* Card 1: Gợi ý cải thiện tự nhiên (takes 2 cols) */}
         <Card className="lg:col-span-2 border-border shadow-sm bg-gradient-to-br from-card via-card to-primary/5 flex flex-col justify-between">
           <CardHeader className="p-4 pb-2 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -610,20 +610,22 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
                 <div className="space-y-2 border-t border-border/30 pt-6">
                   <h4 className="text-xs sm:text-sm font-extrabold text-foreground uppercase tracking-wider">Mối tương quan giữa Giấc ngủ & Cảm xúc</h4>
                   <p className="text-[10px] sm:text-xs text-muted-foreground leading-normal">So sánh số giờ ngủ thực tế, chất lượng ngủ (1-10) và mức cảm xúc (1: Rất buồn đến 5: Rất tốt)</p>
-                  <div className="h-60 sm:h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: isMobile ? -30 : -20, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
-                        <XAxis dataKey="dateLabel" tick={{ fontSize: isMobile ? 8 : 10 }} stroke="#7A4E6D" interval={isMobile ? 5 : 2} />
-                        <YAxis yAxisId="left" domain={[0, 10]} tick={{ fontSize: isMobile ? 8 : 10 }} stroke="#7A4E6D" />
-                        <YAxis yAxisId="right" orientation="right" domain={[0, 5]} tick={{ fontSize: isMobile ? 8 : 10 }} stroke="#7A4E6D" />
-                        <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
-                        <Legend wrapperStyle={{ fontSize: isMobile ? 9 : 11 }} />
-                        <Bar yAxisId="left" dataKey="Thời gian ngủ (giờ)" fill="#F8D7E6" radius={[4, 4, 0, 0]} />
-                        <Line yAxisId="left" type="monotone" dataKey="Chất lượng ngủ" stroke="#B05581" strokeWidth={2} dot={{ r: 2 }} />
-                        <Line yAxisId="right" type="monotone" dataKey="Tâm trạng" stroke="#D96C9D" strokeWidth={2} dot={{ r: 3 }} />
-                      </ComposedChart>
-                    </ResponsiveContainer>
+                  <div className="w-full overflow-x-auto pb-2 scrollbar-none">
+                    <div className="h-60 sm:h-64 min-w-[550px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1DDE7" />
+                          <XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} stroke="#7A4E6D" interval={2} />
+                          <YAxis yAxisId="left" domain={[0, 10]} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
+                          <YAxis yAxisId="right" orientation="right" domain={[0, 5]} tick={{ fontSize: 10 }} stroke="#7A4E6D" />
+                          <Tooltip contentStyle={{ borderRadius: "10px", borderColor: "#F1DDE7", fontSize: 11 }} />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Bar yAxisId="left" dataKey="Thời gian ngủ (giờ)" fill="#F8D7E6" radius={[4, 4, 0, 0]} />
+                          <Line yAxisId="left" type="monotone" dataKey="Chất lượng ngủ" stroke="#B05581" strokeWidth={2} dot={{ r: 2 }} />
+                          <Line yAxisId="right" type="monotone" dataKey="Tâm trạng" stroke="#D96C9D" strokeWidth={2} dot={{ r: 3 }} />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
               </div>

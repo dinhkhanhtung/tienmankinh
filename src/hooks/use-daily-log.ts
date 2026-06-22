@@ -136,8 +136,10 @@ export function useDailyLog() {
 
       const periScore = calculatePeriScore(symptoms);
 
+      const logId = `${user.uid}_${date}`;
+
       const finalLog: DailyLog = {
-        id: date,
+        id: logId,
         userId: user.uid,
         date,
         symptoms,
@@ -148,8 +150,8 @@ export function useDailyLog() {
         updatedAt: new Date().toISOString(),
       };
 
-      // Lưu trữ trong Firestore daily_logs/{YYYY-MM-DD}
-      await setDoc(doc(db, "daily_logs", date), finalLog);
+      // Lưu trữ trong Firestore daily_logs/{userId}_{date}
+      await setDoc(doc(db, "daily_logs", logId), finalLog);
       
       // Cache vào Zustand store
       setDailyLog(date, finalLog);
@@ -158,6 +160,7 @@ export function useDailyLog() {
     } catch (error) {
       console.error("Lỗi lưu nhật ký: ", error);
       toast.error("Không thể lưu nhật ký sức khỏe. Vui lòng thử lại.");
+      throw error;
     } finally {
       setLoading(false);
     }

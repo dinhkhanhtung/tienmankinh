@@ -23,6 +23,25 @@ export function Navigation({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { profile, theme, setTheme } = useUserStore();
+  const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const [showMobileMenu, setShowMobileMenu] = React.useState(false);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const mobileMenuRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -87,65 +106,90 @@ export function Navigation({ children }: { children: React.ReactNode }) {
         </nav>
 
         {/* Bottom actions */}
-        <div className="border-t border-border/60 pt-4 flex flex-col gap-2">
-          {/* User info info */}
-          {profile && (
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-sm">
-                {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-bold text-foreground truncate">{profile.displayName}</span>
-                <span className="text-xs text-muted-foreground truncate">{profile.email}</span>
-              </div>
+        <div ref={menuRef} className="border-t border-border/60 pt-4 relative">
+          {/* Popover user menu */}
+          {showUserMenu && (
+            <div className="absolute bottom-20 left-0 right-0 bg-card border border-border rounded-2xl shadow-xl p-1.5 z-50 flex flex-col gap-1 animate-in fade-in slide-in-from-bottom-2 duration-150">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setShowUserMenu(false);
+                }}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors w-full text-left"
+              >
+                <LogOut className="w-4 h-4" /> Đăng xuất tài khoản
+              </button>
             </div>
           )}
 
-          {/* Theme switcher */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-3.5 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {theme === "light" ? (
-              <>
-                <Moon className="w-4 h-4" /> Giao diện tối
-              </>
-            ) : (
-              <>
-                <Sun className="w-4 h-4" /> Giao diện sáng
-              </>
-            )}
-          </button>
-
-          {/* Logout */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3.5 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 text-muted-foreground transition-colors"
-          >
-            <LogOut className="w-4 h-4" /> Đăng xuất
-          </button>
+          {/* User info info - Click to toggle menu */}
+          {profile && (
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center justify-between w-full p-2 px-3 rounded-xl hover:bg-muted transition-colors text-left group"
+              style={{ WebkitTapHighlightColor: "transparent" }}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-inner group-hover:scale-105 transition-transform">
+                  {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold text-foreground truncate">{profile.displayName}</span>
+                  <span className="text-[10px] text-muted-foreground truncate">{profile.email}</span>
+                </div>
+              </div>
+            </button>
+          )}
         </div>
       </aside>
 
       {/* MOBILE HEADER */}
-      <header className="md:hidden bg-card border-b border-border h-14 px-4 flex items-center justify-between shrink-0 text-foreground">
+      <header className="md:hidden bg-card border-b border-border/80 h-14 px-4 flex items-center justify-between shrink-0 text-foreground sticky top-0 z-40 backdrop-blur-md bg-card/95">
         <div className="flex items-center gap-2">
-          <Heart className="w-5 h-5 text-primary fill-current" />
-          <span className="font-bold text-base text-primary">Tiền Mãn Kinh</span>
+          <div className="w-8 h-8 rounded-full bg-secondary/80 text-primary flex items-center justify-center shadow-inner">
+            <Heart className="w-4 h-4 fill-current" />
+          </div>
+          <span className="font-extrabold text-base tracking-tight text-primary">Tiền Mãn Kinh</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
+            className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            style={{ WebkitTapHighlightColor: "transparent" }}
           >
-            {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            {theme === "light" ? <Moon className="w-4.5 h-4.5" /> : <Sun className="w-4.5 h-4.5" />}
           </button>
-          <button
-            onClick={handleLogout}
-            className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20 text-muted-foreground"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          
+          {/* Mobile Profile Dropdown */}
+          {profile && (
+            <div ref={mobileMenuRef} className="relative">
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="w-9 h-9 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-sm shrink-0 border border-primary/20 shadow-inner active:scale-95 transition-all"
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
+              </button>
+              
+              {showMobileMenu && (
+                <div className="absolute right-0 mt-2 w-60 bg-card border border-border rounded-2xl shadow-xl p-2.5 z-50 flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-150 text-left">
+                  <div className="flex flex-col px-3 py-2 border-b border-border/50 pb-2">
+                    <span className="text-xs font-black text-foreground truncate">{profile.displayName}</span>
+                    <span className="text-[10px] text-muted-foreground truncate">{profile.email}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setShowMobileMenu(false);
+                    }}
+                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors w-full text-left"
+                  >
+                    <LogOut className="w-3.5 h-3.5" /> Đăng xuất tài khoản
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -210,6 +254,20 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
+
+      {/* FLOATING THEME SWITCHER FOR PC */}
+      <button
+        onClick={toggleTheme}
+        className="hidden md:flex fixed bottom-6 right-6 z-50 w-13 h-13 rounded-full bg-card/90 backdrop-blur-md border border-border/80 shadow-2xl hover:border-primary/35 items-center justify-center text-primary transition-all active:scale-95 hover:-translate-y-1 group"
+        title={theme === "light" ? "Giao diện tối" : "Giao diện sáng"}
+        style={{ boxShadow: "0 10px 25px -5px rgba(217,108,157,0.1), 0 8px 16px -6px rgba(217,108,157,0.05)" }}
+      >
+        {theme === "light" ? (
+          <Moon className="w-5.5 h-5.5 transition-all group-hover:rotate-12 group-hover:scale-110 duration-300" />
+        ) : (
+          <Sun className="w-5.5 h-5.5 transition-all group-hover:rotate-90 group-hover:scale-110 duration-300" />
+        )}
+      </button>
     </div>
   );
 }

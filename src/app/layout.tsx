@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { PwaProvider } from "@/components/layout/pwa-provider";
 import { AuthProvider } from "@/components/layout/auth-provider";
@@ -8,6 +8,11 @@ import { ZaloBrowserDetector } from "@/components/layout/zalo-browser-detector";
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin", "vietnamese"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-heading",
   subsets: ["latin", "vietnamese"],
 });
 
@@ -63,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
