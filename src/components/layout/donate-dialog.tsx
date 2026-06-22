@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heart, Copy, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Heart, Copy, Check, Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/use-user-store";
 
@@ -41,7 +42,9 @@ const removeVietnameseTones = (str: string) => {
 export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps) {
   const { profile } = useUserStore();
   const [selectedAmount, setSelectedAmount] = useState<number>(50000); // 50k default
+  const [customAmount, setCustomAmount] = useState<string>("200000"); // 200k default custom
   const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
   const accountNumber = "0982581222";
   const bankName = "BIDV";
 
@@ -52,19 +55,29 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
     { label: "💖 Tùy tâm", amount: 0 },
   ];
 
+  // Tính số tiền thực tế
+  const actualAmount = selectedAmount > 0 ? selectedAmount : (Number(customAmount) || 0);
+
   // Xử lý nội dung chuyển khoản: TMK <TEN_KHONG_DAU> <SO_TIEN>
   const displayName = profile?.displayName || "Thanh vien";
   const cleanName = removeVietnameseTones(displayName)
     .replace(/[^a-zA-Z0-9 ]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  const amountSuffix = selectedAmount > 0 ? ` ${selectedAmount / 1000}K` : "";
+  const amountSuffix = actualAmount > 0 ? ` ${actualAmount / 1000}K` : "";
   const rawInfo = `TMK ${cleanName}${amountSuffix}`;
   const addInfo = rawInfo.substring(0, 25); // Limit to 25 chars for safety
 
+  // Reset status when dialog is closed/opened
+  useEffect(() => {
+    if (open === false) {
+      setStatus("idle");
+    }
+  }, [open]);
+
   // VietQR compact format: https://img.vietqr.io/image/<BANK_ID>-<ACCOUNT_NO>-compact2.png?amount=<AMOUNT>&addInfo=<ADD_INFO>
-  const qrUrl = selectedAmount > 0
-    ? `https://img.vietqr.io/image/BIDV-${accountNumber}-compact2.png?amount=${selectedAmount}&addInfo=${encodeURIComponent(addInfo)}`
+  const qrUrl = actualAmount > 0
+    ? `https://img.vietqr.io/image/BIDV-${accountNumber}-compact2.png?amount=${actualAmount}&addInfo=${encodeURIComponent(addInfo)}`
     : `https://img.vietqr.io/image/BIDV-${accountNumber}-compact2.png?addInfo=${encodeURIComponent(addInfo)}`;
 
   const handleCopy = () => {
@@ -72,6 +85,55 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
     setCopied(true);
     toast.success("Đã sao chép số tài khoản!");
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleConfirm = async () => {
+    if (!profile) {
+      toast.error("Vui lòng đăng nhập để thực hiện xác nhận.");
+      return;
+    }
+
+    if (actualAmount <= 0) {
+      toast.error("Vui lòng chọn hoặc nhập số tiền ủng hộ hợp lệ.");
+      return;
+    }
+
+    setStatus("submitting");
+    try {
+      const response = await fetch("/api/customer-notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: profile.uid,
+          displayName: profile.displayName,
+          email: profile.email,
+          action: "donate",
+          amount: actualAmount,
+          content: addInfo,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setStatus("success");
+        toast.success("Đã gửi thông báo xác nhận! Xin chân thành cảm ơn bạn.");
+        
+        // Tự động đóng dialog sau 2.5s
+        setTimeout(() => {
+          if (onOpenChange) {
+            onOpenChange(false);
+          }
+        }, 2500);
+      } else {
+        throw new Error(result.error || "Gửi yêu cầu thất bại");
+      }
+    } catch (error: any) {
+      console.error("Lỗi gửi xác nhận donate:", error);
+      toast.error(error?.message || "Có lỗi xảy ra. Vui lòng thử lại.");
+      setStatus("idle");
+    }
   };
 
   const dialogContent = (
@@ -88,9 +150,9 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         </DialogDescription>
       </DialogHeader>
 
-      <div className="flex flex-col items-center gap-4 py-2">
+      <div className="flex flex-col items-center gap-4 py-1">
         {/* QR Code container */}
-        <div className="relative p-2.5 bg-white rounded-2xl shadow-inner border border-border/60 max-w-[170px] w-full aspect-square flex items-center justify-center overflow-hidden group">
+        <div className="relative p-2.5 bg-white rounded-2xl shadow-inner border border-border/60 max-w-[160px] w-full aspect-square flex items-center justify-center overflow-hidden group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrUrl}
@@ -107,7 +169,10 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
               <button
                 key={tier.amount}
                 type="button"
-                onClick={() => setSelectedAmount(tier.amount)}
+                onClick={() => {
+                  setSelectedAmount(tier.amount);
+                  if (status === "success") setStatus("idle");
+                }}
                 className={`py-1.5 px-2 rounded-xl text-[11px] font-black transition-all border flex flex-col items-center justify-center cursor-pointer ${
                   selectedAmount === tier.amount
                     ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-[1.02]"
@@ -123,6 +188,26 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
               </button>
             ))}
           </div>
+
+          {/* Ô nhập số tiền tùy chỉnh */}
+          {selectedAmount === 0 && (
+            <div className="pt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              <label htmlFor="custom-amount" className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Nhập số tiền ủng hộ (đ)</label>
+              <Input
+                id="custom-amount"
+                type="number"
+                value={customAmount}
+                onChange={(e) => {
+                  setCustomAmount(e.target.value);
+                  if (status === "success") setStatus("idle");
+                }}
+                placeholder="Nhập số tiền (ví dụ: 200000)"
+                className="h-10 rounded-xl bg-background border-border text-xs font-semibold"
+                min="10000"
+                step="10000"
+              />
+            </div>
+          )}
         </div>
 
         {/* Lời nhắn khéo léo */}
@@ -131,7 +216,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         </p>
 
         {/* Thông tin tài khoản */}
-        <div className="w-full bg-muted/40 p-3.5 rounded-xl border border-border/50 space-y-2.5">
+        <div className="w-full bg-muted/40 p-3 rounded-xl border border-border/50 space-y-2.5">
           <div className="flex justify-between items-center text-xs">
             <span className="text-muted-foreground font-semibold">Ngân hàng</span>
             <span className="font-extrabold text-foreground">{bankName}</span>
@@ -159,15 +244,42 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         </div>
       </div>
 
-      <div className="flex justify-center pt-1">
-        <Button
+      {/* Nút thao tác gửi báo cáo Telegram & Notion */}
+      <div className="flex flex-col gap-2 pt-2 w-full">
+        {status === "success" ? (
+          <Button
+            disabled
+            className="w-full h-11 rounded-xl bg-green-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-green-600/20"
+          >
+            <Check className="w-4 h-4" /> Cảm ơn bạn! Xác nhận đã được gửi.
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={handleConfirm}
+            disabled={status === "submitting" || actualAmount <= 0}
+            className="w-full h-11 rounded-xl bg-gradient-to-r from-primary to-primary/95 text-primary-foreground font-bold text-xs shadow-md shadow-primary/25 hover:shadow-primary/35 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          >
+            {status === "submitting" ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Đang gửi thông báo...
+              </>
+            ) : (
+              <>
+                <Send className="w-3.5 h-3.5" /> Tôi đã chuyển khoản {actualAmount > 0 ? `${actualAmount.toLocaleString("vi-VN")}đ` : ""}
+              </>
+            )}
+          </Button>
+        )}
+        
+        <button
           onClick={() => {
             if (onOpenChange) onOpenChange(false);
           }}
-          className="h-10 rounded-xl px-6 bg-gradient-to-r from-primary to-primary/95 text-primary-foreground font-bold text-xs shadow-md shadow-primary/25 hover:shadow-primary/35 transition-all cursor-pointer"
+          className="text-[10px] text-muted-foreground font-bold hover:text-foreground text-center py-1 transition-colors cursor-pointer"
         >
-          Cảm ơn bạn rất nhiều!
-        </Button>
+          Để sau
+        </button>
       </div>
     </DialogContent>
   );
@@ -187,4 +299,3 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
     </Dialog>
   );
 }
-

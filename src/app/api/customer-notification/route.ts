@@ -24,6 +24,116 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Thiếu UID người dùng." }, { status: 400 });
     }
 
+    // XỬ LÝ RIÊNG CHO HÀNH ĐỘNG ỦNG HỘ (DONATE)
+    if (action === "donate") {
+      const amount = data.amount || 0;
+      const content = data.content || "";
+
+      // 1. GỬI TIN NHẮN QUA TELEGRAM
+      const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+      const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+
+      if (telegramToken && telegramChatId) {
+        try {
+          let telegramMessage = `💖 <b>KHÁCH HÀNG BÁO ỦNG HỘ DỰ ÁN!</b> 💖\n\n`;
+          telegramMessage += `👤 <b>Thông tin tài khoản:</b>\n`;
+          telegramMessage += `- <b>Họ tên:</b> ${displayName}\n`;
+          telegramMessage += `- <b>Email:</b> ${email}\n`;
+          telegramMessage += `- <b>UID:</b> <code>${uid}</code>\n\n`;
+          
+          telegramMessage += `💰 <b>Số tiền báo ủng hộ:</b> <code>${Number(amount).toLocaleString("vi-VN")} đ</code>\n`;
+          telegramMessage += `📝 <b>Nội dung CK dự kiến:</b> <code>${content}</code>\n`;
+          telegramMessage += `⏰ <b>Thời gian báo:</b> ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}\n\n`;
+          telegramMessage += `📌 <i>Vui lòng kiểm tra tài khoản BIDV (0982581222) để đối soát giao dịch.</i>`;
+
+          await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              chat_id: telegramChatId,
+              text: telegramMessage,
+              parse_mode: "HTML",
+            }),
+          });
+        } catch (tgError) {
+          console.error("Lỗi gửi tin nhắn Telegram khi báo donate:", tgError);
+        }
+      }
+
+      // 2. ĐỒNG BỘ VÀO NOTION (Thêm dòng ghi nhận vào nội dung trang khách hàng)
+      const notionApiKey = process.env.NOTION_API_KEY;
+      const notionDatabaseId = process.env.NOTION_DATABASE_ID;
+
+      if (notionApiKey && notionDatabaseId) {
+        try {
+          // Tìm trang của khách hàng dựa trên UID
+          const queryUrl = `https://api.notion.com/v1/databases/${notionDatabaseId}/query`;
+          const queryRes = await fetch(queryUrl, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${notionApiKey}`,
+              "Content-Type": "application/json",
+              "Notion-Version": "2022-06-28"
+            },
+            body: JSON.stringify({
+              filter: {
+                property: "UID",
+                rich_text: {
+                  equals: uid
+                }
+              }
+            })
+          });
+
+          if (queryRes.ok) {
+            const queryData = await queryRes.json();
+            const existingPages = queryData.results || [];
+            if (existingPages.length > 0) {
+              const pageId = existingPages[0].id;
+              // Appending blocks is safe against schema mismatches
+              const blocksUrl = `https://api.notion.com/v1/blocks/${pageId}/children`;
+              await fetch(blocksUrl, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${notionApiKey}`,
+                  "Content-Type": "application/json",
+                  "Notion-Version": "2022-06-28"
+                },
+                body: JSON.stringify({
+                  children: [
+                    {
+                      object: "block",
+                      type: "paragraph",
+                      paragraph: {
+                        rich_text: [
+                          {
+                            type: "text",
+                            text: {
+                              content: `💖 Báo ủng hộ: ${Number(amount).toLocaleString("vi-VN")} đ (${content}) vào lúc ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}`
+                            },
+                            annotations: {
+                              italic: true,
+                              color: "pink"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                })
+              });
+            }
+          }
+        } catch (notionError) {
+          console.error("Lỗi đồng bộ Notion khi báo donate:", notionError);
+        }
+      }
+
+      return NextResponse.json({ success: true, message: "Đã nhận thông tin báo ủng hộ thành công." });
+    }
+
     const currentYear = new Date().getFullYear();
     const age = birthYear ? currentYear - birthYear : null;
 
