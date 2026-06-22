@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tien-man-kinh-v1';
+const CACHE_NAME = 'tien-man-kinh-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
@@ -38,6 +38,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Đối với request trang (document/navigation), áp dụng chiến lược Network-First
+  // để luôn tải HTML mới nhất từ server khi online, tránh lỗi cache cấu hình/API key cũ
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            return caches.match('/');
+          });
+        })
+    );
+    return;
+  }
+
+  // Đối với các assets tĩnh khác, giữ chiến lược Cache-First (trả về cache nếu có, không thì fetch từ mạng)
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

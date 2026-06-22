@@ -164,25 +164,25 @@ function TrackerContent() {
   };
 
   return (
-    <div className="space-y-6 pb-6 page-transition">
+    <div className="space-y-4 sm:space-y-6 pb-6 page-transition">
       {/* 1. HEADER & GREETING CARD */}
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-secondary/40 via-secondary/25 to-background border border-border/60 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
-        <div className="space-y-2 relative z-10 text-center md:text-left flex-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[28px] bg-gradient-to-r from-secondary/40 via-secondary/25 to-background border border-border/60 p-4 sm:p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 transition-all duration-300">
+        <div className="space-y-1.5 relative z-10 text-left flex-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
             <CalendarIcon className="w-3.5 h-3.5" />
             <span>Theo dõi sinh học</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-foreground">
+          <h1 className="text-lg sm:text-2xl font-black text-foreground">
             Lịch chu kỳ kinh nguyệt
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg">
+          <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg">
             Chu kỳ kinh nguyệt là tấm gương phản chiếu sức khỏe nội tiết tố của người phụ nữ. 
             Lắng nghe và thấu hiểu nhịp đập sinh học cơ thể mỗi ngày chị nhé!
           </p>
         </div>
 
         {/* Minh họa SVG Vòng chu kỳ trăng khuyết & hoa sen nghệ thuật */}
-        <div className="shrink-0 relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center pointer-events-none select-none">
+        <div className="hidden md:flex shrink-0 relative w-32 h-32 md:w-36 md:h-36 items-center justify-center pointer-events-none select-none">
           <svg viewBox="0 0 120 120" className="w-full h-full text-primary/80 fill-none stroke-current animate-in fade-in zoom-in-50 duration-500">
             {/* Vòng tròn chu kỳ đứt nét đại diện cho thời gian */}
             <circle cx="60" cy="60" r="45" strokeWidth="1.5" strokeDasharray="3 6" className="text-primary/30" />

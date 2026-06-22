@@ -21,6 +21,12 @@ export function useSpeech(onTranscript: (text: string) => void) {
   const [browserSupportsSpeech, setBrowserSupportsSpeech] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  const onTranscriptRef = useRef(onTranscript);
+
+  // Cập nhật ref khi callback thay đổi
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+  }, [onTranscript]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -53,13 +59,23 @@ export function useSpeech(onTranscript: (text: string) => void) {
 
         rec.onresult = (event: SpeechRecognitionEvent) => {
           const resultText = event.results[0][0].transcript;
-          onTranscript(resultText);
+          onTranscriptRef.current(resultText);
         };
 
         recognitionRef.current = rec;
       }
     }
-  }, [onTranscript]);
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (err) {
+          console.error("Lỗi khi hủy Speech Recognition trong cleanup: ", err);
+        }
+      }
+    };
+  }, []);
 
   const startListening = () => {
     if (recognitionRef.current && !isListening) {

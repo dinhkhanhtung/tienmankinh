@@ -33,10 +33,10 @@ export default function ChatPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Thiết lập Voice Recognition cho chat input
-  const handleTranscript = (text: string) => {
+  const handleTranscript = React.useCallback((text: string) => {
     setInput((prev) => prev ? `${prev} ${text}` : text);
     toast.success("Đã nhận giọng nói của chị.");
-  };
+  }, []);
 
   const { isListening, browserSupportsSpeech, startListening, stopListening } = useSpeech(handleTranscript);
 

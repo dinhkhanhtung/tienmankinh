@@ -322,25 +322,25 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6 pb-6">
+    <div className="space-y-4 sm:space-y-6 pb-6">
       
       {/* 1. GREETING CARD (Chào buổi sáng) */}
-      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-secondary/40 via-secondary/25 to-background border border-border/60 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
-        <div className="space-y-2 relative z-10 text-center md:text-left flex-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 fill-current" />
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[28px] bg-gradient-to-r from-secondary/40 via-secondary/25 to-background border border-border/60 p-4 sm:p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 transition-all duration-300">
+        <div className="space-y-1.5 relative z-10 text-left flex-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 fill-current" />
             <span>Ngày mới an yên</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-foreground">
+          <h1 className="text-lg sm:text-2xl font-black text-foreground">
             Chào buổi sáng, <span className="text-primary">{profile?.displayName || "Lan"}</span>!
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-md">
+          <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-md">
             Hôm nay là ngày tuyệt vời để yêu thương và chăm sóc bản thân. Chúc chị một ngày bình yên và tràn đầy năng lượng!
           </p>
         </div>
 
         {/* Hình minh họa SVG người phụ nữ ôm lấy mình đầy ấm áp */}
-        <div className="shrink-0 relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center pointer-events-none select-none">
+        <div className="hidden md:flex shrink-0 relative w-32 h-32 md:w-36 md:h-36 items-center justify-center pointer-events-none select-none">
           <svg viewBox="0 0 100 100" className="w-full h-full text-primary/80 fill-current animate-in fade-in zoom-in-50 duration-500">
             {/* Vòng nền phát sáng mờ */}
             <circle cx="50" cy="55" r="30" className="text-secondary/50 fill-current" />
@@ -356,81 +356,83 @@ export default function DashboardPage() {
       </div>
 
       {/* 2. PERISCORE SECTION (Khối lớn PeriScore ở giữa) */}
-      <Card className="border-border shadow-sm overflow-hidden glass-card p-6 rounded-[28px] relative transition-all duration-300">
-        <div className="text-center mb-6">
-          <h2 className="text-base font-extrabold text-foreground tracking-tight">PeriScore của bạn</h2>
-          <p className="text-xs text-muted-foreground font-semibold">Chỉ số sức khỏe tiền mãn kinh hôm nay</p>
+      <Card className="border-border shadow-sm overflow-hidden glass-card p-4 sm:p-6 rounded-2xl sm:rounded-[28px] relative transition-all duration-300">
+        <div className="text-center mb-4 sm:mb-6">
+          <h2 className="text-sm sm:text-base font-extrabold text-foreground tracking-tight">PeriScore của bạn</h2>
+          <p className="text-[10px] sm:text-xs text-muted-foreground font-semibold">Chỉ số sức khỏe tiền mãn kinh hôm nay</p>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-around gap-6 md:gap-8">
-          {/* Cột trái: So sánh cải thiện */}
-          <div className="flex items-center gap-3.5 bg-muted/30 border border-border/40 p-4 px-5 rounded-2xl w-full md:w-auto max-w-xs transition-colors hover:bg-muted/50">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
-              <TrendingUp className="w-5 h-5" />
+        <div className="flex flex-row flex-wrap md:flex-nowrap items-center justify-center md:justify-around gap-3 md:gap-8 w-full">
+          {/* Cột trái: So sánh cải thiện (Hiển thị bên trái trên PC, bên trái dưới vòng tròn trên Mobile) */}
+          <div className="order-2 md:order-1 flex items-center gap-2.5 bg-muted/30 border border-border/40 p-2.5 sm:p-4 px-3 sm:px-5 rounded-2xl w-[calc(50%-6px)] md:w-auto md:max-w-xs transition-colors hover:bg-muted/50">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-black text-primary">Cải thiện +12 điểm</span>
-              <span className="text-[10px] text-muted-foreground font-semibold">so với tuần trước</span>
-            </div>
-          </div>
-
-          {/* Cột giữa: Vòng tròn điểm số chính */}
-          <div className="relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center animate-in zoom-in-75 duration-500 shrink-0">
-            <svg className="w-full h-full transform -rotate-90">
-              <circle
-                cx="80"
-                cy="80"
-                r="64"
-                className="stroke-muted/40 dark:stroke-muted/10"
-                strokeWidth="8"
-                fill="transparent"
-              />
-              <circle
-                cx="80"
-                cy="80"
-                r="64"
-                className="stroke-primary"
-                strokeWidth="8.5"
-                fill="transparent"
-                strokeDasharray={2 * Math.PI * 64}
-                strokeDashoffset={2 * Math.PI * 64 - (currentPeriScore / 100) * (2 * Math.PI * 64)}
-                strokeLinecap="round"
-                style={{ transition: "stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)" }}
-              />
-            </svg>
-            <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-4xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-none">{currentPeriScore}</span>
-              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-1">/100</span>
-              <span className={`text-[10px] font-extrabold mt-1.5 px-2 py-0.5 rounded-full border leading-none ${periScoreCat.color}`}>
-                {periScoreCat.label}
-              </span>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-xs sm:text-sm font-black text-primary truncate">Cải thiện +12đ</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold truncate">so với tuần trước</span>
             </div>
           </div>
 
-          {/* Cột phải: So sánh cộng đồng */}
-          <div className="flex items-center gap-3.5 bg-muted/30 border border-border/40 p-4 px-5 rounded-2xl w-full md:w-auto max-w-xs transition-colors hover:bg-muted/50">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
-              <Heart className="w-5 h-5 fill-current" />
+          {/* Cột giữa: Vòng tròn điểm số chính (Trên cùng trên Mobile, giữa trên PC) */}
+          <div className="order-1 md:order-2 w-full md:w-auto flex justify-center mb-3 md:mb-0">
+            <div className="relative w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center animate-in zoom-in-75 duration-500 shrink-0">
+              <svg className="w-full h-full transform -rotate-90">
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="64"
+                  className="stroke-muted/40 dark:stroke-muted/10"
+                  strokeWidth="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="64"
+                  className="stroke-primary"
+                  strokeWidth="8.5"
+                  fill="transparent"
+                  strokeDasharray={2 * Math.PI * 64}
+                  strokeDashoffset={2 * Math.PI * 64 - (currentPeriScore / 100) * (2 * Math.PI * 64)}
+                  strokeLinecap="round"
+                  style={{ transition: "stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)" }}
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center justify-center">
+                <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-none">{currentPeriScore}</span>
+                <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 sm:mt-1">/100</span>
+                <span className={`text-[8px] sm:text-[10px] font-extrabold mt-1 sm:mt-1.5 px-2 py-0.5 rounded-full border leading-none ${periScoreCat.color}`}>
+                  {periScoreCat.label}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col text-left">
-              <span className="text-sm font-black text-foreground leading-tight">Tốt hơn 72%</span>
-              <span className="text-[10px] text-muted-foreground font-semibold">người dùng cùng độ tuổi</span>
+          </div>
+
+          {/* Cột phải: So sánh cộng đồng (Bên phải trên PC, bên phải dưới vòng tròn trên Mobile) */}
+          <div className="order-3 flex items-center gap-2.5 bg-muted/30 border border-border/40 p-2.5 sm:p-4 px-3 sm:px-5 rounded-2xl w-[calc(50%-6px)] md:w-auto md:max-w-xs transition-colors hover:bg-muted/50">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 shadow-inner">
+              <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-xs sm:text-sm font-black text-foreground leading-tight truncate">Tốt hơn 72%</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold truncate">người cùng độ tuổi</span>
             </div>
           </div>
         </div>
 
         {/* Khung nhận xét & Điều hướng */}
-        <Link href="/report" className="block mt-6 group">
-          <div className="flex items-center justify-between p-3.5 px-5 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-dashed border-primary/20 hover:border-primary/40 transition-all duration-300">
+        <Link href="/report" className="block mt-4 md:mt-6 group">
+          <div className="flex items-center justify-between p-2.5 md:p-3.5 px-4 md:px-5 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-dashed border-primary/20 hover:border-primary/40 transition-all duration-300">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Heart className="w-4 h-4 fill-current animate-pulse" />
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current animate-pulse" />
               </div>
-              <p className="text-xs font-bold text-foreground truncate max-w-lg">
+              <p className="text-[11px] sm:text-xs font-bold text-foreground truncate max-w-lg">
                 Sức khỏe của bạn đang ở mức tốt! Hãy duy trì lối sống lành mạnh để cải thiện hơn nữa.
               </p>
             </div>
-            <ChevronRight className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary group-hover:translate-x-0.5 transition-transform" />
           </div>
         </Link>
       </Card>

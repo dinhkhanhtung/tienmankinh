@@ -61,13 +61,13 @@ export default function LogPage() {
   const livePeriCat = getPeriScoreCategory(livePeriScore);
 
   // Thiết lập Voice Recognition cho ghi chú tâm trạng
-  const handleTranscript = (text: string) => {
+  const handleTranscript = React.useCallback((text: string) => {
     setMood((prev) => ({
       ...prev,
       note: prev.note ? `${prev.note} ${text}` : text,
     }));
     toast.success("Đã ghi nhận giọng nói của chị.");
-  };
+  }, []);
 
   const { isListening, browserSupportsSpeech, startListening, stopListening } = useSpeech(handleTranscript);
 
