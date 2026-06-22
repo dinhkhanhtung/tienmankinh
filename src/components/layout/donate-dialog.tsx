@@ -130,22 +130,22 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
   };
 
   const dialogContent = (
-    <DialogContent className="sm:max-w-md border-border bg-card/98 backdrop-blur-md p-6 rounded-2xl shadow-2xl animate-in fade-in duration-200">
-      <DialogHeader className="text-center flex flex-col items-center gap-1.5 pb-1">
-        <div className="w-11 h-11 rounded-full bg-pink-50 dark:bg-pink-950/20 text-primary flex items-center justify-center shadow-inner animate-pulse">
-          <Heart className="w-5.5 h-5.5 fill-current text-primary" />
+    <DialogContent className="max-w-[95%] w-full sm:max-w-md max-h-[90vh] overflow-y-auto scrollbar-none border-border bg-card/98 backdrop-blur-md p-4 sm:p-6 rounded-2xl shadow-2xl animate-in fade-in duration-200">
+      <DialogHeader className="text-center flex flex-col items-center gap-1 pb-0.5">
+        <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-pink-50 dark:bg-pink-950/20 text-primary flex items-center justify-center shadow-inner animate-pulse">
+          <Heart className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 fill-current text-primary" />
         </div>
-        <DialogTitle className="text-lg font-black tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2">
+        <DialogTitle className="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-1">
           Đồng hành cùng dự án
         </DialogTitle>
-        <DialogDescription className="text-xs text-muted-foreground font-semibold px-4 text-center leading-relaxed">
+        <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground font-semibold px-2 sm:px-4 text-center leading-relaxed">
           Sự ủng hộ của bạn giúp duy trì ứng dụng Tiền Mãn Kinh hoạt động ổn định và lâu dài.
         </DialogDescription>
       </DialogHeader>
 
-      <div className="flex flex-col items-center gap-4 py-1">
+      <div className="flex flex-col items-center gap-2.5 sm:gap-4 py-0 sm:py-1">
         {/* QR Code container */}
-        <div className="relative p-2.5 bg-white rounded-2xl shadow-inner border border-border/60 max-w-[220px] w-full aspect-square flex items-center justify-center overflow-hidden group">
+        <div className="relative p-2 bg-white rounded-xl shadow-inner border border-border/60 max-w-[150px] sm:max-w-[180px] w-full aspect-square flex items-center justify-center overflow-hidden group">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrUrl}
@@ -155,7 +155,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         </div>
 
         {/* Chọn các mức ủng hộ */}
-        <div className="w-full space-y-2">
+        <div className="w-full space-y-1.5">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block text-center">Gợi ý mức đồng hành</span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {tiers.map((tier) => (
@@ -184,7 +184,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
 
           {/* Ô nhập số tiền tùy chỉnh */}
           {selectedAmount === 0 && (
-            <div className="pt-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+            <div className="pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
               <label htmlFor="custom-amount" className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Nhập số tiền ủng hộ (đ)</label>
               <Input
                 id="custom-amount"
@@ -204,18 +204,18 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         </div>
 
         {/* Lời nhắn khéo léo */}
-        <p className="text-xs text-muted-foreground/90 text-center leading-relaxed font-semibold bg-muted/30 p-3 rounded-xl border border-border/50">
+        <p className="text-[11px] sm:text-xs text-muted-foreground/90 text-center leading-relaxed font-semibold bg-muted/30 p-2 sm:p-3 rounded-xl border border-border/50">
           Ứng dụng hoạt động phi lợi nhuận. Mọi sự ủng hộ là <span className="font-extrabold text-primary">hoàn toàn tự nguyện</span> nhằm chi trả tiền phí API AI Coach, duy trì máy chủ (hosting) và bảo dưỡng hệ thống.
         </p>
 
         {/* Thông tin tài khoản */}
-        <div className="w-full bg-muted/40 p-3 rounded-xl border border-border/50 space-y-2.5">
-          <div className="flex justify-between items-center text-xs">
+        <div className="w-full bg-muted/40 p-2.5 sm:p-3 rounded-xl border border-border/50 space-y-2">
+          <div className="flex justify-between items-center text-[11px] sm:text-xs">
             <span className="text-muted-foreground font-semibold">Ngân hàng</span>
             <span className="font-extrabold text-foreground">{bankName}</span>
           </div>
           
-          <div className="flex justify-between items-center text-xs">
+          <div className="flex justify-between items-center text-[11px] sm:text-xs">
             <span className="text-muted-foreground font-semibold">Số tài khoản</span>
             <div className="flex items-center gap-2">
               <span className="font-black text-foreground tracking-wider">{accountNumber}</span>
@@ -230,7 +230,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-xs pt-1 border-t border-border/20">
+          <div className="flex justify-between items-center text-[11px] sm:text-xs pt-1 border-t border-border/20">
             <span className="text-muted-foreground font-semibold">Nội dung chuyển khoản</span>
             <span className="font-black text-primary tracking-wide text-[11px]">{addInfo}</span>
           </div>
@@ -238,7 +238,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
       </div>
 
       {/* Nút thao tác gửi báo cáo Telegram & Notion */}
-      <div className="flex flex-col gap-2 pt-2 w-full">
+      <div className="flex flex-col gap-2 pt-1.5 w-full">
         {status === "success" ? (
           <Button
             disabled

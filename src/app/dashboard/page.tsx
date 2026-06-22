@@ -28,6 +28,11 @@ export default function DashboardPage() {
   
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [greeting, setGreeting] = useState({
+    label: "Ngày mới an yên",
+    title: "Chào buổi sáng",
+    desc: "Hôm nay là ngày tuyệt vời để yêu thương và chăm sóc bản thân. Chúc chị một ngày bình yên và tràn đầy năng lượng!"
+  });
 
   // Đảm bảo Recharts và responsive state chỉ render phía client
   useEffect(() => {
@@ -45,6 +50,36 @@ export default function DashboardPage() {
       clearTimeout(timer);
       window.removeEventListener("resize", checkMobile);
     };
+  }, []);
+
+  // Tính toán lời chào động theo thời gian thực tế
+  useEffect(() => {
+    const hours = new Date().getHours();
+    if (hours >= 5 && hours < 12) {
+      setGreeting({
+        label: "Ngày mới an yên",
+        title: "Chào buổi sáng",
+        desc: "Hôm nay là ngày tuyệt vời để yêu thương và chăm sóc bản thân. Chúc chị một ngày bình yên và tràn đầy năng lượng!"
+      });
+    } else if (hours >= 12 && hours < 18) {
+      setGreeting({
+        label: "Chiều an yên",
+        title: "Chào buổi chiều",
+        desc: "Hãy dành vài phút nghỉ ngơi và uống một ly nước ấm chị nhé. Chúc chị một buổi chiều bình yên và tràn đầy năng lượng!"
+      });
+    } else if (hours >= 18 && hours < 22) {
+      setGreeting({
+        label: "Tối bình yên",
+        title: "Chào buổi tối",
+        desc: "Sau một ngày dài bận rộn, giờ là lúc chị dành thời gian thư giãn và yêu thương bản thân. Chúc chị một buổi tối an lành!"
+      });
+    } else {
+      setGreeting({
+        label: "Chúc ngủ ngon",
+        title: "Chúc chị ngủ ngon",
+        desc: "Hãy khép lại ngày hôm nay và thả lỏng tâm trí. Chúc chị có một giấc ngủ thật ngon và sâu giấc!"
+      });
+    }
   }, []);
 
   const latestCycle = sortedCycles[0];
@@ -329,13 +364,13 @@ export default function DashboardPage() {
         <div className="space-y-1.5 relative z-10 text-left flex-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
             <Sparkles className="w-3 h-3 fill-current" />
-            <span>Ngày mới an yên</span>
+            <span>{greeting.label}</span>
           </div>
           <h1 className="text-lg sm:text-2xl font-black text-foreground">
-            Chào buổi sáng, <span className="text-primary">{profile?.displayName || "Lan"}</span>!
+            {greeting.title}, <span className="text-primary">{profile?.displayName || "Lan"}</span>!
           </h1>
-          <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-md">
-            Hôm nay là ngày tuyệt vời để yêu thương và chăm sóc bản thân. Chúc chị một ngày bình yên và tràn đầy năng lượng!
+          <p className="text-[11px] sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-md mt-1">
+            {greeting.desc}
           </p>
         </div>
 

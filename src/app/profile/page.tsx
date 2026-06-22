@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart, Camera, MessageSquare } from "lucide-react";
+import { User, Scale, Activity, Baby, Sparkles, Loader2, Bell, FileText, ChevronRight, Heart, Camera, MessageSquare, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { DonateDialog } from "@/components/layout/donate-dialog";
 import { FeedbackDialog } from "@/components/layout/feedback-dialog";
@@ -274,7 +274,7 @@ export default function ProfilePage() {
           <h1 className="text-lg sm:text-2xl font-black text-foreground">
             Hồ sơ sức khỏe
           </h1>
-          <p className="hidden sm:block text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg">
+          <p className="text-[11px] sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg mt-1">
             Quản lý thông tin thể chất, sinh học của riêng chị. 
             Cập nhật dữ liệu chính xác giúp trợ lý AI Coach đưa ra các gợi ý y khoa tự nhiên tối ưu nhất.
           </p>
@@ -413,6 +413,40 @@ export default function ProfilePage() {
                 <span className="text-[9px] bg-primary/15 text-primary px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">Gửi tặng</span>
               </Button>
             } />
+          </Card>
+
+          {/* Card Thêm vào màn hình chính */}
+          <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden rounded-[28px] p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center shadow-inner shrink-0">
+                <Smartphone className="w-4.5 h-4.5 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-xs sm:text-sm font-extrabold text-foreground">Tải App Tiền Mãn Kinh</h4>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Thêm vào màn hình chính</p>
+              </div>
+            </div>
+            
+            <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
+              Chị có thể cài đặt hoặc thêm ứng dụng này lên màn hình chính điện thoại để truy cập nhanh như một App thông thường:
+            </p>
+
+            <div className="space-y-3.5 text-xs font-semibold text-foreground bg-muted/30 p-3.5 rounded-2xl border border-border/50">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-primary block uppercase">📱 Hướng dẫn trên iPhone (Safari):</span>
+                <span className="block text-[11px] leading-relaxed text-muted-foreground">
+                  1. Nhấn nút <strong>Chia sẻ (Share)</strong> <span className="inline-block px-1 border border-border rounded bg-card">⬆️</span> ở thanh công cụ phía dưới trình duyệt.<br />
+                  2. Cuộn xuống dưới và chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong> <span className="inline-block px-1 border border-border rounded bg-card">➕</span>.
+                </span>
+              </div>
+              <div className="space-y-1 pt-2 border-t border-border/40">
+                <span className="text-[10px] font-bold text-primary block uppercase">🤖 Hướng dẫn trên Android (Chrome):</span>
+                <span className="block text-[11px] leading-relaxed text-muted-foreground">
+                  1. Nhấn nút <strong>Menu 3 chấm (...)</strong> ở góc trên bên phải trình duyệt Chrome.<br />
+                  2. Chọn <strong>"Thêm vào màn hình chính"</strong> (hoặc <strong>"Cài đặt ứng dụng"</strong>).
+                </span>
+              </div>
+            </div>
           </Card>
 
           {/* Cài đặt Nhắc nhở & Báo cáo */}
