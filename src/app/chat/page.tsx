@@ -103,40 +103,40 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)] max-w-3xl mx-auto">
+    <div className="flex flex-col h-[calc(100dvh-9.5rem)] md:h-[calc(100vh-7rem)] max-w-3xl mx-auto space-y-4">
       {/* Header */}
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <MessageCircle className="w-6 h-6 text-primary" /> Trò chuyện cùng AI Coach
+      <div className="shrink-0">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-2">
+          <MessageCircle className="w-5 h-5 sm:w-6 h-6 text-primary" /> Trò chuyện cùng AI Coach
         </h1>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 font-semibold">
           Tư vấn cá nhân hóa dựa trên dữ liệu nhật ký sức khỏe 7 ngày qua của chị
         </p>
       </div>
 
       {/* Main Chat Box */}
-      <Card className="flex-1 flex flex-col border-border shadow-sm overflow-hidden bg-card rounded-2xl">
+      <Card className="flex-1 flex flex-col border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm rounded-2xl min-h-0">
         {/* Chat window Header */}
-        <CardHeader className="bg-muted/10 border-b border-border/40 py-3.5 px-4 flex flex-row items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-secondary text-primary flex items-center justify-center font-bold">
-              <Sparkles className="w-4 h-4 fill-current" />
+        <CardHeader className="bg-muted/10 border-b border-border/40 py-2.5 px-4 flex flex-row items-center justify-between shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-secondary text-primary flex items-center justify-center font-bold shadow-sm">
+              <Sparkles className="w-3.5 h-3.5 fill-current" />
             </div>
             <div>
-              <CardTitle className="text-sm font-bold">Bác sĩ ảo Coach</CardTitle>
-              <CardDescription className="text-[10px] text-green-500 font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-ping"></span> Hoạt động trực tuyến
+              <CardTitle className="text-xs sm:text-sm font-extrabold text-foreground">Bác sĩ ảo Coach</CardTitle>
+              <CardDescription className="text-[9px] text-green-500 font-bold flex items-center gap-1">
+                <span className="w-1 h-1 rounded-full bg-green-500 inline-block animate-pulse"></span> Hoạt động trực tuyến
               </CardDescription>
             </div>
           </div>
           
-          <span className="text-[10px] text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full font-bold">
+          <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full font-bold">
             Gemini 1.5 Flash
           </span>
         </CardHeader>
 
         {/* Message Area */}
-        <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0 bg-gradient-to-b from-card to-background/30">
+        <CardContent className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 min-h-0 bg-gradient-to-b from-card to-background/20">
           {messages.map((msg) => {
             const isUser = msg.role === "user";
             return (
@@ -145,14 +145,13 @@ export default function ChatPage() {
                 className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-3.5 text-sm sm:text-base leading-relaxed ${
+                  className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-3 text-xs sm:text-sm leading-relaxed font-semibold ${
                     isUser
-                      ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm"
-                      : "bg-secondary/40 text-foreground dark:bg-secondary/20 rounded-tl-none border border-border/50"
+                      ? "bg-primary text-primary-foreground rounded-tr-none shadow-sm shadow-primary/5"
+                      : "bg-secondary/40 text-foreground dark:bg-secondary/20 rounded-tl-none border border-border/40"
                   }`}
                 >
-                  {/* Nội dung tin nhắn (hỗ trợ phân dòng cơ bản) */}
-                  <div className="whitespace-pre-line font-medium">
+                  <div className="whitespace-pre-line">
                     {msg.content}
                   </div>
                 </div>
@@ -163,9 +162,9 @@ export default function ChatPage() {
           {/* AI is thinking bubble */}
           {sending && (
             <div className="flex w-full justify-start">
-              <div className="bg-secondary/30 dark:bg-secondary/10 rounded-2xl rounded-tl-none p-3.5 border border-border/30 flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                <span className="text-xs text-muted-foreground font-semibold">AI Coach đang suy nghĩ và phân tích...</span>
+              <div className="bg-secondary/30 dark:bg-secondary/10 rounded-2xl rounded-tl-none p-3 border border-border/30 flex items-center gap-2">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                <span className="text-[10px] text-muted-foreground font-semibold">AI Coach đang phân tích dữ liệu...</span>
               </div>
             </div>
           )}
@@ -173,21 +172,22 @@ export default function ChatPage() {
         </CardContent>
 
         {/* Chat Box Footer & Form */}
-        <CardFooter className="flex flex-col border-t border-border/40 p-4 gap-3 bg-muted/5 shrink-0">
+        <CardFooter className="flex flex-col border-t border-border/40 p-3 gap-2.5 bg-muted/5 shrink-0">
           
-          {/* Quick Questions suggestions (Chỉ hiển thị khi chưa chat quá nhiều) */}
+          {/* Quick Questions suggestions - Cuộn ngang trên di động cực kỳ mượt mà */}
           {messages.length <= 2 && !sending && (
             <div className="w-full">
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                <HelpCircle className="w-3.5 h-3.5" /> Gợi ý câu hỏi nhanh:
-              </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1 text-[9px] text-muted-foreground font-bold uppercase tracking-wider mb-1.5">
+                <HelpCircle className="w-3 h-3" /> Gợi ý câu hỏi nhanh:
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1.5 -mx-1 px-1 scrollbar-none snap-x snap-mandatory">
                 {quickQuestions.map((q, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleSend(q)}
-                    className="text-left text-xs text-primary font-bold bg-secondary/30 dark:bg-secondary/15 hover:bg-secondary/60 px-3 py-2 rounded-xl transition-all border border-primary/10 truncate"
+                    className="text-left text-[11px] text-primary font-bold bg-primary/5 hover:bg-primary/10 border border-primary/10 px-3 py-1.5 rounded-full transition-all shrink-0 snap-start max-w-[240px] truncate"
+                    style={{ WebkitTapHighlightColor: "transparent" }}
                   >
                     {q}
                   </button>
@@ -197,30 +197,30 @@ export default function ChatPage() {
           )}
 
           {/* Medical disclaimer note */}
-          <div className="w-full flex items-start gap-1.5 text-[10px] leading-normal text-muted-foreground p-2 bg-muted/40 rounded-xl">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-500 mt-0.5" />
+          <div className="w-full flex items-start gap-1 text-[9px] leading-relaxed text-muted-foreground bg-muted/30 p-1.5 rounded-lg border border-border/30">
+            <AlertTriangle className="w-3 h-3 shrink-0 text-amber-500 mt-0.5" />
             <span>
-              Lưu ý: Lời khuyên của AI Coach chỉ mang tính tham khảo cải thiện sức khỏe lối sống, không thay thế chẩn đoán y khoa từ bác sĩ.
+              Lưu ý: Lời khuyên của AI Coach chỉ mang tính tham khảo cải thiện lối sống, không thay thế chẩn đoán y khoa.
             </span>
           </div>
 
           {/* Chat Form Input */}
           <form onSubmit={handleFormSubmit} className="flex w-full items-center gap-2">
             <Input
-              placeholder="Nhập câu hỏi của chị về sức khỏe..."
+              placeholder="Nhập câu hỏi của chị..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+              className="flex-1 h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold p-3"
               disabled={sending}
               maxLength={500}
             />
             <Button
               type="submit"
               size="icon"
-              className="h-12 w-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-colors"
+              className="h-11 w-11 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm active:scale-95 transition-all shrink-0"
               disabled={!input.trim() || sending}
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4" />
             </Button>
           </form>
         </CardFooter>

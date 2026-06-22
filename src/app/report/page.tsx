@@ -9,10 +9,12 @@ import { useCycles } from "@/hooks/use-cycles";
 import { Button } from "@/components/ui/button";
 import { 
   Printer, ArrowLeft, Heart, Sparkles, 
-  ShieldAlert, Activity, FileText, Calendar, Loader2 
+  ShieldAlert, Activity, FileText, Calendar, Loader2,
+  Copy, MessageCircle
 } from "lucide-react";
 import { format, subMonths, parseISO, isAfter } from "date-fns";
 import { vi } from "date-fns/locale";
+import { toast } from "sonner";
 
 function ReportContent() {
   const router = useRouter();
@@ -86,23 +88,88 @@ function ReportContent() {
     }
   };
 
+  const handleZaloConsult = () => {
+    const name = profile?.displayName || "Thành viên";
+    const age = profile?.birthYear ? new Date().getFullYear() - profile.birthYear : "--";
+    const bmiVal = profile?.bmi || "--";
+    const bmiCategory = bmiVal !== "--" 
+      ? (bmiVal < 18.5 ? "Gầy" : bmiVal < 25 ? "Bình thường" : bmiVal < 30 ? "Thừa cân" : "Béo phì")
+      : "Chưa cập nhật";
+    
+    // Tìm ghi chú gần nhất trong filteredLogs
+    let lastLogNote = "";
+    const sortedFilteredLogs = [...filteredLogs].sort((a, b) => b.date.localeCompare(a.date));
+    for (const log of sortedFilteredLogs) {
+      if (log.mood?.note) {
+        lastLogNote = log.mood.note;
+        break;
+      }
+    }
+
+    const message = `KÍNH GỬI BÁC SĨ ĐÔNG Y - BÁO CÁO SỨC KHỎE TIỀN MÃN KINH (${rangeMonths} THÁNG QUA)
+---------------------------------
+- Họ và tên: ${name} (${age} tuổi)
+- Chiều cao/Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
+- Chỉ số BMI: ${bmiVal} (${bmiCategory})
+- Điểm PeriScore trung bình: ${avgPeriScore}/100 (${periScoreCat.label})
+- Dữ liệu nhật ký ${rangeMonths} tháng qua (Ghi chép ${totalDays} ngày):
+  + Số ngày mất ngủ nặng (mức 2, 3): ${severeInsomniaCount} ngày
+  + Số ngày bốc hỏa nặng (mức 2, 3): ${severeHotFlashesCount} ngày
+  + Cường độ bốc hỏa TB: ${avgHotFlashes} / 3.0
+  + Cường độ mất ngủ TB: ${avgInsomnia} / 3.0
+  + Mức độ lo âu TB: ${avgAnxiety} / 3.0
+  + Thời gian ngủ TB: ${avgSleep} giờ / đêm
+- Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Thời gian hành kinh TB: ${averagePeriodDuration} ngày)
+- Số chu kỳ đã ghi nhận: ${filteredCycles.length} (Chu kỳ bất thường: ${filteredCycles.filter((c) => c.isAbnormal).length})
+- Ghi chú sức khỏe gần nhất: "${lastLogNote || "Không có ghi chú"}"
+---------------------------------
+Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40+.`;
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(message)
+        .then(() => {
+          toast.success("Đã tự động gom và sao chép tóm tắt báo cáo sức khỏe của chị!");
+          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Bác sĩ Đông y.", { duration: 6000 });
+          
+          setTimeout(() => {
+            window.open("https://zalo.me/0982581222", "_blank");
+          }, 1500);
+        })
+        .catch((err) => {
+          console.error("Lỗi sao chép: ", err);
+          toast.error("Không thể tự động sao chép. Đang mở Zalo tư vấn bác sĩ: 0982581222.");
+          setTimeout(() => {
+            window.open("https://zalo.me/0982581222", "_blank");
+          }, 1500);
+        });
+    } else {
+      window.open("https://zalo.me/0982581222", "_blank");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-black p-4 sm:p-8 max-w-4xl mx-auto print:p-0 print:max-w-full">
       {/* Top action bar - Hidden when print */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-6 print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-200 pb-4 mb-6 print:hidden">
         <Button 
           variant="outline" 
           onClick={() => router.back()} 
-          className="h-10 px-4 rounded-xl border-gray-300 text-gray-700"
+          className="h-10 px-4 rounded-xl border-gray-300 text-gray-700 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Quay lại
         </Button>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 font-medium">Báo cáo sức khỏe {rangeMonths} tháng</span>
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <Button 
+            onClick={handleZaloConsult}
+            variant="outline"
+            className="h-10 px-4 rounded-xl border-primary text-primary hover:bg-primary/5 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center"
+          >
+            <MessageCircle className="w-4 h-4" /> Gửi Zalo tư vấn
+          </Button>
           <Button 
             onClick={handlePrint}
-            className="h-10 px-5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 font-semibold flex items-center gap-1.5 shadow-sm"
+            className="h-10 px-4 sm:px-5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center"
           >
             <Printer className="w-4 h-4" /> Tải PDF / In báo cáo
           </Button>
@@ -287,6 +354,40 @@ function ReportContent() {
           </div>
         </div>
 
+      </div>
+
+      {/* Bác sĩ Đông y tư vấn trực tiếp - Hidden when print */}
+      <div className="mt-8 bg-gradient-to-br from-primary/5 via-white to-secondary/10 border border-primary/20 p-6 rounded-2xl shadow-sm print:hidden space-y-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <h3 className="text-base font-extrabold text-foreground flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-primary" /> Nhận tư vấn Đông y từ Bác sĩ Chuyên khoa
+            </h3>
+            <p className="text-xs text-muted-foreground font-semibold leading-relaxed">
+              Bác sĩ Đông y sẽ dựa trên báo cáo chi tiết {rangeMonths} tháng của chị để tư vấn phác đồ thảo dược và liệu pháp dưỡng sinh phù hợp nhất.
+            </p>
+          </div>
+          <Button 
+            onClick={handleZaloConsult}
+            className="w-full md:w-auto h-11 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:bg-primary/95 text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/25 active:scale-98 transition-all shrink-0"
+          >
+            <Copy className="w-4 h-4" /> Sao chép báo cáo & Chat Zalo
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-gray-200/60 text-[11px] text-muted-foreground font-semibold">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+            <span>Tự động tổng hợp chỉ số PeriScore và số ngày mất ngủ, bốc hỏa</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+            <span>Chuyển tiếp đến Zalo của Bác sĩ Đông y (SĐT: 0982581222)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+            <span>Dịch vụ tư vấn và chăm sóc sức khỏe ban đầu hoàn toàn miễn phí</span>
+          </div>
+        </div>
       </div>
     </div>
   );

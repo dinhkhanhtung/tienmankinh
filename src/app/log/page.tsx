@@ -119,19 +119,19 @@ export default function LogPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       {/* Title & Date Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Nhật ký sức khỏe</h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1 font-medium">
-            Ghi nhận thể trạng hàng ngày để cải thiện sức khỏe tuổi trung niên
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground sm:text-3xl">Nhật ký sức khỏe</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-semibold leading-relaxed">
+            Ghi nhận thể trạng hàng ngày để AI Coach theo dõi và cá nhân hóa tư vấn sức khỏe tuổi trung niên.
           </p>
         </div>
         
         {/* Date input */}
-        <div className="flex items-center gap-2 bg-card border border-border p-2 rounded-xl shadow-sm self-start">
-          <Calendar className="w-4 h-4 text-primary" />
+        <div className="flex items-center gap-2 bg-card border border-border p-2 px-3 rounded-xl shadow-sm self-start sm:self-auto transition-all focus-within:ring-2 focus-within:ring-primary/20">
+          <Calendar className="w-4 h-4 text-primary shrink-0" />
           <Label htmlFor="log-date" className="sr-only">Chọn ngày ghi nhật ký</Label>
           <Input
             id="log-date"
@@ -139,61 +139,71 @@ export default function LogPage() {
             max={format(new Date(), "yyyy-MM-dd")}
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="border-0 bg-transparent focus-visible:ring-0 p-0 h-auto font-bold text-sm w-32 cursor-pointer text-foreground"
+            className="border-0 bg-transparent focus-visible:ring-0 p-0 h-auto font-bold text-xs sm:text-sm w-32 cursor-pointer text-foreground"
           />
         </div>
       </div>
 
       {/* Main Forms Layout */}
       <Tabs defaultValue="symptoms" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full max-w-md h-12 bg-muted/60 p-1 rounded-xl mb-6">
-          <TabsTrigger value="symptoms" className="rounded-lg font-bold text-sm">
-            <Flame className="w-4 h-4 mr-1.5" /> Triệu chứng
+        <TabsList className="grid grid-cols-3 w-full max-w-md h-11 bg-muted/60 p-1 rounded-xl mb-6 shadow-inner">
+          <TabsTrigger value="symptoms" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Flame className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Triệu chứng
           </TabsTrigger>
-          <TabsTrigger value="sleep" className="rounded-lg font-bold text-sm">
-            <Moon className="w-4 h-4 mr-1.5" /> Giấc ngủ
+          <TabsTrigger value="sleep" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Moon className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Giấc ngủ
           </TabsTrigger>
-          <TabsTrigger value="mood" className="rounded-lg font-bold text-sm">
-            <MoodIcon className="w-4 h-4 mr-1.5" /> Tâm trạng
+          <TabsTrigger value="mood" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <MoodIcon className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Tâm trạng
           </TabsTrigger>
         </TabsList>
 
         {/* TAB 1: Symptoms Form */}
-        <TabsContent value="symptoms" className="space-y-6 outline-none">
+        <TabsContent value="symptoms" className="space-y-4 outline-none">
           {symptomGroups.map((group, groupIdx) => (
-            <Card key={groupIdx} className="border-border shadow-sm">
-              <CardHeader className="bg-muted/10 border-b border-border/40 pb-4">
-                <CardTitle className="text-base font-bold">{group.title}</CardTitle>
-                <CardDescription className="text-xs">{group.description}</CardDescription>
+            <Card key={groupIdx} className="border-border shadow-sm overflow-hidden bg-card/75 backdrop-blur-sm">
+              <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
+                <CardTitle className="text-sm sm:text-base font-extrabold">{group.title}</CardTitle>
+                <CardDescription className="text-[11px] sm:text-xs font-semibold text-muted-foreground">{group.description}</CardDescription>
               </CardHeader>
               <CardContent className="p-0 divide-y divide-border/40">
                 {group.items.map((item) => (
-                  <div key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-4">
-                    <div className="space-y-1 max-w-md">
-                      <Label className="text-sm sm:text-base font-bold text-foreground">{item.label}</Label>
-                      <p className="text-xs text-muted-foreground leading-normal">{item.desc}</p>
+                  <div key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-3">
+                    <div className="space-y-0.5 max-w-md">
+                      <Label className="text-xs sm:text-sm font-extrabold text-foreground">{item.label}</Label>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed font-semibold">{item.desc}</p>
                     </div>
 
                     {/* Selector thang điểm 0-3 */}
-                    <div className="flex items-center gap-1.5 self-start sm:self-center">
-                      {[0, 1, 2, 3].map((val) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => handleSymptomChange(item.key, val)}
-                          className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl font-bold text-sm border transition-all ${
-                            symptoms[item.key] === val
-                              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                              : "bg-background border-border text-muted-foreground hover:bg-muted"
-                          }`}
-                        >
-                          {val === 0 ? "0" : `+${val}`}
-                        </button>
-                      ))}
-                      <span className="text-[11px] font-semibold text-muted-foreground ml-2">
-                        {symptoms[item.key] === 0 ? "Không bị" :
+                    <div className="flex items-center gap-2 self-start sm:self-center w-full sm:w-auto justify-between sm:justify-start">
+                      <div className="flex items-center gap-1.5">
+                        {[0, 1, 2, 3].map((val) => (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => handleSymptomChange(item.key, val)}
+                            className={`w-9 h-9 sm:w-11 sm:h-11 rounded-lg font-bold text-xs border transition-all active:scale-95 ${
+                              symptoms[item.key] === val
+                                ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/10"
+                                : "bg-background border-border text-muted-foreground hover:bg-muted"
+                            }`}
+                          >
+                            {val === 0 ? "0" : `+${val}`}
+                          </button>
+                        ))}
+                      </div>
+                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-lg border shrink-0 ${
+                        symptoms[item.key] === 0 
+                          ? "text-muted-foreground bg-muted/40 border-border/60" 
+                          : symptoms[item.key] === 1 
+                            ? "text-green-600 bg-green-50 dark:bg-green-950/20 border-green-200" 
+                            : symptoms[item.key] === 2 
+                              ? "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200" 
+                              : "text-red-500 bg-red-50 dark:bg-red-950/20 border-red-200"
+                      }`}>
+                        {symptoms[item.key] === 0 ? "Không" :
                          symptoms[item.key] === 1 ? "Nhẹ" :
-                         symptoms[item.key] === 2 ? "Trung bình" : "Nặng"}
+                         symptoms[item.key] === 2 ? "Vừa" : "Nặng"}
                       </span>
                     </div>
                   </div>
@@ -206,7 +216,7 @@ export default function LogPage() {
           <div className="flex justify-end pt-2">
             <Button
               onClick={handleSaveLog}
-              className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-base font-bold flex items-center gap-2 shadow-md w-full sm:w-auto"
+              className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
               disabled={loading}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
@@ -217,45 +227,45 @@ export default function LogPage() {
 
         {/* TAB 2: Sleep Form */}
         <TabsContent value="sleep" className="outline-none">
-          <Card className="border-border shadow-sm max-w-2xl">
-            <CardHeader className="bg-muted/10 border-b border-border/40 pb-4">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <Moon className="w-5 h-5 text-primary" /> Thông tin giấc ngủ ban đêm
+          <Card className="border-border shadow-sm max-w-2xl bg-card/75 backdrop-blur-sm">
+            <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
+              <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
+                <Moon className="w-4 h-4 text-primary" /> Thông tin giấc ngủ ban đêm
               </CardTitle>
               <CardDescription className="text-xs">
-                Mất ngủ là triệu chứng phổ biến trong thời kỳ tiền mãn kinh. Hãy theo dõi kỹ.
+                Theo dõi thời gian và chất lượng giấc ngủ để phát hiện sớm rối loạn giấc ngủ tuổi tiền mãn kinh.
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-6 space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <CardContent className="p-4 sm:p-6 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Giờ đi ngủ */}
-                <div className="space-y-2">
-                  <Label htmlFor="bedTime" className="text-sm font-semibold">Giờ đi ngủ</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="bedTime" className="text-xs font-bold text-muted-foreground uppercase">Giờ đi ngủ</Label>
                   <Input
                     id="bedTime"
                     type="time"
                     value={sleep.bedTime}
                     onChange={(e) => setSleep((prev) => ({ ...prev, bedTime: e.target.value }))}
-                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    className="h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                   />
                 </div>
 
                 {/* Giờ thức dậy */}
-                <div className="space-y-2">
-                  <Label htmlFor="wakeTime" className="text-sm font-semibold">Giờ thức dậy</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="wakeTime" className="text-xs font-bold text-muted-foreground uppercase">Giờ thức dậy</Label>
                   <Input
                     id="wakeTime"
                     type="time"
                     value={sleep.wakeTime}
                     onChange={(e) => setSleep((prev) => ({ ...prev, wakeTime: e.target.value }))}
-                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    className="h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                   />
                 </div>
 
                 {/* Số lần thức giấc */}
-                <div className="space-y-2">
-                  <Label htmlFor="awakenings" className="text-sm font-semibold">Số lần thức giấc trong đêm</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="awakenings" className="text-xs font-bold text-muted-foreground uppercase">Số lần thức giấc trong đêm</Label>
                   <Input
                     id="awakenings"
                     type="number"
@@ -263,15 +273,15 @@ export default function LogPage() {
                     max="30"
                     value={sleep.awakenings}
                     onChange={(e) => setSleep((prev) => ({ ...prev, awakenings: parseInt(e.target.value) || 0 }))}
-                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    className="h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                   />
                 </div>
 
                 {/* Chất lượng giấc ngủ */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <Label htmlFor="quality" className="text-sm font-semibold">Chất lượng giấc ngủ tự đánh giá</Label>
-                    <span className="text-sm font-bold text-primary">{sleep.quality} / 10</span>
+                    <Label htmlFor="quality" className="text-xs font-bold text-muted-foreground uppercase">Chất lượng ngủ tự đánh giá</Label>
+                    <span className="text-xs font-extrabold text-primary bg-secondary/30 px-2 py-0.5 rounded-md">{sleep.quality} / 10</span>
                   </div>
                   <Input
                     id="quality"
@@ -287,19 +297,19 @@ export default function LogPage() {
 
               {/* Tự động tính toán hiển thị */}
               {sleepDurMinutes > 0 && (
-                <div className="p-4 bg-muted/50 border border-border rounded-xl flex items-center justify-between text-sm font-semibold">
+                <div className="p-3.5 bg-primary/5 border border-primary/10 rounded-xl flex items-center justify-between text-xs sm:text-sm font-bold shadow-inner">
                   <span className="text-muted-foreground">Tổng thời lượng ngủ thực tế:</span>
-                  <span className="text-foreground text-base font-black">
+                  <span className="text-primary text-sm sm:text-base font-black">
                     {sleepDurHours} tiếng ({sleepDurMinutes} phút)
                   </span>
                 </div>
               )}
             </CardContent>
 
-            <CardFooter className="flex justify-end p-6 border-t border-border/40">
+            <CardFooter className="flex justify-end p-4 border-t border-border/40">
               <Button
                 onClick={handleSaveLog}
-                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-base font-bold flex items-center gap-2 shadow-md w-full sm:w-auto"
+                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
                 disabled={loading}
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
@@ -311,21 +321,21 @@ export default function LogPage() {
 
         {/* TAB 3: Mood Form */}
         <TabsContent value="mood" className="outline-none">
-          <Card className="border-border shadow-sm max-w-2xl">
-            <CardHeader className="bg-muted/10 border-b border-border/40 pb-4">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <MoodIcon className="w-5 h-5 text-primary" /> Cảm xúc & Ghi chú tự do
+          <Card className="border-border shadow-sm max-w-2xl bg-card/75 backdrop-blur-sm">
+            <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
+              <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
+                <MoodIcon className="w-4 h-4 text-primary" /> Cảm xúc & Ghi chú tự do
               </CardTitle>
               <CardDescription className="text-xs">
-                Tâm trạng thay đổi thất thường là một khía cạnh quan trọng của thay đổi nội tiết tố.
+                Ghi nhận biến động tâm trạng hàng ngày để theo dõi ảnh hưởng của thay đổi nội tiết tố.
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-6 space-y-6">
-              {/* Lựa chọn Emoji cảm xúc */}
+            <CardContent className="p-4 sm:p-6 space-y-6">
+              {/* Lựa chọn Emoji cảm xúc - Tối ưu 5 cột trên một dòng */}
               <div className="space-y-3">
-                <Label className="text-sm font-semibold">Hôm nay bạn cảm thấy thế nào?</Label>
-                <div className="flex flex-wrap gap-3">
+                <Label className="text-xs sm:text-sm font-bold text-muted-foreground uppercase">Hôm nay chị cảm thấy thế nào?</Label>
+                <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
                   {moodOptions.map((opt) => {
                     const Icon = opt.icon;
                     const isSelected = mood.level === opt.level;
@@ -334,14 +344,15 @@ export default function LogPage() {
                         key={opt.level}
                         type="button"
                         onClick={() => setMood((prev) => ({ ...prev, level: opt.level }))}
-                        className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all flex-1 min-w-[70px] ${
+                        className={`flex flex-col items-center justify-center p-1.5 sm:p-3 rounded-xl border transition-all active:scale-95 ${
                           isSelected 
-                            ? "bg-primary border-primary text-primary-foreground shadow-md font-bold"
+                            ? "bg-primary border-primary text-primary-foreground shadow-md shadow-primary/20 font-bold"
                             : "bg-background border-border text-muted-foreground hover:bg-muted"
                         }`}
+                        style={{ WebkitTapHighlightColor: "transparent" }}
                       >
-                        <Icon className={`w-7 h-7 mb-1.5 ${isSelected ? "text-primary-foreground" : "text-primary"}`} />
-                        <span className="text-[11px] tracking-wide">{opt.label}</span>
+                        <Icon className={`w-5 h-5 sm:w-7 sm:h-7 mb-1 ${isSelected ? "text-primary-foreground" : "text-primary"}`} />
+                        <span className="text-[9px] sm:text-[10px] font-bold tracking-tight text-center truncate w-full">{opt.label}</span>
                       </button>
                     );
                   })}
@@ -351,7 +362,7 @@ export default function LogPage() {
               {/* Ghi chú & micro */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <Label htmlFor="note" className="text-sm font-semibold">Ghi chú tự do (Nhập hoặc Nói)</Label>
+                  <Label htmlFor="note" className="text-xs font-bold text-muted-foreground uppercase">Ghi chú tự do (Nhập hoặc Nói)</Label>
                   
                   {/* Speech to text button */}
                   {browserSupportsSpeech && (
@@ -359,10 +370,10 @@ export default function LogPage() {
                       type="button"
                       variant="outline"
                       onClick={toggleListening}
-                      className={`h-9 px-3 rounded-xl flex items-center gap-1.5 text-xs font-semibold ${
+                      className={`h-8 px-3 rounded-lg flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 ${
                         isListening 
                           ? "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900 animate-pulse" 
-                          : "hover:bg-muted text-primary"
+                          : "hover:bg-muted text-primary border-border"
                       }`}
                     >
                       {isListening ? (
@@ -382,16 +393,16 @@ export default function LogPage() {
                   id="note"
                   placeholder={
                     isListening 
-                      ? "Đang lắng nghe giọng nói của bạn... Hãy nói rõ ràng." 
-                      : "Hôm nay có gì đặc biệt? Bạn có triệu chứng nào lạ không? Hãy viết ra đây (hoặc nhấn nút Nói tiếng Việt)."
+                      ? "Đang lắng nghe giọng nói của chị... Hãy nói rõ ràng." 
+                      : "Hôm nay có gì đặc biệt? Chị có triệu chứng nào lạ không? Hãy viết ra đây (hoặc nhấn nút Nói tiếng Việt)."
                   }
                   value={mood.note}
                   onChange={(e) => setMood((prev) => ({ ...prev, note: e.target.value }))}
-                  className="min-h-[120px] rounded-xl border-border bg-background focus:ring-primary text-base leading-relaxed"
+                  className="min-h-[100px] rounded-xl border-border bg-background focus:ring-primary text-sm sm:text-base leading-relaxed font-semibold p-3"
                   disabled={isListening}
                 />
-                <p className="text-[11px] text-muted-foreground leading-normal flex items-start gap-1">
-                  <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <p className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold leading-normal flex items-start gap-1 p-1 bg-muted/20 rounded-lg">
+                  <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary" />
                   <span>
                     Tính năng giọng nói sử dụng Web Speech API được tối ưu trên Google Chrome & Safari.
                   </span>
@@ -399,10 +410,10 @@ export default function LogPage() {
               </div>
             </CardContent>
 
-            <CardFooter className="flex justify-end p-6 border-t border-border/40">
+            <CardFooter className="flex justify-end p-4 border-t border-border/40">
               <Button
                 onClick={handleSaveLog}
-                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-base font-bold flex items-center gap-2 shadow-md w-full sm:w-auto"
+                className="h-12 px-8 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-transform"
                 disabled={loading}
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}

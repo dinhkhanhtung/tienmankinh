@@ -157,30 +157,55 @@ export function Navigation({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* MOBILE BOTTOM NAVIGATION */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border h-16 flex items-center justify-around z-40 text-foreground">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-lg border-t border-border/80 h-16 flex items-center justify-around z-40 text-foreground shadow-lg shadow-black/5 pb-safe">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
+          
+          // Định nghĩa nhãn ngắn cho di động
+          let mobileLabel = "";
+          if (item.name === "Tổng quan") mobileLabel = "Trang chủ";
+          else if (item.name === "Lịch chu kỳ") mobileLabel = "Lịch";
+          else if (item.name === "AI Coach") mobileLabel = "AI Coach";
+          else if (item.name === "Hồ sơ") mobileLabel = "Hồ sơ";
+
+          if (item.highlight) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex flex-col items-center justify-center flex-1 select-none relative -top-3 h-full"
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-md active:scale-95 ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-primary/30"
+                    : "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-primary/20 hover:opacity-95"
+                }`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-bold text-primary mt-1 select-none">Ghi chép</span>
+              </Link>
+            );
+          }
+
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-xs font-semibold gap-1 select-none transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`flex flex-col items-center justify-center flex-1 h-full py-1 text-[10px] font-bold select-none transition-colors ${
+                isActive ? "text-primary" : "text-muted-foreground"
               }`}
+              style={{ WebkitTapHighlightColor: "transparent" }}
             >
-              <div className={`p-1.5 rounded-full ${
-                item.highlight 
-                  ? isActive 
-                    ? "bg-primary text-primary-foreground" 
-                    : "bg-secondary text-primary"
-                  : isActive
-                    ? "bg-secondary text-primary"
-                    : "hover:bg-muted"
+              <div className={`p-1.5 rounded-xl transition-all ${
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "hover:bg-muted"
               }`}>
                 <Icon className="w-5 h-5" />
               </div>
-              <span className="scale-90">{item.name}</span>
+              <span className="mt-0.5 tracking-tight">{mobileLabel}</span>
             </Link>
           );
         })}

@@ -159,83 +159,83 @@ export default function ProfilePage() {
   const bmiCat = bmi > 0 ? getBmiCategory(bmi) : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Hồ sơ sức khỏe</h1>
-        <p className="text-sm sm:text-base text-muted-foreground mt-1">
-          Quản lý thông tin thể chất và sinh học để tối ưu hóa dự báo sức khỏe
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground sm:text-3xl">Hồ sơ sức khỏe</h1>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-semibold leading-relaxed">
+          Quản lý thông tin thể chất, sinh học và cài đặt thông báo nhắc nhở sức khỏe hàng ngày.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left side Card: Summary & BMI */}
-        <Card className="border-border shadow-sm h-fit">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto w-20 h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-bold text-3xl mb-3 shadow-inner">
+        <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="text-center pb-4 bg-muted/10 border-b border-border/40">
+            <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner">
               {profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"}
             </div>
-            <CardTitle className="text-lg font-bold">{profile.displayName}</CardTitle>
-            <CardDescription className="text-sm font-medium">{profile.email}</CardDescription>
+            <CardTitle className="text-base sm:text-lg font-extrabold mt-2">{profile.displayName}</CardTitle>
+            <CardDescription className="text-xs font-semibold text-muted-foreground">{profile.email}</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 pt-0 border-t border-border/50 p-6">
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Thông số thể hình</span>
-              <div className="grid grid-cols-2 gap-4 mt-2">
-                <div className="bg-muted/40 p-3 rounded-xl border border-border/50 text-center">
-                  <div className="text-xs text-muted-foreground font-semibold">Chiều cao</div>
-                  <div className="text-lg font-extrabold text-foreground mt-0.5">{profile.height} cm</div>
+          <CardContent className="space-y-5 p-5">
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Thông số thể hình</span>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
+                  <div className="text-[10px] text-muted-foreground font-bold uppercase">Chiều cao</div>
+                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">{profile.height} cm</div>
                 </div>
-                <div className="bg-muted/40 p-3 rounded-xl border border-border/50 text-center">
-                  <div className="text-xs text-muted-foreground font-semibold">Cân nặng</div>
-                  <div className="text-lg font-extrabold text-foreground mt-0.5">{profile.weight} kg</div>
+                <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
+                  <div className="text-[10px] text-muted-foreground font-bold uppercase">Cân nặng</div>
+                  <div className="text-base sm:text-lg font-black text-foreground mt-0.5">{profile.weight} kg</div>
                 </div>
               </div>
             </div>
 
             {profile.bmi && (
-              <div className="space-y-2 mt-4 pt-4 border-t border-border/40">
-                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Chỉ số BMI hiện tại</span>
-                <div className="flex items-center justify-between mt-2">
+              <div className="space-y-2.5 pt-4 border-t border-border/40">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Chỉ số BMI hiện tại</span>
+                <div className="flex items-center justify-between">
                   <div className="text-2xl font-black text-primary">{profile.bmi}</div>
                   {bmiCat && (
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${bmiCat.color}`}>
+                    <span className={`text-xs font-bold px-3 py-0.5 rounded-full ${bmiCat.color}`}>
                       {bmiCat.label}
                     </span>
                   )}
                 </div>
-                <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden mt-2 relative">
-                  {/* Một thanh BMI đơn giản */}
+                <div className="w-full bg-secondary/40 h-2.5 rounded-full overflow-hidden relative">
                   <div 
                     className="bg-primary h-full rounded-full transition-all duration-300"
                     style={{ width: `${Math.min((profile.bmi / 40) * 100, 100)}%` }}
                   ></div>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  * BMI = Cân nặng (kg) / [Chiều cao (m)]². BMI bình thường dao động từ 18.5 - 24.9.
+                <p className="text-[10px] text-muted-foreground leading-relaxed font-semibold">
+                  * Chỉ số khối cơ thể (BMI) bình thường dao động từ 18.5 - 24.9.
                 </p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border shadow-sm h-fit">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" /> Báo cáo & Thiết lập
+        {/* Card 2: Reports & Settings */}
+        <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="pb-3 bg-muted/10 border-b border-border/40 p-4">
+            <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" /> Báo cáo & Thiết lập
             </CardTitle>
             <CardDescription className="text-xs">
-              Xuất dữ liệu sức khỏe và cài đặt thông báo nhắc nhở.
+              Xuất dữ liệu sức khỏe định kỳ và quản lý thông báo.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 p-6 pt-0 border-t border-border/40">
+          <CardContent className="space-y-4 p-4 sm:p-5">
             {/* Nhắc nhở ghi log */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-1">
               <div className="space-y-0.5 max-w-[70%]">
-                <Label htmlFor="notify-switch" className="text-sm font-semibold flex items-center gap-1.5 cursor-pointer">
-                  <Bell className="w-4 h-4 text-primary" /> Nhắc nhở hàng ngày
+                <Label htmlFor="notify-switch" className="text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer">
+                  <Bell className="w-4 h-4 text-primary" /> Nhắc nhở mỗi ngày
                 </Label>
-                <p className="text-[10px] text-muted-foreground leading-normal">
-                  Gửi thông báo nhắc nhở ghi nhật ký lúc 21:00 mỗi tối
+                <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
+                  Nhận thông báo nhắc nhở ghi nhật ký lúc 21:00 tối
                 </p>
               </div>
               <Switch
@@ -247,8 +247,8 @@ export default function ProfilePage() {
             </div>
 
             {/* Xuất báo cáo */}
-            <div className="space-y-2 pt-4 border-t border-border/40">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">Xuất báo cáo sức khỏe</span>
+            <div className="space-y-2.5 pt-4 border-t border-border/40">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Xuất báo cáo sức khỏe</span>
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={() => router.push("/report?range=3")}
@@ -288,104 +288,104 @@ export default function ProfilePage() {
         </Card>
 
         {/* Right side Form: Edit Profile */}
-        <Card className="lg:col-span-2 border-border shadow-sm">
-          <CardHeader className="bg-muted/10 border-b border-border/40 pb-4">
-            <CardTitle className="text-lg font-bold flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" /> Thông tin cá nhân
+        <Card className="lg:col-span-2 border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="bg-muted/10 border-b border-border/40 p-4 sm:p-5">
+            <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
+              <User className="w-4 h-4 text-primary" /> Thông tin cá nhân
             </CardTitle>
-            <CardDescription className="text-sm">
-              Cập nhật thông tin chi tiết để các thuật toán phân tích chính xác hơn.
+            <CardDescription className="text-xs">
+              Cập nhật thông tin sinh học chính xác giúp AI Coach phân tích chính xác nhất.
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <form onSubmit={handleSave} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Tên */}
-                <div className="space-y-2">
-                  <Label htmlFor="displayName" className="text-sm font-semibold text-foreground">Họ và Tên</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="displayName" className="text-xs font-bold text-muted-foreground uppercase">Họ và Tên</Label>
                   <Input
                     id="displayName"
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    className="h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                     required
                   />
                 </div>
 
                 {/* Năm sinh */}
-                <div className="space-y-2">
-                  <Label htmlFor="birthYear" className="text-sm font-semibold text-foreground">Năm sinh</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="birthYear" className="text-xs font-bold text-muted-foreground uppercase">Năm sinh</Label>
                   <Input
                     id="birthYear"
                     type="number"
                     value={birthYear}
                     onChange={(e) => setBirthYear(e.target.value)}
-                    className="h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                    className="h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                     required
                   />
                 </div>
 
                 {/* Chiều cao */}
-                <div className="space-y-2">
-                  <Label htmlFor="height" className="text-sm font-semibold text-foreground">Chiều cao (cm)</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="height" className="text-xs font-bold text-muted-foreground uppercase">Chiều cao (cm)</Label>
                   <div className="relative">
-                    <Scale className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Scale className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
                       id="height"
                       type="number"
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      className="pl-11 h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Cân nặng */}
-                <div className="space-y-2">
-                  <Label htmlFor="weight" className="text-sm font-semibold text-foreground">Cân nặng (kg)</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="weight" className="text-xs font-bold text-muted-foreground uppercase">Cân nặng (kg)</Label>
                   <div className="relative">
-                    <Activity className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Activity className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
                       id="weight"
                       type="number"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
-                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      className="pl-11 h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Tuổi có kinh */}
-                <div className="space-y-2">
-                  <Label htmlFor="periodAge" className="text-sm font-semibold text-foreground">Tuổi có kinh lần đầu</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="periodAge" className="text-xs font-bold text-muted-foreground uppercase">Tuổi có kinh lần đầu</Label>
                   <div className="relative">
-                    <Sparkles className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Sparkles className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
                       id="periodAge"
                       type="number"
                       value={periodAge}
                       onChange={(e) => setPeriodAge(e.target.value)}
-                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      className="pl-11 h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                       required
                     />
                   </div>
                 </div>
 
                 {/* Số con */}
-                <div className="space-y-2">
-                  <Label htmlFor="childrenCount" className="text-sm font-semibold text-foreground">Số con đã sinh</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="childrenCount" className="text-xs font-bold text-muted-foreground uppercase">Số con đã sinh</Label>
                   <div className="relative">
-                    <Baby className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
+                    <Baby className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                     <Input
                       id="childrenCount"
                       type="number"
                       value={childrenCount}
                       onChange={(e) => setChildrenCount(e.target.value)}
-                      className="pl-11 h-12 rounded-xl border-border bg-background focus:ring-primary text-base"
+                      className="pl-11 h-11 rounded-xl border-border bg-background focus:ring-primary text-sm font-semibold"
                       required
                     />
                   </div>
@@ -393,13 +393,13 @@ export default function ProfilePage() {
               </div>
 
               {bmi > 0 && (
-                <div className="p-4 bg-muted border border-border rounded-xl flex items-center justify-between text-sm">
+                <div className="p-3.5 bg-muted border border-border rounded-xl flex items-center justify-between text-xs font-bold shadow-inner">
                   <div>
-                    <span className="text-muted-foreground font-semibold">BMI ước tính: </span>
-                    <span className="font-bold text-foreground">{bmi}</span>
+                    <span className="text-muted-foreground">BMI ước tính: </span>
+                    <span className="text-foreground text-sm font-black">{bmi}</span>
                   </div>
                   {bmiCat && (
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${bmiCat.color}`}>
+                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${bmiCat.color}`}>
                       {bmiCat.label}
                     </span>
                   )}
@@ -408,12 +408,12 @@ export default function ProfilePage() {
 
               <Button
                 type="submit"
-                className="w-full sm:w-auto h-12 px-8 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center transition-colors"
+                className="w-full sm:w-auto h-11 px-8 text-xs sm:text-sm font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center transition-colors active:scale-98"
                 disabled={loading}
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin mr-2" /> Đang cập nhật...
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang cập nhật...
                   </>
                 ) : (
                   "Lưu thay đổi"
