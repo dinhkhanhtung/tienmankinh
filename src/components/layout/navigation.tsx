@@ -150,14 +150,14 @@ export function Navigation({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col overflow-y-auto pb-16 md:pb-0 relative bg-background">
+      <main className="flex-1 flex flex-col overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0 relative bg-background">
         <div className="flex-1 p-4 sm:p-6 md:p-8 max-w-5xl w-full mx-auto">
           {children}
         </div>
       </main>
 
       {/* MOBILE BOTTOM NAVIGATION */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-lg border-t border-border/80 h-16 flex items-center justify-around z-40 text-foreground shadow-lg shadow-black/5 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-lg border-t border-border/80 h-16 flex items-center justify-around z-50 text-foreground shadow-lg shadow-black/5 pb-safe" style={{ touchAction: "manipulation" }}>
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
