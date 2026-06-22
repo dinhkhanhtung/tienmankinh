@@ -151,7 +151,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0 relative bg-background">
-        <div className="flex-1 p-4 sm:p-6 md:p-8 max-w-5xl w-full mx-auto">
+        <div className="flex-1 p-4 sm:p-6 md:p-8 max-w-[1400px] w-full mx-auto">
           {children}
         </div>
       </main>
