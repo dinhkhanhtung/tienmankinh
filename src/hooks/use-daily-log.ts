@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAuthStore } from "@/store/use-auth-store";
 import { useLogStore } from "@/store/use-log-store";
 import { db } from "@/lib/firebase";
@@ -99,7 +99,7 @@ export function useDailyLog() {
   };
 
   // 3. Lấy log của ngày cụ thể (từ cache local store hoặc trả về mặc định)
-  const getLogForDate = (date: string): DailyLog => {
+  const getLogForDate = useCallback((date: string): DailyLog => {
     const existingLog = dailyLogs[date];
     if (existingLog) return existingLog;
 
@@ -115,10 +115,10 @@ export function useDailyLog() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-  };
+  }, [dailyLogs, user]);
 
   // 4. Lưu log vào Firestore và Zustand cache
-  const saveLog = async (
+  const saveLog = useCallback(async (
     date: string, 
     symptoms: SymptomCategory, 
     sleep: SleepData, 
@@ -161,7 +161,7 @@ export function useDailyLog() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, dailyLogs, setDailyLog]);
 
   return {
     loading,

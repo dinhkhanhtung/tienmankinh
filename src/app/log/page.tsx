@@ -25,13 +25,14 @@ export default function LogPage() {
   const [sleep, setSleep] = useState(DEFAULT_SLEEP);
   const [mood, setMood] = useState(DEFAULT_MOOD);
 
-  // Sync local state khi ngày thay đổi hoặc log được lấy
+  // Sync local state chỉ khi người dùng chọn ngày khác
   useEffect(() => {
     const log = getLogForDate(selectedDate);
     setSymptoms(log.symptoms);
     setSleep(log.sleep);
     setMood(log.mood);
-  }, [selectedDate, getLogForDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
 
   // Thiết lập Voice Recognition cho ghi chú tâm trạng
   const handleTranscript = (text: string) => {
