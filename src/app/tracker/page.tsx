@@ -306,11 +306,11 @@ function TrackerContent() {
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 py-2">
             {/* Khung chứa Calendar bo góc bồng bềnh */}
-            <div className="p-3 sm:p-5 border border-border/60 bg-muted/15 rounded-[28px] w-full max-w-[325px] md:max-w-[340px] flex justify-center overflow-hidden shadow-inner shrink-0">
+            <div className="p-3 sm:p-5 border border-border/60 bg-muted/15 rounded-[28px] w-full max-w-[360px] md:max-w-[380px] flex justify-center overflow-hidden shadow-inner shrink-0">
               <Calendar
                 mode="single"
                 locale={vi}
-                className="rounded-2xl p-0"
+                className="rounded-2xl p-0 w-full [--cell-size:2.5rem] sm:[--cell-size:2.8rem] md:[--cell-size:3rem] flex justify-center"
                 modifiers={modifiers}
                 modifiersStyles={modifiersStyles}
               />

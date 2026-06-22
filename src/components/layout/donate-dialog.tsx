@@ -264,15 +264,6 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
             )}
           </Button>
         )}
-        
-        <button
-          onClick={() => {
-            if (onOpenChange) onOpenChange(false);
-          }}
-          className="text-[10px] text-muted-foreground font-bold hover:text-foreground text-center py-1 transition-colors cursor-pointer"
-        >
-          Để sau
-        </button>
       </div>
     </DialogContent>
   );

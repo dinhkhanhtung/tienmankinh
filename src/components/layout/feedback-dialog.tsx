@@ -170,7 +170,7 @@ export function FeedbackDialog({ trigger, open: controlledOpen, onOpenChange: co
 
         {/* Lời nhắn gửi */}
         <p className="text-[10px] text-muted-foreground/80 leading-normal font-medium italic">
-          * Ý kiến của bạn sẽ được gửi trực tiếp đến đội ngũ quản trị qua Telegram và lưu trong hệ thống Notion để theo dõi, xử lý sớm nhất.
+          * Ý kiến đóng góp của chị sẽ được gửi trực tiếp đến ban quản trị để theo dõi và xử lý sớm nhất.
         </p>
 
         {/* Nút gửi */}

@@ -163,6 +163,17 @@ export default function LogPage() {
     }
   };
 
+  const handleTabChange = (value: string) => {
+    if (typeof window !== "undefined") {
+      const element = document.getElementById("log-title-area");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
   const sleepDurMinutes = calculateSleepDuration(sleep.bedTime, sleep.wakeTime);
   const sleepDurHours = (sleepDurMinutes / 60).toFixed(1);
 
@@ -176,9 +187,9 @@ export default function LogPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-8 page-transition max-w-5xl mx-auto px-4 sm:px-0">
+    <div className="space-y-6 pb-8 page-transition w-full">
       {/* Title & Date Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div id="log-title-area" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground sm:text-3xl">Nhật ký sức khỏe</h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-semibold leading-relaxed">
@@ -224,7 +235,7 @@ export default function LogPage() {
       </div>
 
       {/* Main Forms Layout */}
-      <Tabs defaultValue="symptoms" className="w-full">
+      <Tabs defaultValue="symptoms" onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid grid-cols-4 w-full max-w-lg h-11 bg-muted/60 p-1 rounded-xl mb-6 shadow-inner">
           <TabsTrigger value="symptoms" className="rounded-lg font-bold text-[10px] sm:text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Flame className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Triệu chứng
@@ -241,7 +252,7 @@ export default function LogPage() {
         </TabsList>
 
         {/* TAB 1: Symptoms Form */}
-        <TabsContent value="symptoms" className="space-y-4 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+        <TabsContent value="symptoms" className="space-y-4 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[600px]">
           {symptomGroups.map((group, groupIdx) => (
             <Card key={groupIdx} className="border-border shadow-sm overflow-hidden glass-card w-full">
               <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
@@ -310,7 +321,7 @@ export default function LogPage() {
         </TabsContent>
 
         {/* TAB 2: Sleep Form */}
-        <TabsContent value="sleep" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+        <TabsContent value="sleep" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[600px]">
           <Card className="border-border shadow-sm w-full glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
@@ -393,7 +404,7 @@ export default function LogPage() {
         </TabsContent>
 
         {/* TAB 3: Mood Form */}
-        <TabsContent value="mood" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+        <TabsContent value="mood" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[600px]">
           <Card className="border-border shadow-sm w-full glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
@@ -494,7 +505,7 @@ export default function LogPage() {
         </TabsContent>
 
         {/* TAB 4: Voice Journaling Form (Mockup 4) */}
-        <TabsContent value="voice" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+        <TabsContent value="voice" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[600px]">
           <Card className="border-border shadow-sm w-full glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
