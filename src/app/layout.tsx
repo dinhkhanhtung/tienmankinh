@@ -12,6 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tienmankinh.vercel.app"),
   title: "Tiền Mãn Kinh - Theo Dõi Sức Khỏe Phụ Nữ Trung Niên",
   description: "Ứng dụng hỗ trợ phụ nữ từ 40–55 tuổi theo dõi chu kỳ kinh nguyệt, triệu chứng tiền mãn kinh, giấc ngủ, tâm trạng và nhận tư vấn sức khỏe từ AI Coach.",
   manifest: "/manifest.json",
@@ -23,6 +24,28 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+  openGraph: {
+    title: "Tiền Mãn Kinh - Đồng Hành Cùng Sức Khỏe Phụ Nữ Tuổi 40+",
+    description: "Theo dõi chu kỳ - Hiểu cơ thể - Sống an yên. Ứng dụng hỗ trợ theo dõi sức khỏe và tư vấn y khoa tự nhiên.",
+    url: "https://tienmankinh.vercel.app/",
+    siteName: "Tiền Mãn Kinh",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1000,
+        height: 620,
+        alt: "Tiền Mãn Kinh - Đồng hành cùng sức khỏe phụ nữ tuổi 40+",
+      }
+    ],
+    locale: "vi_VN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tiền Mãn Kinh - Đồng Hành Cùng Sức Khỏe Phụ Nữ Tuổi 40+",
+    description: "Theo dõi chu kỳ - Hiểu cơ thể - Sống an yên. Ứng dụng hỗ trợ theo dõi sức khỏe và tư vấn y khoa tự nhiên.",
+    images: ["/og-image.jpg"],
+  }
 };
 
 export const viewport: Viewport = {
