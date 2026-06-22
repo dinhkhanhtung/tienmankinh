@@ -35,25 +35,25 @@ export async function POST(req: NextRequest) {
       try {
         const actionText = action === "onboarding" ? "🆕 KHÁCH HÀNG MỚI ĐĂNG KÝ!" : "🔄 CẬP NHẬT THÔNG TIN HỒ SƠ!";
         
-        let telegramMessage = `🔔 *${actionText}*\n\n`;
-        telegramMessage += `👤 *Thông tin tài khoản:*\n`;
-        telegramMessage += `- *Họ tên:* ${displayName}\n`;
-        telegramMessage += `- *Email:* ${email}\n`;
-        telegramMessage += `- *UID:* \`${uid}\`\n`;
-        if (age) telegramMessage += `- *Tuổi:* ${age} tuổi (Năm sinh: ${birthYear})\n`;
+        let telegramMessage = `🔔 <b>${actionText}</b>\n\n`;
+        telegramMessage += `👤 <b>Thông tin tài khoản:</b>\n`;
+        telegramMessage += `- <b>Họ tên:</b> ${displayName}\n`;
+        telegramMessage += `- <b>Email:</b> ${email}\n`;
+        telegramMessage += `- <b>UID:</b> <code>${uid}</code>\n`;
+        if (age) telegramMessage += `- <b>Tuổi:</b> ${age} tuổi (Năm sinh: ${birthYear})\n`;
         
-        telegramMessage += `\n📊 *Chỉ số thể chất:*\n`;
-        if (height) telegramMessage += `- *Chiều cao:* ${height} cm\n`;
-        if (weight) telegramMessage += `- *Cân nặng:* ${weight} kg\n`;
-        if (bmi) telegramMessage += `- *BMI:* ${bmi}\n`;
+        telegramMessage += `\n📊 <b>Chỉ số thể chất:</b>\n`;
+        if (height) telegramMessage += `- <b>Chiều cao:</b> ${height} cm\n`;
+        if (weight) telegramMessage += `- <b>Cân nặng:</b> ${weight} kg\n`;
+        if (bmi) telegramMessage += `- <b>BMI:</b> ${bmi}\n`;
         
-        telegramMessage += `\n🌸 *Thông tin chu kỳ & sinh sản:*\n`;
-        if (periodAge) telegramMessage += `- *Tuổi dậy thì:* ${periodAge} tuổi\n`;
-        if (childrenCount !== undefined) telegramMessage += `- *Số con:* ${childrenCount}\n`;
-        if (lastPeriodDate) telegramMessage += `- *Kỳ kinh gần nhất:* ${lastPeriodDate}\n`;
-        if (cycleLength) telegramMessage += `- *Độ dài chu kỳ:* ${cycleLength} ngày\n`;
+        telegramMessage += `\n🌸 <b>Thông tin chu kỳ & sinh sản:</b>\n`;
+        if (periodAge) telegramMessage += `- <b>Tuổi dậy thì:</b> ${periodAge} tuổi\n`;
+        if (childrenCount !== undefined) telegramMessage += `- <b>Số con:</b> ${childrenCount}\n`;
+        if (lastPeriodDate) telegramMessage += `- <b>Kỳ kinh gần nhất:</b> ${lastPeriodDate}\n`;
+        if (cycleLength) telegramMessage += `- <b>Độ dài chu kỳ:</b> ${cycleLength} ngày\n`;
         
-        telegramMessage += `\n⏰ *Thời gian:* ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}`;
+        telegramMessage += `\n⏰ <b>Thời gian:</b> ${new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" })}`;
 
         await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
           method: "POST",
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             chat_id: telegramChatId,
             text: telegramMessage,
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
           }),
         });
       } catch (tgError) {
