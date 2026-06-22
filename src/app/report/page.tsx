@@ -9,7 +9,7 @@ import { useCycles } from "@/hooks/use-cycles";
 import { Button } from "@/components/ui/button";
 import { 
   Printer, ArrowLeft, Heart, Sparkles, 
-  ShieldAlert, Activity, FileText, Calendar, Loader2,
+  ShieldAlert, Activity, Calendar, Loader2,
   Copy, MessageCircle
 } from "lucide-react";
 import { format, subMonths, parseISO, isAfter } from "date-fns";
@@ -148,13 +148,13 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
   };
 
   return (
-    <div className="min-h-screen bg-white text-black p-4 sm:p-8 max-w-4xl mx-auto print:p-0 print:max-w-full">
+    <div className="min-h-screen bg-transparent text-foreground p-0 sm:p-4 w-full max-w-4xl mx-auto print:bg-white print:text-black print:p-0 print:max-w-full page-transition">
       {/* Top action bar - Hidden when print */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-200 pb-4 mb-6 print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-4 mb-6 print:hidden">
         <Button 
           variant="outline" 
           onClick={() => router.back()} 
-          className="h-10 px-4 rounded-xl border-gray-300 text-gray-700 w-full sm:w-auto"
+          className="h-10 px-4 rounded-xl border-border text-muted-foreground hover:text-foreground w-full sm:w-auto active:scale-95 transition-transform"
         >
           <ArrowLeft className="w-4 h-4 mr-2" /> Quay lại
         </Button>
@@ -163,61 +163,61 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
           <Button 
             onClick={handleZaloConsult}
             variant="outline"
-            className="h-10 px-4 rounded-xl border-primary text-primary hover:bg-primary/5 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center"
+            className="h-10 px-4 rounded-xl border-primary text-primary hover:bg-primary/5 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center active:scale-95 transition-transform"
           >
             <MessageCircle className="w-4 h-4" /> Gửi Zalo tham vấn
           </Button>
           <Button 
             onClick={handlePrint}
-            className="h-10 px-4 sm:px-5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center"
+            className="h-10 px-4 sm:px-5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center active:scale-95 transition-transform"
           >
             <Printer className="w-4 h-4" /> Tải PDF / In báo cáo
           </Button>
         </div>
       </div>
 
-      {/* REPORT PAGE CONTAINER */}
-      <div className="border border-gray-300 p-8 rounded-2xl shadow-sm print:border-0 print:p-0 print:shadow-none">
+      {/* REPORT PAGE CONTAINER - Glassmorphism on web, plain white on print */}
+      <div className="glass-card border border-border/80 p-5 sm:p-8 rounded-3xl shadow-md print:bg-white print:text-black print:border-0 print:p-0 print:shadow-none w-full">
         
         {/* Header Báo cáo */}
-        <div className="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-6">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-primary font-bold text-lg">
-              <Heart className="w-6 h-6 fill-current" />
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start border-b-2 border-primary/45 print:border-black pb-6 mb-6 gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-primary font-bold text-lg select-none">
+              <Heart className="w-6 h-6 fill-current animate-pulse" />
               <span>Hệ Thống Theo Dõi Sức Khỏe Tiền Mãn Kinh</span>
             </div>
-            <h1 className="text-2xl font-black tracking-tight text-gray-900">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground print:text-black">
               BÁO CÁO TỔNG HỢP SỨC KHỎE CÁ NHÂN
             </h1>
-            <p className="text-sm text-gray-500 font-medium">
+            <p className="text-xs sm:text-sm text-muted-foreground print:text-gray-500 font-semibold">
               Khoảng thời gian: {rangeMonths} tháng qua (Từ ngày {format(startDateLimit, "dd/MM/yyyy")} đến nay)
             </p>
           </div>
-          <div className="text-right text-xs text-gray-500 font-semibold space-y-1">
+          <div className="text-left sm:text-right text-xs text-muted-foreground print:text-gray-500 font-semibold space-y-1 shrink-0">
             <p>Ngày kết xuất: {format(new Date(), "dd/MM/yyyy")}</p>
             <p>Mã hồ sơ: #{profile.uid.substring(0, 8).toUpperCase()}</p>
           </div>
         </div>
 
         {/* Thông tin bệnh nhân / người dùng */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm print:bg-gray-100">
+        <div className="bg-muted/40 border border-border/60 rounded-2xl p-4.5 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs sm:text-sm print:bg-gray-100 print:border-gray-300 print:text-black">
           <div>
-            <span className="text-gray-500 block text-xs font-semibold uppercase">Họ và tên</span>
-            <span className="font-bold text-gray-900">{profile.displayName}</span>
+            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Họ và tên</span>
+            <span className="font-extrabold text-foreground print:text-black">{profile.displayName}</span>
           </div>
           <div>
-            <span className="text-gray-500 block text-xs font-semibold uppercase">Năm sinh / Tuổi</span>
-            <span className="font-bold text-gray-900">
+            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Năm sinh / Tuổi</span>
+            <span className="font-extrabold text-foreground print:text-black">
               {profile.birthYear} ({new Date().getFullYear() - (profile.birthYear || 1975)} tuổi)
             </span>
           </div>
           <div>
-            <span className="text-gray-500 block text-xs font-semibold uppercase">Chiều cao / Cân nặng</span>
-            <span className="font-bold text-gray-900">{profile.height} cm / {profile.weight} kg</span>
+            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Chiều cao / Cân nặng</span>
+            <span className="font-extrabold text-foreground print:text-black">{profile.height} cm / {profile.weight} kg</span>
           </div>
           <div>
-            <span className="text-gray-500 block text-xs font-semibold uppercase">Chỉ số BMI</span>
-            <span className="font-bold text-gray-900">
+            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Chỉ số BMI</span>
+            <span className="font-extrabold text-foreground print:text-black">
               {profile.bmi} ({profile.bmi && profile.bmi < 25 ? "Bình thường" : "Thừa cân"})
             </span>
           </div>
@@ -226,38 +226,38 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         {/* Nội dung chính 1: PeriScore & Cảnh báo */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* PeriScore Box */}
-          <div className="border border-gray-300 rounded-xl p-5 text-center flex flex-col justify-center bg-gray-50/50 print:bg-gray-50">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Điểm PeriScore Trung bình</span>
-            <div className="text-5xl font-black text-primary my-3">{avgPeriScore}</div>
+          <div className="border border-border/75 rounded-2xl p-5 text-center flex flex-col justify-center bg-muted/25 print:bg-gray-50 print:border-gray-300">
+            <span className="text-[10px] sm:text-xs font-bold text-muted-foreground print:text-gray-500 uppercase tracking-wider">Điểm PeriScore Trung bình</span>
+            <div className="text-4xl sm:text-5xl font-black text-primary my-3">{avgPeriScore}</div>
             <span className={`inline-block mx-auto text-xs font-extrabold px-3 py-1 rounded-full border ${periScoreCat.color}`}>
               {periScoreCat.label}
             </span>
-            <p className="text-[10px] text-gray-500 mt-3 italic leading-normal">
+            <p className="text-[9px] sm:text-[10px] text-muted-foreground print:text-gray-500 mt-3 italic leading-normal font-semibold">
               * Hệ số nhân đôi được áp dụng cho triệu chứng Bốc hỏa và Mất ngủ theo tiêu chuẩn PeriScore.
             </p>
           </div>
 
           {/* Lịch sử chu kỳ tóm tắt */}
-          <div className="md:col-span-2 border border-gray-300 rounded-xl p-5 space-y-4">
-            <h3 className="font-bold text-sm text-gray-800 flex items-center gap-1.5 border-b border-gray-200 pb-2">
-              <Calendar className="w-4 h-4 text-primary" /> Tóm tắt chu kỳ kinh nguyệt
+          <div className="md:col-span-2 border border-border/75 rounded-2xl p-5 space-y-4 print:border-gray-300">
+            <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 border-b border-border/40 print:border-gray-300 pb-2.5">
+              <Calendar className="w-4.5 h-4.5 text-primary" /> Tóm tắt chu kỳ kinh nguyệt
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div>
-                <span className="text-gray-500 font-semibold block">Vòng chu kỳ trung bình:</span>
-                <span className="text-base font-bold text-gray-900">{averageCycleLength} ngày</span>
+            <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
+              <div className="space-y-0.5">
+                <span className="text-muted-foreground print:text-gray-500 block">Vòng chu kỳ trung bình:</span>
+                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{averageCycleLength} ngày</span>
               </div>
-              <div>
-                <span className="text-gray-500 font-semibold block">Thời gian hành kinh trung bình:</span>
-                <span className="text-base font-bold text-gray-900">{averagePeriodDuration} ngày</span>
+              <div className="space-y-0.5">
+                <span className="text-muted-foreground print:text-gray-500 block">Thời gian hành kinh trung bình:</span>
+                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{averagePeriodDuration} ngày</span>
               </div>
-              <div>
-                <span className="text-gray-500 font-semibold block">Số chu kỳ đã theo dõi:</span>
-                <span className="text-base font-bold text-gray-900">{filteredCycles.length} chu kỳ</span>
+              <div className="space-y-0.5">
+                <span className="text-muted-foreground print:text-gray-500 block">Số chu kỳ đã theo dõi:</span>
+                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{filteredCycles.length} chu kỳ</span>
               </div>
-              <div>
-                <span className="text-gray-500 font-semibold block">Chu kỳ bất thường ghi nhận:</span>
-                <span className="text-base font-bold text-red-600">
+              <div className="space-y-0.5">
+                <span className="text-muted-foreground print:text-gray-500 block">Chu kỳ bất thường ghi nhận:</span>
+                <span className="text-sm sm:text-base font-black text-red-500 dark:text-rose-400 print:text-red-600">
                   {filteredCycles.filter((c) => c.isAbnormal).length} lần
                 </span>
               </div>
@@ -267,51 +267,51 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 
         {/* Nội dung chính 2: Chi tiết triệu chứng */}
         <div className="space-y-4 mb-8">
-          <h3 className="font-bold text-sm text-gray-800 flex items-center gap-1.5 border-b border-gray-200 pb-2">
-            <Activity className="w-4 h-4 text-primary" /> Thống kê mức độ Triệu chứng & Giấc ngủ
+          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 border-b border-border/40 print:border-gray-300 pb-2.5">
+            <Activity className="w-4.5 h-4.5 text-primary" /> Thống kê mức độ Triệu chứng & Giấc ngủ
           </h3>
-          <div className="overflow-x-auto pb-1 border border-gray-300 rounded-xl scrollbar-none">
-            <table className="min-w-[600px] w-full divide-y divide-gray-200 text-left text-xs">
-              <thead className="bg-gray-100 font-bold text-gray-700">
+          <div className="overflow-x-auto pb-1 border border-border/60 rounded-2xl scrollbar-none print:border-gray-300">
+            <table className="min-w-[600px] w-full divide-y divide-border/40 print:divide-gray-300 text-left text-xs">
+              <thead className="bg-muted/50 print:bg-gray-100 font-bold text-muted-foreground print:text-gray-700 select-none">
                 <tr>
-                  <th className="px-4 py-3">Chỉ số sức khỏe phân tích</th>
-                  <th className="px-4 py-3 text-center">Giá trị trung bình</th>
-                  <th className="px-4 py-3">Mức độ / Nhận định</th>
+                  <th className="px-4 py-3.5 font-black uppercase tracking-wider">Chỉ số sức khỏe phân tích</th>
+                  <th className="px-4 py-3.5 text-center font-black uppercase tracking-wider">Giá trị trung bình</th>
+                  <th className="px-4 py-3.5 font-black uppercase tracking-wider">Mức độ / Nhận định</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 font-medium text-gray-900">
-                <tr>
+              <tbody className="divide-y divide-border/30 print:divide-gray-200 font-bold text-foreground print:text-black">
+                <tr className="hover:bg-muted/10 transition-colors">
                   <td className="px-4 py-3">Cường độ cơn bốc hỏa (Hot Flashes)</td>
-                  <td className="px-4 py-3 text-center">{avgHotFlashes} / 3.0</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgHotFlashes} / 3.0</td>
+                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
                     {parseFloat(avgHotFlashes) < 1.0 ? "Nhẹ / Không đáng kể" : parseFloat(avgHotFlashes) < 2.0 ? "Trung bình" : "Nghiêm trọng"}
                   </td>
                 </tr>
-                <tr>
+                <tr className="hover:bg-muted/10 transition-colors">
                   <td className="px-4 py-3">Mức độ mất ngủ (Insomnia)</td>
-                  <td className="px-4 py-3 text-center">{avgInsomnia} / 3.0</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgInsomnia} / 3.0</td>
+                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
                     {parseFloat(avgInsomnia) < 1.0 ? "Ngủ tốt" : parseFloat(avgInsomnia) < 2.0 ? "Mất ngủ nhẹ" : "Mất ngủ nghiêm trọng"}
                   </td>
                 </tr>
-                <tr>
+                <tr className="hover:bg-muted/10 transition-colors">
                   <td className="px-4 py-3">Cảm giác lo âu bồn chồn (Anxiety)</td>
-                  <td className="px-4 py-3 text-center">{avgAnxiety} / 3.0</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgAnxiety} / 3.0</td>
+                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
                     {parseFloat(avgAnxiety) < 1.0 ? "Tâm lý ổn định" : "Căng thẳng nhẹ/vừa"}
                   </td>
                 </tr>
-                <tr>
+                <tr className="hover:bg-muted/10 transition-colors">
                   <td className="px-4 py-3">Thời gian ngủ ban đêm trung bình</td>
-                  <td className="px-4 py-3 text-center">{avgSleep} giờ / đêm</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgSleep} giờ / đêm</td>
+                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
                     {parseFloat(avgSleep) >= 7.0 ? "Đạt tiêu chuẩn sức khỏe" : "Thiếu ngủ nhẹ"}
                   </td>
                 </tr>
-                <tr>
+                <tr className="hover:bg-muted/10 transition-colors">
                   <td className="px-4 py-3">Chất lượng giấc ngủ tự đánh giá</td>
-                  <td className="px-4 py-3 text-center">{avgSleepQuality} / 10</td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgSleepQuality} / 10</td>
+                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
                     {parseFloat(avgSleepQuality) >= 7.0 ? "Tốt" : parseFloat(avgSleepQuality) >= 5.0 ? "Trung bình" : "Kém"}
                   </td>
                 </tr>
@@ -321,11 +321,11 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </div>
 
         {/* Nội dung chính 3: Nhận định lâm sàng sơ bộ từ AI Coach */}
-        <div className="border border-gray-300 rounded-xl p-5 mb-8 bg-gray-50/30 print:bg-transparent">
-          <h3 className="font-bold text-sm text-gray-800 flex items-center gap-1.5 mb-3">
-            <Sparkles className="w-4 h-4 text-primary fill-current" /> Khuyến nghị cải thiện thể trạng (AI Coach)
+        <div className="border border-primary/20 rounded-2xl p-5 mb-8 bg-primary/5 print:bg-transparent print:border-gray-300">
+          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 mb-3 select-none">
+            <Sparkles className="w-4 h-4 text-primary fill-current animate-pulse" /> Khuyến nghị cải thiện thể trạng (AI Coach)
           </h3>
-          <p className="text-xs leading-relaxed text-gray-700 font-medium">
+          <p className="text-xs leading-relaxed text-foreground/90 print:text-gray-700 font-semibold">
             {totalDays === 0 
               ? "Chưa có đủ dữ liệu ghi nhận nhật ký sức khỏe để phân tích khuyến nghị."
               : avgPeriScore > 50 
@@ -335,19 +335,19 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
         </div>
 
         {/* Chữ ký & Disclaimer y tế */}
-        <div className="border-t border-gray-200 pt-6 mt-8 flex flex-col md:flex-row md:justify-between items-start gap-6">
+        <div className="border-t border-border/40 print:border-gray-200 pt-6 mt-8 flex flex-col md:flex-row md:justify-between items-start gap-6">
           {/* Disclaimer */}
-          <div className="max-w-md flex items-start gap-2 text-[10px] leading-relaxed text-gray-500 font-semibold">
-            <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
+          <div className="max-w-md flex items-start gap-2 text-[10px] leading-relaxed text-muted-foreground print:text-gray-500 font-semibold">
+            <ShieldAlert className="w-4.5 h-4.5 shrink-0 text-red-500 mt-0.5" />
             <span>
               Tuyên bố pháp lý: Báo cáo này hoàn toàn tự động kết xuất dựa trên dữ liệu nhật ký tự ghi chép của cá nhân. Báo cáo không mang tính chất chẩn đoán bệnh lâm sàng thay thế bác sĩ. Hãy mang báo cáo này thảo luận trực tiếp với bác sĩ phụ khoa của chị trong lần khám định kỳ gần nhất.
             </span>
           </div>
 
           {/* Signature block */}
-          <div className="text-center md:mr-10 self-center md:self-auto text-xs font-semibold text-gray-700">
+          <div className="text-center md:mr-10 self-center md:self-auto text-xs font-semibold text-muted-foreground print:text-gray-700">
             <p className="italic mb-12">Người theo dõi sức khỏe</p>
-            <p className="font-bold text-gray-900 border-t border-gray-300 pt-2 px-6">
+            <p className="font-extrabold text-foreground print:text-black border-t border-border/60 print:border-black pt-2 px-8 select-none">
               {profile.displayName}
             </p>
           </div>
@@ -356,7 +356,7 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
       </div>
 
       {/* Tham vấn Chuyên gia Sức khỏe - Hidden when print */}
-      <div className="mt-8 bg-gradient-to-br from-primary/5 via-white to-secondary/10 border border-primary/20 p-6 rounded-2xl shadow-sm print:hidden space-y-4">
+      <div className="mt-8 bg-gradient-to-br from-primary/5 via-card/50 to-secondary/10 border border-primary/20 p-5 sm:p-6 rounded-2xl shadow-sm print:hidden space-y-4 glass-card w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <h3 className="text-base font-extrabold text-foreground flex items-center gap-2">
@@ -368,12 +368,12 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
           </div>
           <Button 
             onClick={handleZaloConsult}
-            className="w-full md:w-auto h-11 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:bg-primary/95 text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/25 active:scale-98 transition-all shrink-0"
+            className="w-full md:w-auto h-11 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:bg-primary/95 text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/25 active:scale-95 transition-transform shrink-0 cursor-pointer"
           >
             <Copy className="w-4 h-4" /> Gửi báo cáo & Trò chuyện Zalo
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-gray-200/60 text-[11px] text-muted-foreground font-semibold">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3.5 border-t border-border/40 text-[11px] text-muted-foreground font-semibold select-none">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
             <span>Tự động tổng hợp chỉ số PeriScore và số ngày mất ngủ, bốc hỏa</span>
@@ -395,9 +395,9 @@ Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 export default function ReportPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-white text-black p-6">
+      <div className="min-h-screen flex items-center justify-center bg-transparent text-foreground p-6">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        <p className="ml-3 text-sm">Đang kết xuất báo cáo y khoa...</p>
+        <p className="ml-3 text-sm font-semibold">Đang kết xuất báo cáo y khoa...</p>
       </div>
     }>
       <ReportContent />

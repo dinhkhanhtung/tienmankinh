@@ -49,9 +49,7 @@ export async function POST(req: NextRequest) {
     try {
       const logsQuery = query(
         collection(db, "daily_logs"),
-        where("userId", "==", userId),
-        orderBy("date", "desc"),
-        limit(7)
+        where("userId", "==", userId)
       );
       const logsSnap = await getDocs(logsQuery);
 
@@ -59,7 +57,11 @@ export async function POST(req: NextRequest) {
         const logs: any[] = [];
         logsSnap.forEach((doc) => logs.push(doc.data()));
         
-        logsText = logs.map((log) => {
+        // Sắp xếp theo ngày giảm dần và lấy tối đa 7 ngày gần nhất để tránh yêu cầu composite index
+        logs.sort((a: any, b: any) => b.date.localeCompare(a.date));
+        const latestLogs = logs.slice(0, 7);
+        
+        logsText = latestLogs.map((log) => {
           const formattedDate = log.date;
           const symptomsList = Object.entries(log.symptoms || {})
             .filter(([_, val]: any) => val > 0)
@@ -127,7 +129,12 @@ export async function POST(req: NextRequest) {
     // Chuyển đổi lịch sử chat và lọc bỏ tin nhắn chào mừng tĩnh "welcome"
     // Gemini API bắt buộc tin nhắn đầu tiên của contents phải có role là 'user'
     const contents = messages
-      .filter((msg: any) => msg.id !== "welcome")
+      .filter((msg: any, index: number) => {
+        // Lọc bỏ tin nhắn welcome bằng ID hoặc nếu nó là tin nhắn đầu tiên có role assistant (phòng hờ client ko gửi ID)
+        if (msg.id === "welcome") return false;
+        if (index === 0 && msg.role === "assistant") return false;
+        return true;
+      })
       .map((msg: any) => ({
         role: msg.role === "assistant" ? "model" : "user",
         parts: [{ text: msg.content }]

@@ -41,30 +41,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // 2. Tải cache dữ liệu chu kỳ kinh nguyệt (tối đa 12 chu kỳ gần nhất để tối ưu)
             const cyclesQuery = query(
               collection(db, "cycles"),
-              where("userId", "==", firebaseUser.uid),
-              orderBy("startDate", "desc"),
-              limit(12)
+              where("userId", "==", firebaseUser.uid)
             );
             const cyclesSnap = await getDocs(cyclesQuery);
             const cyclesData: PeriodCycle[] = [];
             cyclesSnap.forEach((doc) => {
               cyclesData.push({ id: doc.id, ...doc.data() } as PeriodCycle);
             });
-            setCycles(cyclesData);
+            // Sắp xếp in-memory giảm dần theo startDate và lấy tối đa 12 chu kỳ
+            cyclesData.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+            setCycles(cyclesData.slice(0, 12));
 
             // 3. Tải cache logs hàng ngày (30 ngày gần nhất để vẽ biểu đồ và nạp context AI)
             const logsQuery = query(
               collection(db, "daily_logs"),
-              where("userId", "==", firebaseUser.uid),
-              orderBy("date", "desc"),
-              limit(30)
+              where("userId", "==", firebaseUser.uid)
             );
             const logsSnap = await getDocs(logsQuery);
             const logsData: DailyLog[] = [];
             logsSnap.forEach((doc) => {
               logsData.push({ id: doc.id, ...doc.data() } as DailyLog);
             });
-            setDailyLogs(logsData);
+            // Sắp xếp in-memory giảm dần theo date và lấy tối đa 30 logs gần nhất
+            logsData.sort((a, b) => b.date.localeCompare(a.date));
+            setDailyLogs(logsData.slice(0, 30));
 
             // Chuyển hướng nếu đang ở màn hình login
             if (pathname === "/login") {

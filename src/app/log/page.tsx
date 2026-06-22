@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Smile, Frown, Meh, AlertCircle, Mic, MicOff, Info, 
-  Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2, ArrowRight,
+  Smile, Frown, Meh, Mic, MicOff, Info, 
+  Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2,
   Check, Sparkles
 } from "lucide-react";
 import { format } from "date-fns";
@@ -65,7 +65,7 @@ export default function LogPage() {
       ...prev,
       note: prev.note ? `${prev.note} ${text}` : text,
     }));
-    toast.success("Đã ghi nhận giọng nói của bạn.");
+    toast.success("Đã ghi nhận giọng nói của chị.");
   };
 
   const { isListening, browserSupportsSpeech, startListening, stopListening } = useSpeech(handleTranscript);
@@ -132,11 +132,13 @@ export default function LogPage() {
     try {
       await saveLog(selectedDate, symptoms, sleep, mood);
       setIsSaved(true);
+      toast.success("Đã lưu nhật ký sức khỏe thành công!");
       setTimeout(() => {
         setIsSaved(false);
       }, 2500);
     } catch (err) {
       console.error(err);
+      toast.error("Không thể lưu nhật ký. Vui lòng thử lại.");
     }
   };
 
@@ -153,7 +155,7 @@ export default function LogPage() {
   ];
 
   return (
-    <div className="space-y-6 pb-6 page-transition">
+    <div className="space-y-6 pb-8 page-transition max-w-3xl mx-auto px-4 sm:px-0">
       {/* Title & Date Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -215,9 +217,9 @@ export default function LogPage() {
         </TabsList>
 
         {/* TAB 1: Symptoms Form */}
-        <TabsContent value="symptoms" className="space-y-4 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <TabsContent value="symptoms" className="space-y-4 outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
           {symptomGroups.map((group, groupIdx) => (
-            <Card key={groupIdx} className="border-border shadow-sm overflow-hidden glass-card">
+            <Card key={groupIdx} className="border-border shadow-sm overflow-hidden glass-card w-full">
               <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
                 <CardTitle className="text-sm sm:text-base font-extrabold">{group.title}</CardTitle>
                 <CardDescription className="text-[11px] sm:text-xs font-semibold text-muted-foreground">{group.description}</CardDescription>
@@ -281,33 +283,11 @@ export default function LogPage() {
               </CardContent>
             </Card>
           ))}
-
-          {/* Quick save button */}
-          <div className="flex justify-end pt-2">
-            <Button
-              onClick={handleSaveLog}
-              className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
-                isSaved 
-                  ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
-                  : "bg-primary text-primary-foreground hover:bg-primary/95"
-              }`}
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : isSaved ? (
-                <Check className="w-5 h-5" />
-              ) : (
-                <Save className="w-5 h-5" />
-              )}
-              {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký triệu chứng"}
-            </Button>
-          </div>
         </TabsContent>
 
         {/* TAB 2: Sleep Form */}
-        <TabsContent value="sleep" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <Card className="border-border shadow-sm max-w-2xl glass-card">
+        <TabsContent value="sleep" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+          <Card className="border-border shadow-sm w-full glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
                 <Moon className="w-4 h-4 text-primary" /> Thông tin giấc ngủ ban đêm
@@ -370,7 +350,7 @@ export default function LogPage() {
                     max="10"
                     value={sleep.quality}
                     onChange={(e) => setSleep((prev) => ({ ...prev, quality: parseInt(e.target.value) }))}
-                    className="h-10 cursor-pointer accent-primary"
+                    className="h-10 cursor-pointer accent-primary animate-in fade-in"
                   />
                 </div>
               </div>
@@ -385,33 +365,12 @@ export default function LogPage() {
                 </div>
               )}
             </CardContent>
-
-            <CardFooter className="flex justify-end p-4 border-t border-border/40">
-              <Button
-                onClick={handleSaveLog}
-                className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
-                  isSaved 
-                    ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
-                    : "bg-primary text-primary-foreground hover:bg-primary/95"
-                }`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : isSaved ? (
-                  <Check className="w-5 h-5" />
-                ) : (
-                  <Save className="w-5 h-5" />
-                )}
-                {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký giấc ngủ"}
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
 
         {/* TAB 3: Mood Form */}
-        <TabsContent value="mood" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <Card className="border-border shadow-sm max-w-2xl glass-card">
+        <TabsContent value="mood" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+          <Card className="border-border shadow-sm w-full glass-card">
             <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
               <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
                 <MoodIcon className="w-4 h-4 text-primary" /> Cảm xúc & Ghi chú tự do
@@ -507,30 +466,31 @@ export default function LogPage() {
                 </p>
               </div>
             </CardContent>
-
-            <CardFooter className="flex justify-end p-4 border-t border-border/40">
-              <Button
-                onClick={handleSaveLog}
-                className={`h-12 px-8 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
-                  isSaved 
-                    ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
-                    : "bg-primary text-primary-foreground hover:bg-primary/95"
-                }`}
-                disabled={loading}
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : isSaved ? (
-                  <Check className="w-5 h-5" />
-                ) : (
-                  <Save className="w-5 h-5" />
-                )}
-                {isSaved ? "Đã lưu thành công!" : "Lưu nhật ký cảm xúc"}
-              </Button>
-            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Nút lưu chung duy nhất dưới cùng trang */}
+      <div className="flex justify-end pt-4 border-t border-border/40 mt-6 shrink-0">
+        <Button
+          onClick={handleSaveLog}
+          className={`h-12 px-10 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md w-full sm:w-auto active:scale-98 transition-all duration-300 ${
+            isSaved 
+              ? "bg-emerald-600 hover:bg-emerald-650 text-white shadow-emerald-200" 
+              : "bg-primary text-primary-foreground hover:bg-primary/95 shadow-primary/10"
+          }`}
+          disabled={loading}
+        >
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : isSaved ? (
+            <Check className="w-5 h-5 animate-in zoom-in duration-200" />
+          ) : (
+            <Save className="w-5 h-5" />
+          )}
+          {isSaved ? "Đã lưu nhật ký thành công!" : "Lưu nhật ký sức khỏe"}
+        </Button>
+      </div>
     </div>
   );
 }

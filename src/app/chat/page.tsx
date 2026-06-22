@@ -79,6 +79,7 @@ export default function ChatPage() {
 
     try {
       const chatHistory = [...messages, userMessage].map((msg) => ({
+        id: msg.id,
         role: msg.role,
         content: msg.content
       }));
