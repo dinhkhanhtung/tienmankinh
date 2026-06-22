@@ -267,7 +267,7 @@ export default function DashboardPage() {
       }
     }
 
-    const message = `KÍNH GỬI BÁC SĨ ĐÔNG Y - BÁO CÁO SỨC KHỎE TIỀN MÃN KINH
+    const message = `BÁO CÁO SỨC KHỎE CÁ NHÂN - TIỀN MÃN KINH
 ---------------------------------
 - Họ và tên: ${name} (${age} tuổi)
 - Chiều cao/Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
@@ -280,13 +280,13 @@ export default function DashboardPage() {
 - Chu kỳ kinh nguyệt trung bình: ${averageCycleLength} ngày (Thời gian hành kinh TB: ${averagePeriodDuration} ngày)
 - Ghi chú sức khỏe gần nhất: "${lastLogNote || "Không có ghi chú"}"
 ---------------------------------
-Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40+.`;
+Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(message)
         .then(() => {
           toast.success("Đã tự động gom và sao chép tóm tắt sức khỏe của chị!");
-          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Bác sĩ Đông y.", { duration: 6000 });
+          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Chuyên gia.", { duration: 6000 });
           
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
@@ -294,7 +294,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
         })
         .catch((err) => {
           console.error("Lỗi sao chép: ", err);
-          toast.error("Không thể tự động sao chép. Đang mở Zalo tư vấn bác sĩ: 0982581222.");
+          toast.error("Không thể tự động sao chép. Đang mở Zalo tham vấn chuyên gia: 0982581222.");
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
           }, 1500);
@@ -498,12 +498,12 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
         {/* Card 1: Gợi ý Đông y (takes 2 cols) */}
         <Card className="lg:col-span-2 border-border shadow-sm bg-gradient-to-br from-card via-card to-primary/5 flex flex-col justify-between">
           <CardHeader className="p-4 pb-2 sm:p-6">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <CardTitle className="text-base font-extrabold flex items-center gap-2">
-                <Heart className="w-5 h-5 text-primary fill-current shrink-0" /> Gợi ý chăm sóc Đông y dành riêng cho chị
+                <Heart className="w-5 h-5 text-primary fill-current shrink-0" /> Liệu pháp cải thiện tự nhiên khuyên dùng
               </CardTitle>
-              <span className="text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
-                Thể trạng: {symptomProfile.label}
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 self-start sm:self-auto shrink-0 truncate max-w-full">
+                {symptomProfile.label}
               </span>
             </div>
             <CardDescription className="text-xs mt-1.5 leading-relaxed font-semibold">
@@ -533,10 +533,10 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
         <Card className="border-primary/20 shadow-md bg-gradient-to-br from-primary/5 via-card to-secondary/15 relative overflow-hidden flex flex-col justify-between">
           <CardHeader className="p-4 pb-2 sm:p-6 relative z-10">
             <CardTitle className="text-base font-extrabold flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-primary" /> Bác sĩ Đông y tư vấn
+              <MessageCircle className="w-5 h-5 text-primary" /> Tham vấn Chuyên gia Sức khỏe
             </CardTitle>
             <CardDescription className="text-xs leading-relaxed mt-1 font-semibold">
-              Chị đã ghi chép sức khỏe đều đặn. Hãy nhận tư vấn trực tiếp từ bác sĩ chuyên khoa Đông y để được thiết lập phác đồ điều trị phù hợp nhất.
+              Chị đã ghi chép sức khỏe đều đặn. Hãy tham vấn chuyên gia sức khỏe để được hỗ trợ thiết lập lộ trình cải thiện thể trạng phù hợp nhất.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 pt-2 sm:p-6 sm:pt-0 space-y-4 relative z-10 flex-1">
@@ -557,7 +557,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
               onClick={handleZaloConsult}
               className="w-full h-11 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:bg-primary/95 text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/25 active:scale-98 transition-transform"
             >
-              <Copy className="w-4 h-4" /> Sao chép & Gửi Zalo tư vấn
+              <Copy className="w-4 h-4" /> Gửi báo cáo & Tham vấn chuyên gia
             </Button>
           </CardFooter>
           {/* Vector hình tròn trang trí nền */}

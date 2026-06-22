@@ -106,7 +106,7 @@ function ReportContent() {
       }
     }
 
-    const message = `KÍNH GỬI BÁC SĨ ĐÔNG Y - BÁO CÁO SỨC KHỎE TIỀN MÃN KINH (${rangeMonths} THÁNG QUA)
+    const message = `BÁO CÁO SỨC KHỎE CÁ NHÂN (${rangeMonths} THÁNG QUA)
 ---------------------------------
 - Họ và tên: ${name} (${age} tuổi)
 - Chiều cao/Cân nặng: ${profile?.height || "--"} cm / ${profile?.weight || "--"} kg
@@ -123,13 +123,13 @@ function ReportContent() {
 - Số chu kỳ đã ghi nhận: ${filteredCycles.length} (Chu kỳ bất thường: ${filteredCycles.filter((c) => c.isAbnormal).length})
 - Ghi chú sức khỏe gần nhất: "${lastLogNote || "Không có ghi chú"}"
 ---------------------------------
-Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40+.`;
+Tôi cần tham vấn giải pháp cải thiện thể trạng tuổi 40+.`;
 
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(message)
         .then(() => {
           toast.success("Đã tự động gom và sao chép tóm tắt báo cáo sức khỏe của chị!");
-          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Bác sĩ Đông y.", { duration: 6000 });
+          toast.info("Đang chuyển hướng Zalo... Chị chỉ cần Nhấp chuột phải -> Dán (Paste) để gửi báo cáo cho Chuyên gia.", { duration: 6000 });
           
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
@@ -137,7 +137,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
         })
         .catch((err) => {
           console.error("Lỗi sao chép: ", err);
-          toast.error("Không thể tự động sao chép. Đang mở Zalo tư vấn bác sĩ: 0982581222.");
+          toast.error("Không thể tự động sao chép. Đang mở Zalo tham vấn chuyên gia: 0982581222.");
           setTimeout(() => {
             window.open("https://zalo.me/0982581222", "_blank");
           }, 1500);
@@ -165,7 +165,7 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
             variant="outline"
             className="h-10 px-4 rounded-xl border-primary text-primary hover:bg-primary/5 font-semibold flex items-center gap-1.5 shadow-sm text-xs sm:text-sm flex-1 sm:flex-none justify-center"
           >
-            <MessageCircle className="w-4 h-4" /> Gửi Zalo tư vấn
+            <MessageCircle className="w-4 h-4" /> Gửi Zalo tham vấn
           </Button>
           <Button 
             onClick={handlePrint}
@@ -355,22 +355,22 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
 
       </div>
 
-      {/* Bác sĩ Đông y tư vấn trực tiếp - Hidden when print */}
+      {/* Tham vấn Chuyên gia Sức khỏe - Hidden when print */}
       <div className="mt-8 bg-gradient-to-br from-primary/5 via-white to-secondary/10 border border-primary/20 p-6 rounded-2xl shadow-sm print:hidden space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <h3 className="text-base font-extrabold text-foreground flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-primary" /> Nhận tư vấn Đông y từ Bác sĩ Chuyên khoa
+              <MessageCircle className="w-5 h-5 text-primary" /> Nhận hỗ trợ cải thiện từ Chuyên gia Sức khỏe
             </h3>
             <p className="text-xs text-muted-foreground font-semibold leading-relaxed">
-              Bác sĩ Đông y sẽ dựa trên báo cáo chi tiết {rangeMonths} tháng của chị để tư vấn phác đồ thảo dược và liệu pháp dưỡng sinh phù hợp nhất.
+              Chuyên gia sẽ dựa trên báo cáo chi tiết {rangeMonths} tháng của chị để hỗ trợ thiết lập lộ trình cải thiện và lối sống phù hợp nhất.
             </p>
           </div>
           <Button 
             onClick={handleZaloConsult}
             className="w-full md:w-auto h-11 px-6 rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:bg-primary/95 text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-primary/25 active:scale-98 transition-all shrink-0"
           >
-            <Copy className="w-4 h-4" /> Sao chép báo cáo & Chat Zalo
+            <Copy className="w-4 h-4" /> Gửi báo cáo & Trò chuyện Zalo
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-gray-200/60 text-[11px] text-muted-foreground font-semibold">
@@ -380,11 +380,11 @@ Tôi cần tư vấn giải pháp Đông y cải thiện thể trạng tuổi 40
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
-            <span>Chuyển tiếp đến Zalo của Bác sĩ Đông y (SĐT: 0982581222)</span>
+            <span>Chuyển tiếp đến Zalo của Chuyên gia tư vấn (SĐT: 0982581222)</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
-            <span>Dịch vụ tư vấn và chăm sóc sức khỏe ban đầu hoàn toàn miễn phí</span>
+            <span>Hỗ trợ giải đáp và chăm sóc sức khỏe ban đầu hoàn toàn miễn phí</span>
           </div>
         </div>
       </div>
