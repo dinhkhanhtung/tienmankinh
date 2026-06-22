@@ -145,6 +145,22 @@ export default function ProfilePage() {
       // Cập nhật Zustand Store
       updateProfile(updates);
 
+      // Gửi thông báo ngầm đến Telegram & Notion
+      fetch("/api/customer-notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          ...updates,
+          action: "update",
+        }),
+      }).catch((err) => {
+        console.error("Lỗi gửi thông báo tích hợp ngầm khi cập nhật profile:", err);
+      });
+
       toast.success("Cập nhật thông tin hồ sơ sức khỏe thành công!");
     } catch (error) {
       console.error("Lỗi cập nhật profile: ", error);

@@ -133,6 +133,22 @@ export default function OnboardingPage() {
       // Lưu Profile vào Zustand
       setProfile(onboardedProfile);
 
+      // Gửi thông báo ngầm đến Telegram & Notion
+      fetch("/api/customer-notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...onboardedProfile,
+          lastPeriodDate,
+          cycleLength: parseInt(cycleLength),
+          action: "onboarding",
+        }),
+      }).catch((err) => {
+        console.error("Lỗi gửi thông báo tích hợp ngầm:", err);
+      });
+
       toast.success("Cấu hình tài khoản thành công! Chào mừng bạn.");
       router.push("/dashboard");
     } catch (error) {

@@ -1,17 +1,14 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { db } from "@/lib/firebase";
 import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export async function POST(req: NextRequest) {
   try {
     const { messages, userId } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json({ 
         reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do hệ thống đang trong quá trình bảo trì kết nối dịch vụ. Chị vui lòng quay lại sau ít phút hoặc liên hệ bộ phận hỗ trợ kỹ thuật để được hỗ trợ kịp thời nhé!" 
       });
@@ -120,56 +117,50 @@ export async function POST(req: NextRequest) {
     5. ĐỊNH DẠNG: Viết câu trả lời mạch lạc, chia thành các đoạn ngắn hoặc gạch đầu dòng rõ ràng để người trung niên dễ đọc. Tránh viết những đoạn văn quá dài dòng và phức tạp.
     `;
 
-    // 4. Gọi Gemini API
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      systemInstruction: systemInstruction
-    });
-
-    // Chuẩn hóa và gộp các tin nhắn trùng role liên tiếp để đảm bảo cấu trúc đan xen hợp lệ cho Gemini API
-    const sanitizedContents: any[] = [];
-    let lastRole: string | null = null;
+    // 4. Chuẩn hóa lịch sử trò chuyện cho OpenAI API
+    const openAIMessages: any[] = [
+      { role: "system", content: systemInstruction }
+    ];
 
     messages.forEach((msg: any) => {
       // Bỏ qua tin nhắn welcome
       if (msg.id === "welcome") return;
 
-      const role = msg.role === "assistant" ? "model" : "user";
-      const text = msg.content?.trim() || "";
-      if (!text) return;
+      const role = msg.role === "assistant" ? "assistant" : "user";
+      const content = msg.content?.trim() || "";
+      if (!content) return;
 
-      if (role === lastRole && sanitizedContents.length > 0) {
-        // Gộp tin nhắn trùng role liên tiếp
-        sanitizedContents[sanitizedContents.length - 1].parts[0].text += "\n" + text;
-      } else {
-        sanitizedContents.push({
-          role,
-          parts: [{ text }]
-        });
-        lastRole = role;
-      }
+      openAIMessages.push({ role, content });
     });
 
-    // Đảm bảo tin nhắn đầu tiên bắt buộc phải có role là 'user'
-    while (sanitizedContents.length > 0 && sanitizedContents[0].role !== "user") {
-      sanitizedContents.shift();
-    }
-
-    if (sanitizedContents.length === 0) {
+    // Kiểm tra xem có tin nhắn hợp lệ nào từ người dùng không
+    const userMessages = openAIMessages.filter((msg) => msg.role === "user");
+    if (userMessages.length === 0) {
       return NextResponse.json({ error: "Lịch sử trò chuyện không chứa tin nhắn hợp lệ từ người dùng." }, { status: 400 });
     }
 
-    const contents = sanitizedContents;
-
-    const result = await model.generateContent({
-      contents: contents,
-      generationConfig: {
-        maxOutputTokens: 800,
+    // 5. Gọi OpenAI API (sử dụng fetch trực tiếp để tránh phụ thuộc thư viện ngoài)
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: openAIMessages,
         temperature: 0.7,
-      }
+        max_tokens: 800
+      })
     });
 
-    const responseText = result.response.text();
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `OpenAI API returned status ${response.status}`);
+    }
+
+    const result = await response.json();
+    const responseText = result.choices?.[0]?.message?.content || "";
     
     return NextResponse.json({ reply: responseText });
 
@@ -178,7 +169,12 @@ export async function POST(req: NextRequest) {
     const errorMessage = error?.message || "";
     
     // Nếu lỗi do API Key không hợp lệ hoặc hết hạn
-    if (errorMessage.includes("API key not valid") || errorMessage.includes("API_KEY_INVALID")) {
+    if (
+      errorMessage.includes("API key not valid") || 
+      errorMessage.includes("API_KEY_INVALID") ||
+      errorMessage.includes("invalid_api_key") ||
+      errorMessage.includes("incorrect API key")
+    ) {
       return NextResponse.json({ 
         reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện cùng chị lúc này do dịch vụ kết nối máy chủ gặp sự cố kỹ thuật. Chị vui lòng thử lại sau hoặc thông báo bộ phận kỹ thuật hỗ trợ kiểm tra lại đường truyền kết nối nhé!" 
       });
