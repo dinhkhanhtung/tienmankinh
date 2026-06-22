@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ 
-        reply: "Chào chị! Em là AI Coach của chị. Hiện tại hệ thống chưa được cấu hình khóa API (GEMINI_API_KEY) trong tệp `.env.local` ở máy chủ. Chị vui lòng mở tệp `.env.local`, điền khóa API của chị vào dòng `GEMINI_API_KEY=your_key_here` và khởi động lại dự án để bắt đầu trò chuyện cùng em nhé!" 
+        reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do hệ thống đang trong quá trình bảo trì kết nối dịch vụ. Chị vui lòng quay lại sau ít phút hoặc liên hệ bộ phận hỗ trợ kỹ thuật để được hỗ trợ kịp thời nhé!" 
       });
     }
 
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
     // Nếu lỗi do API Key không hợp lệ hoặc hết hạn
     if (errorMessage.includes("API key not valid") || errorMessage.includes("API_KEY_INVALID")) {
       return NextResponse.json({ 
-        reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện lúc này do khóa kết nối API (GEMINI_API_KEY) được cấu hình trên máy chủ hiện không hợp lệ hoặc đã hết hạn. Chị vui lòng kiểm tra và cập nhật lại khóa API chính xác trên trang cấu hình Vercel để kích hoạt lại nhé!" 
+        reply: "Chào chị! Rất tiếc là em (AI Coach) chưa thể trò chuyện cùng chị lúc này do dịch vụ kết nối máy chủ gặp sự cố kỹ thuật. Chị vui lòng thử lại sau hoặc thông báo bộ phận kỹ thuật hỗ trợ kiểm tra lại đường truyền kết nối nhé!" 
       });
     }
 

@@ -152,7 +152,7 @@ export default function ChatPage() {
           </div>
           
           <span className="text-[9px] sm:text-[10px] text-primary/80 bg-primary/5 border border-primary/10 px-2.5 py-0.5 rounded-full font-black">
-            Gemini 1.5 Pro
+            Tư vấn 24/7
           </span>
         </CardHeader>
 
