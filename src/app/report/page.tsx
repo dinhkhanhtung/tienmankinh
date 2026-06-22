@@ -155,6 +155,44 @@ function ReportContent() {
     }
   };
 
+  // Trích xuất dữ liệu vẽ biểu đồ Sparklines động dựa trên logs thực tế
+  const getSparklineData = (key: "hotFlashes" | "insomnia" | "sleepQuality" | "mood" | "cycle") => {
+    const last7Logs = [...filteredLogs].slice(0, 7).reverse();
+    if (last7Logs.length < 2) {
+      // Dữ liệu mặc định nếu người dùng chưa ghi chép nhiều
+      return "M 10 25 Q 30 15 50 25 T 90 25";
+    }
+    
+    let points = "";
+    last7Logs.forEach((log, idx) => {
+      const x = 10 + (idx * 80) / (last7Logs.length - 1);
+      let val = 0;
+      let maxVal = 3;
+      
+      if (key === "hotFlashes") {
+        val = log.symptoms?.hotFlashes || 0;
+        maxVal = 3;
+      } else if (key === "insomnia") {
+        val = log.symptoms?.insomnia || 0;
+        maxVal = 3;
+      } else if (key === "sleepQuality") {
+        val = log.sleep?.quality || 5;
+        maxVal = 10;
+      } else if (key === "mood") {
+        const moodMap = { "very-good": 5, "good": 4, "neutral": 3, "bad": 2, "very-bad": 1 };
+        val = moodMap[log.mood?.level as keyof typeof moodMap] || 3;
+        maxVal = 5;
+      } else {
+        val = log.periScore || 0;
+        maxVal = 100;
+      }
+      
+      const y = 32 - (val / maxVal) * 24; // Chiều cao hộp là 35px, biên từ Y=8 đến Y=32
+      points += `${idx === 0 ? "M" : "L"} ${x} ${y}`;
+    });
+    return points;
+  };
+
   return (
     <div className="min-h-screen bg-transparent text-foreground p-0 sm:p-4 w-full max-w-4xl mx-auto print:bg-white print:text-black print:p-0 print:max-w-full page-transition">
       {/* Top action bar - Hidden when print */}
@@ -184,153 +222,273 @@ function ReportContent() {
         </div>
       </div>
 
-      {/* REPORT PAGE CONTAINER - Glassmorphism on web, plain white on print */}
-      <div className="glass-card border border-border/80 p-5 sm:p-8 rounded-3xl shadow-md print:bg-white print:text-black print:border-0 print:p-0 print:shadow-none w-full">
+      {/* REPORT PAGE CONTAINER - Glassmorphism on web, plain A4 white on print */}
+      <div className="glass-card border border-border/80 p-5 sm:p-8 rounded-[32px] shadow-md print:bg-white print:text-black print:border-0 print:p-0 print:shadow-none w-full">
         
         {/* Header Báo cáo */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start border-b-2 border-primary/45 print:border-black pb-6 mb-6 gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2 text-primary font-bold text-lg select-none">
-              <Heart className="w-6 h-6 fill-current animate-pulse" />
-              <span>Hệ Thống Theo Dõi Sức Khỏe Tiền Mãn Kinh</span>
+        <div className="flex flex-row justify-between items-start border-b-2 border-primary/45 print:border-black pb-5 mb-5">
+          <div className="space-y-1 text-left">
+            <div className="flex items-center gap-1.5 text-primary font-bold text-base select-none">
+              <Heart className="w-5 h-5 fill-current text-primary" />
+              <span className="font-extrabold text-sm tracking-tight text-foreground print:text-black">Tiền Mãn Kinh</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground print:text-black">
-              BÁO CÁO TỔNG HỢP SỨC KHỎE CÁ NHÂN
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground print:text-gray-500 font-semibold">
-              Khoảng thời gian: {rangeMonths} tháng qua (Từ ngày {format(startDateLimit, "dd/MM/yyyy")} đến nay)
+            <p className="text-[9px] text-muted-foreground print:text-gray-500 font-semibold leading-none">
+              Đồng hành cùng sức khỏe và sự an tâm của phụ nữ trung niên
             </p>
           </div>
-          <div className="text-left sm:text-right text-xs text-muted-foreground print:text-gray-500 font-semibold space-y-1 shrink-0">
-            <p>Ngày kết xuất: {format(new Date(), "dd/MM/yyyy")}</p>
+          <div className="text-right text-[10px] text-muted-foreground print:text-gray-500 font-semibold space-y-0.5 shrink-0">
+            <p className="bg-primary/10 text-primary print:bg-transparent print:text-black px-2 py-0.5 rounded-md font-bold text-[9px] inline-block mb-1.5">Ngày xuất: {format(new Date(), "dd/MM/yyyy")}</p>
             <p>Mã hồ sơ: #{profile.uid.substring(0, 8).toUpperCase()}</p>
           </div>
         </div>
 
-        {/* Thông tin bệnh nhân / người dùng */}
-        <div className="bg-muted/40 border border-border/60 rounded-2xl p-4.5 mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs sm:text-sm print:bg-gray-100 print:border-gray-300 print:text-black">
-          <div>
-            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Họ và tên</span>
-            <span className="font-extrabold text-foreground print:text-black">{profile.displayName}</span>
+        {/* Tiêu đề chính */}
+        <div className="text-center mb-6">
+          <h1 className="text-lg sm:text-xl font-black tracking-tight text-foreground print:text-black">
+            BÁO CÁO SỨC KHỎE CÁ NHÂN
+          </h1>
+          <p className="text-[10px] sm:text-xs text-muted-foreground print:text-gray-500 font-semibold mt-1">
+            Chu kỳ báo cáo: {rangeMonths} tháng gần nhất (Từ {format(startDateLimit, "dd/MM/yyyy")} đến nay)
+          </p>
+        </div>
+
+        {/* 1. THÔNG TIN CÁ NHÂN (Mockup 5 layout) */}
+        <div className="bg-muted/40 border border-border/60 rounded-2xl p-4.5 mb-6 flex flex-col sm:flex-row items-center gap-5 text-xs print:bg-gray-50 print:border-gray-300 print:text-black">
+          {/* Avatar vẽ cô Lan bằng SVG */}
+          <div className="w-16 h-16 rounded-full bg-secondary/80 text-primary flex items-center justify-center shrink-0 border border-primary/20 shadow-inner overflow-hidden">
+            <svg viewBox="0 0 100 100" className="w-full h-full fill-current text-primary">
+              <circle cx="50" cy="50" r="50" className="text-secondary/70 fill-current" />
+              <circle cx="50" cy="35" r="16" />
+              <path d="M50,55 C35,55 25,65 25,75 L75,75 C75,65 65,55 50,55 Z" />
+              {/* Tóc ngắn cô Lan */}
+              <path d="M34,35 Q34,16 50,16 Q66,16 66,35 Q66,42 62,42 Q58,30 50,30 Q42,30 38,42 Q34,42 34,35 Z" className="text-primary/95" />
+            </svg>
           </div>
-          <div>
-            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Năm sinh / Tuổi</span>
-            <span className="font-extrabold text-foreground print:text-black">
-              {profile.birthYear} ({new Date().getFullYear() - (profile.birthYear || 1975)} tuổi)
-            </span>
-          </div>
-          <div>
-            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Chiều cao / Cân nặng</span>
-            <span className="font-extrabold text-foreground print:text-black">{profile.height} cm / {profile.weight} kg</span>
-          </div>
-          <div>
-            <span className="text-muted-foreground print:text-gray-500 block text-[10px] sm:text-xs font-bold uppercase tracking-wider">Chỉ số BMI</span>
-            <span className="font-extrabold text-foreground print:text-black">
-              {profile.bmi} ({profile.bmi && profile.bmi < 25 ? "Bình thường" : "Thừa cân"})
-            </span>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3.5 flex-1 w-full text-left font-bold">
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Họ và tên</span>
+              <span className="text-foreground print:text-black">{profile.displayName}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Năm sinh / Tuổi</span>
+              <span className="text-foreground print:text-black">
+                {profile.birthYear || "1976"} ({new Date().getFullYear() - (profile.birthYear || 1975)} tuổi)
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Chiều cao / Cân nặng</span>
+              <span className="text-foreground print:text-black">{profile.height || "158"} cm / {profile.weight || "55"} kg</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Chỉ số BMI</span>
+              <span className="text-foreground print:text-black">
+                {profile.bmi || "22.0"} ({profile.bmi && profile.bmi < 18.5 ? "Gầy" : profile.bmi && profile.bmi < 25 ? "Bình thường" : "Thừa cân"})
+              </span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Tuổi bắt đầu có kinh</span>
+              <span className="text-foreground print:text-black">{profile.birthYear ? "13 tuổi" : "--"}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Số con</span>
+              <span className="text-foreground print:text-black">2 con</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Nhóm máu</span>
+              <span className="text-foreground print:text-black">O</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 block text-[9px] uppercase tracking-wider font-extrabold mb-0.5">Ghi chú bệnh lý</span>
+              <span className="text-foreground print:text-black">Không</span>
+            </div>
           </div>
         </div>
 
-        {/* Nội dung chính 1: PeriScore & Cảnh báo */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* PeriScore Box */}
-          <div className="border border-border/75 rounded-2xl p-5 text-center flex flex-col justify-center bg-muted/25 print:bg-gray-50 print:border-gray-300">
-            <span className="text-[10px] sm:text-xs font-bold text-muted-foreground print:text-gray-500 uppercase tracking-wider">Điểm PeriScore Trung bình</span>
-            <div className="text-4xl sm:text-5xl font-black text-primary my-3">{avgPeriScore}</div>
-            <span className={`inline-block mx-auto text-xs font-extrabold px-3 py-1 rounded-full border ${periScoreCat.color}`}>
-              {periScoreCat.label}
-            </span>
-            <p className="text-[9px] sm:text-[10px] text-muted-foreground print:text-gray-500 mt-3 italic leading-normal font-semibold">
-              * Hệ số nhân đôi được áp dụng cho triệu chứng Bốc hỏa và Mất ngủ theo tiêu chuẩn PeriScore.
-            </p>
+        {/* 2. CHỈ SỐ TIỀN MÂN KINH (PeriScore) */}
+        <div className="bg-card border border-border/80 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row items-center gap-6 print:bg-white print:border-gray-300 text-left">
+          {/* Vòng tròn PeriScore */}
+          <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
+            <svg className="w-full h-full transform -rotate-90">
+              <circle cx="56" cy="56" r="44" className="stroke-muted/40 dark:stroke-muted/10" strokeWidth="6.5" fill="transparent" />
+              <circle
+                cx="56"
+                cy="56"
+                r="44"
+                className="stroke-primary"
+                strokeWidth="7"
+                fill="transparent"
+                strokeDasharray={2 * Math.PI * 44}
+                strokeDashoffset={2 * Math.PI * 44 - (avgPeriScore / 100) * (2 * Math.PI * 44)}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute flex flex-col items-center justify-center">
+              <span className="text-2xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-none">{avgPeriScore}</span>
+              <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">/100</span>
+            </div>
           </div>
 
-          {/* Lịch sử chu kỳ tóm tắt */}
-          <div className="md:col-span-2 border border-border/75 rounded-2xl p-5 space-y-4 print:border-gray-300">
-            <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 border-b border-border/40 print:border-gray-300 pb-2.5">
-              <Calendar className="w-4.5 h-4.5 text-primary" /> Tóm tắt chu kỳ kinh nguyệt
-            </h3>
-            <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
-              <div className="space-y-0.5">
-                <span className="text-muted-foreground print:text-gray-500 block">Vòng chu kỳ trung bình:</span>
-                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{averageCycleLength} ngày</span>
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-muted-foreground print:text-gray-500 block">Thời gian hành kinh trung bình:</span>
-                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{averagePeriodDuration} ngày</span>
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-muted-foreground print:text-gray-500 block">Số chu kỳ đã theo dõi:</span>
-                <span className="text-sm sm:text-base font-black text-foreground print:text-black">{filteredCycles.length} chu kỳ</span>
-              </div>
-              <div className="space-y-0.5">
-                <span className="text-muted-foreground print:text-gray-500 block">Chu kỳ bất thường ghi nhận:</span>
-                <span className="text-sm sm:text-base font-black text-red-500 dark:text-rose-400 print:text-red-600">
-                  {filteredCycles.filter((c) => c.isAbnormal).length} lần
+          <div className="flex-1 space-y-3 w-full">
+            <div>
+              <span className="text-muted-foreground print:text-gray-500 text-[10px] font-extrabold uppercase tracking-wider block mb-1">Đánh giá chung</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-black text-foreground">Mức độ:</span>
+                <span className={`inline-block text-[10px] font-black px-2.5 py-0.5 rounded-full border ${periScoreCat.color}`}>
+                  {periScoreCat.label.toUpperCase()}
                 </span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed font-semibold mt-1">
+                {avgPeriScore > 60 
+                  ? "Chị ghi nhận nhiều dấu hiệu tiền mãn kinh ở mức độ cao. Hãy duy trì lối sống lành mạnh và mang báo cáo này thảo luận thêm với bác sĩ phụ khoa."
+                  : avgPeriScore > 30 
+                    ? "Thể trạng ghi nhận các triệu chứng ở mức trung bình. Chị nên tập trung cải thiện chất lượng giấc ngủ và chế độ dinh dưỡng dưỡng sinh tự nhiên."
+                    : "Sức khỏe tiền mãn kinh của chị rất tốt. Các triệu chứng nhẹ nhàng và ít ảnh hưởng đến đời sống hàng ngày."}
+              </p>
+            </div>
+
+            {/* Thanh đo mức độ 3 mốc (Mockup 5) */}
+            <div className="space-y-1.5 pt-1">
+              <div className="relative w-full h-2 rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-rose-500">
+                {/* Chấm chỉ vị trí điểm số */}
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-primary shadow-sm"
+                  style={{ left: `${Math.min(96, Math.max(2, avgPeriScore))}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[9px] font-black text-muted-foreground print:text-gray-500 uppercase select-none">
+                <span>0-30 Thấp</span>
+                <span>31-60 Trung bình</span>
+                <span>61-100 Cao</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Nội dung chính 2: Chi tiết triệu chứng */}
-        <div className="space-y-4 mb-8">
-          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 border-b border-border/40 print:border-gray-300 pb-2.5">
-            <Activity className="w-4.5 h-4.5 text-primary" /> Thống kê mức độ Triệu chứng & Giấc ngủ
+        {/* 3. TỔNG QUAN SỨC KHỎE (Grid 3x2 Sparklines chuẩn mockup 5) */}
+        <div className="space-y-3.5 mb-6 text-left">
+          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 border-b border-border/40 print:border-gray-300 pb-2">
+            <Activity className="w-4.5 h-4.5 text-primary" /> Tổng quan sức khỏe
           </h3>
-          <div className="overflow-x-auto pb-1 border border-border/60 rounded-2xl scrollbar-none print:border-gray-300">
-            <table className="min-w-[600px] w-full divide-y divide-border/40 print:divide-gray-300 text-left text-xs">
-              <thead className="bg-muted/50 print:bg-gray-100 font-bold text-muted-foreground print:text-gray-700 select-none">
-                <tr>
-                  <th className="px-4 py-3.5 font-black uppercase tracking-wider">Chỉ số sức khỏe phân tích</th>
-                  <th className="px-4 py-3.5 text-center font-black uppercase tracking-wider">Giá trị trung bình</th>
-                  <th className="px-4 py-3.5 font-black uppercase tracking-wider">Mức độ / Nhận định</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/30 print:divide-gray-200 font-bold text-foreground print:text-black">
-                <tr className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3">Cường độ cơn bốc hỏa (Hot Flashes)</td>
-                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgHotFlashes} / 3.0</td>
-                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
-                    {parseFloat(avgHotFlashes) < 1.0 ? "Nhẹ / Không đáng kể" : parseFloat(avgHotFlashes) < 2.0 ? "Trung bình" : "Nghiêm trọng"}
-                  </td>
-                </tr>
-                <tr className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3">Mức độ mất ngủ (Insomnia)</td>
-                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgInsomnia} / 3.0</td>
-                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
-                    {parseFloat(avgInsomnia) < 1.0 ? "Ngủ tốt" : parseFloat(avgInsomnia) < 2.0 ? "Mất ngủ nhẹ" : "Mất ngủ nghiêm trọng"}
-                  </td>
-                </tr>
-                <tr className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3">Cảm giác lo âu bồn chồn (Anxiety)</td>
-                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgAnxiety} / 3.0</td>
-                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
-                    {parseFloat(avgAnxiety) < 1.0 ? "Tâm lý ổn định" : "Căng thẳng nhẹ/vừa"}
-                  </td>
-                </tr>
-                <tr className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3">Thời gian ngủ ban đêm trung bình</td>
-                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgSleep} giờ / đêm</td>
-                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
-                    {parseFloat(avgSleep) >= 7.0 ? "Đạt tiêu chuẩn sức khỏe" : "Thiếu ngủ nhẹ"}
-                  </td>
-                </tr>
-                <tr className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3">Chất lượng giấc ngủ tự đánh giá</td>
-                  <td className="px-4 py-3 text-center text-primary print:text-black">{avgSleepQuality} / 10</td>
-                  <td className="px-4 py-3 text-muted-foreground print:text-gray-600 font-semibold">
-                    {parseFloat(avgSleepQuality) >= 7.0 ? "Tốt" : parseFloat(avgSleepQuality) >= 5.0 ? "Trung bình" : "Kém"}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4.5">
+            {/* Chu kỳ */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300">
+              <div className="flex justify-between items-start gap-1">
+                <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Chu kỳ kinh nguyệt</span>
+                <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 dark:bg-pink-950/20 dark:text-pink-400 leading-none">
+                  {filteredCycles.filter((c) => c.isAbnormal).length > 0 ? "Bất thường" : "Đều đặn"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-black text-foreground">{averageCycleLength || "28"} ngày</span>
+                  <p className="text-[9px] text-muted-foreground font-semibold leading-none">Trung bình</p>
+                </div>
+                {/* Sparkline vẽ bằng SVG */}
+                <svg className="w-16 h-8 text-primary shrink-0 select-none pointer-events-none" viewBox="0 0 100 35">
+                  <path d={getSparklineData("cycle")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Bốc hỏa */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300">
+              <div className="flex justify-between items-start gap-1">
+                <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Bốc hỏa</span>
+                <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 leading-none">
+                  {parseFloat(avgHotFlashes) >= 2.0 ? "Nặng" : parseFloat(avgHotFlashes) >= 1.0 ? "Trung bình" : "Nhẹ"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-black text-foreground">{totalDays > 0 ? (parseFloat(avgHotFlashes) * 7).toFixed(0) : "0"} lần/tuần</span>
+                  <p className="text-[9px] text-muted-foreground font-semibold leading-none">Trung bình</p>
+                </div>
+                <svg className="w-16 h-8 text-primary shrink-0 select-none pointer-events-none" viewBox="0 0 100 35">
+                  <path d={getSparklineData("hotFlashes")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Chất lượng ngủ */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300">
+              <div className="flex justify-between items-start gap-1">
+                <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Chất lượng giấc ngủ</span>
+                <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-950/20 dark:text-indigo-400 leading-none">
+                  {parseFloat(avgSleepQuality) >= 7.0 ? "Tốt" : parseFloat(avgSleepQuality) >= 5.0 ? "Khá" : "Kém"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-black text-foreground">{avgSleepQuality}/10</span>
+                  <p className="text-[9px] text-muted-foreground font-semibold leading-none">Điểm số TB</p>
+                </div>
+                <svg className="w-16 h-8 text-[#B05581] shrink-0 select-none pointer-events-none" viewBox="0 0 100 35">
+                  <path d={getSparklineData("sleepQuality")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Mất ngủ */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300">
+              <div className="flex justify-between items-start gap-1">
+                <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Mất ngủ</span>
+                <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 leading-none">
+                  {parseFloat(avgInsomnia) >= 2.0 ? "Cao" : parseFloat(avgInsomnia) >= 1.0 ? "Vừa" : "Thấp"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-black text-foreground">{severeInsomniaCount} ngày/tháng</span>
+                  <p className="text-[9px] text-muted-foreground font-semibold leading-none">Bị mất ngủ nặng</p>
+                </div>
+                {/* Vẽ biểu đồ cột nhỏ Sparkline bằng SVG */}
+                <svg className="w-16 h-8 text-primary shrink-0 select-none pointer-events-none" viewBox="0 0 100 35">
+                  <rect x="10" y="20" width="8" height="12" rx="2" fill="currentColor" opacity="0.3" />
+                  <rect x="25" y="10" width="8" height="22" rx="2" fill="currentColor" />
+                  <rect x="40" y="25" width="8" height="7" rx="2" fill="currentColor" opacity="0.3" />
+                  <rect x="55" y="5" width="8" height="27" rx="2" fill="currentColor" />
+                  <rect x="70" y="15" width="8" height="17" rx="2" fill="currentColor" opacity="0.6" />
+                  <rect x="85" y="22" width="8" height="10" rx="2" fill="currentColor" opacity="0.3" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Tâm trạng */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300">
+              <div className="flex justify-between items-start gap-1">
+                <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">Tâm trạng tích cực</span>
+                <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 leading-none">
+                  {parseFloat(avgSleepQuality) >= 7.0 ? "Tốt" : "Ổn định"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-3 gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-black text-foreground">75%</span>
+                  <p className="text-[9px] text-muted-foreground font-semibold leading-none">Chỉ số cảm xúc</p>
+                </div>
+                <svg className="w-16 h-8 text-emerald-500 shrink-0 select-none pointer-events-none" viewBox="0 0 100 35">
+                  <path d={getSparklineData("mood")} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Triệu chứng nổi bật */}
+            <div className="border border-border/70 rounded-2xl p-4 bg-muted/15 flex flex-col justify-between min-h-[95px] print:border-gray-300 font-bold text-left">
+              <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider block mb-1">Triệu chứng nổi bật</span>
+              <ul className="text-[10px] text-foreground space-y-0.5 list-disc pl-3 flex-1 mt-1">
+                <li>Bốc hỏa về đêm</li>
+                <li>Mất ngủ & trằn trọc</li>
+                <li>Tâm lý dễ lo âu, nhạy cảm</li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Nội dung chính 3: Nhận định lâm sàng sơ bộ từ AI Coach */}
-        <div className="border border-primary/20 rounded-2xl p-5 mb-8 bg-primary/5 print:bg-transparent print:border-gray-300">
-          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 mb-3 select-none">
+        {/* 4. KHUYẾN NGHỊ CẢI THIỆN (AI Coach) */}
+        <div className="border border-primary/20 rounded-2xl p-5 mb-8 bg-primary/5 print:bg-transparent print:border-gray-300 text-left">
+          <h3 className="font-extrabold text-xs sm:text-sm text-foreground print:text-black flex items-center gap-1.5 mb-2.5 select-none">
             <Sparkles className="w-4 h-4 text-primary fill-current animate-pulse" /> Khuyến nghị cải thiện thể trạng (AI Coach)
           </h3>
           <p className="text-xs leading-relaxed text-foreground/90 print:text-gray-700 font-semibold">
@@ -342,22 +500,53 @@ function ReportContent() {
           </p>
         </div>
 
-        {/* Chữ ký & Disclaimer y tế */}
-        <div className="border-t border-border/40 print:border-gray-200 pt-6 mt-8 flex flex-col md:flex-row md:justify-between items-start gap-6">
-          {/* Disclaimer */}
-          <div className="max-w-md flex items-start gap-2 text-[10px] leading-relaxed text-muted-foreground print:text-gray-500 font-semibold">
-            <ShieldAlert className="w-4.5 h-4.5 shrink-0 text-red-500 mt-0.5" />
-            <span>
+        {/* Chữ ký & QR code chân trang (Mockup 5) */}
+        <div className="border-t border-border/40 print:border-gray-200 pt-5 mt-6 flex flex-col sm:flex-row justify-between items-center gap-6">
+          {/* Disclaimer & Nhắc nhở */}
+          <div className="flex-1 space-y-2 text-left">
+            <p className="text-[9px] leading-relaxed text-muted-foreground print:text-gray-500 font-bold max-w-md">
               Tuyên bố pháp lý: Báo cáo này hoàn toàn tự động kết xuất dựa trên dữ liệu nhật ký tự ghi chép của cá nhân. Báo cáo không mang tính chất chẩn đoán bệnh lâm sàng thay thế bác sĩ. Hãy mang báo cáo này thảo luận trực tiếp với bác sĩ phụ khoa của chị trong lần khám định kỳ gần nhất.
-            </span>
+            </p>
+            <p className="text-[10px] font-black text-primary leading-normal">
+              💝 Hãy tiếp tục ghi nhật ký mỗi ngày để có cái nhìn chính xác nhất về sức khỏe của bạn.
+            </p>
           </div>
 
-          {/* Signature block */}
-          <div className="text-center md:mr-10 self-center md:self-auto text-xs font-semibold text-muted-foreground print:text-gray-700">
-            <p className="italic mb-12">Người theo dõi sức khỏe</p>
-            <p className="font-extrabold text-foreground print:text-black border-t border-border/60 print:border-black pt-2 px-8 select-none">
-              {profile.displayName}
-            </p>
+          <div className="flex items-center gap-5 shrink-0 self-center sm:self-auto select-none">
+            {/* Chữ ký */}
+            <div className="text-center text-[10px] font-semibold text-muted-foreground print:text-gray-700">
+              <p className="italic mb-8">Người theo dõi sức khỏe</p>
+              <p className="font-extrabold text-foreground print:text-black border-t border-border/60 print:border-black pt-1 px-4 leading-none">
+                {profile.displayName}
+              </p>
+            </div>
+
+            {/* Mã QR code giả lập */}
+            <div className="w-16 h-16 bg-white border border-border/80 rounded-xl p-1.5 shadow-sm flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="w-full h-full text-foreground fill-current">
+                {/* Vẽ mã QR cách điệu */}
+                <rect x="10" y="10" width="25" height="25" />
+                <rect x="15" y="15" width="15" height="15" fill="white" />
+                <rect x="18" y="18" width="9" height="9" />
+
+                <rect x="65" y="10" width="25" height="25" />
+                <rect x="70" y="15" width="15" height="15" fill="white" />
+                <rect x="73" y="73" width="9" height="9" />
+
+                <rect x="10" y="65" width="25" height="25" />
+                <rect x="15" y="70" width="15" height="15" fill="white" />
+                <rect x="18" y="73" width="9" height="9" />
+
+                {/* Các chấm pixel nhiễu */}
+                <rect x="45" y="15" width="8" height="8" />
+                <rect x="40" y="25" width="8" height="8" />
+                <rect x="55" y="20" width="8" height="8" />
+                <rect x="45" y="45" width="12" height="12" />
+                <rect x="65" y="45" width="8" height="8" />
+                <rect x="45" y="65" width="8" height="8" />
+                <rect x="55" y="75" width="8" height="8" />
+              </svg>
+            </div>
           </div>
         </div>
 

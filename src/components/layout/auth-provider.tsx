@@ -92,9 +92,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setCycles([]);
         setDailyLogs([]);
         
-        // Điều hướng về trang login nếu đang ở các trang yêu cầu đăng nhập
+        // Điều hướng về trang login nếu đang ở các trang yêu cầu đăng nhập (loại trừ trang chủ "/" chứa Landing Page)
         const protectedRoutes = ["/dashboard", "/tracker", "/log", "/chat", "/profile", "/onboarding"];
-        if (protectedRoutes.some((route) => pathname.startsWith(route)) || pathname === "/") {
+        if (protectedRoutes.some((route) => pathname.startsWith(route))) {
           router.push("/login");
         }
       }

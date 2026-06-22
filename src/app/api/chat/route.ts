@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, orderBy, limit, getDocs, updateDoc } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,6 +22,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Lịch sử trò chuyện không hợp lệ." }, { status: 400 });
     }
 
+    // Xác định ngày hiện tại theo giờ Việt Nam (YYYY-MM-DD)
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+    const CHAT_LIMIT = 10;
+    let todayChatCount = 0;
+    let lastChatDate = "";
+
     // 1. Truy vấn Profile người dùng từ Firestore (Sử dụng Client SDK trên môi trường Node.js Server)
     let userProfileText = "Chưa có thông tin hồ sơ.";
     try {
@@ -29,6 +35,9 @@ export async function POST(req: NextRequest) {
       const userDocSnap = await getDoc(userDocRef);
       if (userDocSnap.exists()) {
         const profile = userDocSnap.data();
+        todayChatCount = profile.todayChatCount || 0;
+        lastChatDate = profile.lastChatDate || "";
+
         const currentYear = new Date().getFullYear();
         const age = profile?.birthYear ? currentYear - profile.birthYear : "chưa rõ";
         userProfileText = `
@@ -39,6 +48,30 @@ export async function POST(req: NextRequest) {
       }
     } catch (dbErr) {
       console.warn("Bỏ qua lỗi đọc profile từ Firestore Server: ", dbErr);
+    }
+
+    // Kiểm tra giới hạn lượt chat
+    const isToday = lastChatDate === today;
+    const currentCount = isToday ? todayChatCount : 0;
+
+    if (currentCount >= CHAT_LIMIT) {
+      return NextResponse.json({ 
+        error: "LIMIT_REACHED",
+        reply: "Chào chị! Hôm nay chị em mình đã trò chuyện khá nhiều rồi đấy ạ. Để chị có thời gian nghỉ ngơi và áp dụng các mẹo chăm sóc sức khỏe đã thảo luận, AI Coach xin phép tạm nghỉ ngơi một chút nhé. Chúc chị một ngày bình an và hẹn gặp lại chị vào ngày mai!" 
+      }, { status: 429 });
+    }
+
+    // Tăng lượt chat và cập nhật vào Firestore
+    const newCount = currentCount + 1;
+    try {
+      const userDocRef = doc(db, "users", userId);
+      await updateDoc(userDocRef, {
+        todayChatCount: newCount,
+        lastChatDate: today,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (dbErr) {
+      console.warn("Bỏ qua lỗi cập nhật lượt chat vào Firestore: ", dbErr);
     }
 
     // 2. Truy vấn nhật ký 7 ngày gần nhất của người dùng
@@ -117,11 +150,8 @@ export async function POST(req: NextRequest) {
     5. ĐỊNH DẠNG: Viết câu trả lời mạch lạc, chia thành các đoạn ngắn hoặc gạch đầu dòng rõ ràng để người trung niên dễ đọc. Tránh viết những đoạn văn quá dài dòng và phức tạp.
     `;
 
-    // 4. Chuẩn hóa lịch sử trò chuyện cho OpenAI API
-    const openAIMessages: any[] = [
-      { role: "system", content: systemInstruction }
-    ];
-
+    // 4. Chuẩn hóa lịch sử trò chuyện cho OpenAI API (Giới hạn tối đa 6 tin nhắn gần nhất để tiết kiệm token)
+    const validMessages: any[] = [];
     messages.forEach((msg: any) => {
       // Bỏ qua tin nhắn welcome
       if (msg.id === "welcome") return;
@@ -130,10 +160,18 @@ export async function POST(req: NextRequest) {
       const content = msg.content?.trim() || "";
       if (!content) return;
 
-      openAIMessages.push({ role, content });
+      validMessages.push({ role, content });
     });
 
-    // Kiểm tra xem có tin nhắn hợp lệ nào từ người dùng không
+    // Lấy 6 tin nhắn cuối cùng
+    const recentMessages = validMessages.slice(-6);
+
+    const openAIMessages: any[] = [
+      { role: "system", content: systemInstruction },
+      ...recentMessages
+    ];
+
+    // Kiểm tra xem có tin nhắn hợp lệ nào từ người dùng trong lịch sử gửi đi không
     const userMessages = openAIMessages.filter((msg) => msg.role === "user");
     if (userMessages.length === 0) {
       return NextResponse.json({ error: "Lịch sử trò chuyện không chứa tin nhắn hợp lệ từ người dùng." }, { status: 400 });
@@ -162,7 +200,11 @@ export async function POST(req: NextRequest) {
     const result = await response.json();
     const responseText = result.choices?.[0]?.message?.content || "";
     
-    return NextResponse.json({ reply: responseText });
+    return NextResponse.json({ 
+      reply: responseText,
+      todayChatCount: newCount,
+      lastChatDate: today
+    });
 
   } catch (error: any) {
     console.error("Lỗi API Chat: ", error);

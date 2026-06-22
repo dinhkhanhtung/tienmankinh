@@ -263,37 +263,71 @@ export default function ProfilePage() {
   const bmiCat = bmi > 0 ? getBmiCategory(bmi) : null;
 
   return (
-    <div className="space-y-6 pb-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground sm:text-3xl">Hồ sơ sức khỏe</h1>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-semibold leading-relaxed">
-          Quản lý thông tin thể chất, sinh học và cài đặt thông báo nhắc nhở sức khỏe hàng ngày.
-        </p>
+    <div className="space-y-6 pb-6 page-transition">
+      {/* 1. HEADER & GREETING CARD */}
+      <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-secondary/40 via-secondary/25 to-background border border-border/60 p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
+        <div className="space-y-2 relative z-10 text-center md:text-left flex-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+            <User className="w-3.5 h-3.5" />
+            <span>Thông tin cá nhân</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-black text-foreground">
+            Hồ sơ sức khỏe
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground font-semibold leading-relaxed max-w-lg">
+            Quản lý thông tin thể chất, sinh học của riêng chị. 
+            Cập nhật dữ liệu chính xác giúp trợ lý AI Coach đưa ra các gợi ý y khoa tự nhiên tối ưu nhất.
+          </p>
+        </div>
+
+        {/* Minh họa SVG hoa cúc họa mi / hoa cỏ nhẹ nhàng */}
+        <div className="shrink-0 relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center pointer-events-none select-none">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-primary/80 fill-current animate-in fade-in zoom-in-50 duration-500">
+            {/* Vẽ hoa cúc pastel cách điệu */}
+            <circle cx="50" cy="50" r="10" className="text-amber-300" />
+            {/* Các cánh hoa xung quanh */}
+            <path d="M50 22 C48 35 52 35 50 22 Z" className="text-secondary/70" />
+            <path d="M50 78 C48 65 52 65 50 78 Z" className="text-secondary/70" />
+            <path d="M22 50 C35 48 35 52 22 50 Z" className="text-secondary/70" />
+            <path d="M78 50 C65 48 65 52 78 50 Z" className="text-secondary/70" />
+            
+            <path d="M30 30 C40 38 38 40 30 30 Z" className="text-secondary/50" />
+            <path d="M70 70 C60 62 62 60 70 70 Z" className="text-secondary/50" />
+            <path d="M30 70 C40 62 38 60 30 70 Z" className="text-secondary/50" />
+            <path d="M70 30 C60 38 62 40 70 30 Z" className="text-secondary/50" />
+
+            <circle cx="50" cy="50" r="6" className="text-amber-400" />
+          </svg>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Cột trái (PC) / Stack trên cùng (Mobile): Hồ sơ, Donate, Cài đặt */}
+        {/* Cột trái: Tóm tắt thể chất, Donate & Cài đặt thông báo */}
         <div className="space-y-6 lg:col-span-1">
-          {/* Left side Card: Summary & BMI */}
-          <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden">
-            <CardHeader className="text-center pb-4 bg-muted/10 border-b border-border/40 relative">
-              <div 
-                onClick={handleAvatarClick}
-                className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-2xl sm:text-3xl shadow-inner cursor-pointer group overflow-hidden border-2 border-border/40 hover:border-primary/50 transition-all duration-300"
-                title="Nhấn để thay đổi ảnh đại diện"
-              >
-                {uploading ? (
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                ) : profile.photoURL ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                ) : (
-                  profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
-                )}
-                
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Camera className="w-5 h-5 text-white" />
+          {/* Card Summary & BMI */}
+          <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden rounded-[28px] p-5 relative">
+            <div className="text-center pb-4 border-b border-border/40 relative flex flex-col items-center">
+              {/* Avatar với viền kép gradient phát sáng */}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-tr from-primary to-accent rounded-full blur-[3px] opacity-70 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div 
+                  onClick={handleAvatarClick}
+                  className="relative w-20 h-20 rounded-full bg-secondary text-primary flex items-center justify-center font-black text-3xl shadow-inner cursor-pointer overflow-hidden border-2 border-background active:scale-95 transition-transform duration-300"
+                  title="Nhấn vào đây để đổi ảnh đại diện"
+                >
+                  {uploading ? (
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  ) : profile.photoURL ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profile.photoURL} alt={profile.displayName || "Avatar"} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    profile.displayName ? profile.displayName.charAt(0).toUpperCase() : "U"
+                  )}
+                  
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Camera className="w-5 h-5 text-white" />
+                  </div>
                 </div>
               </div>
 
@@ -306,22 +340,23 @@ export default function ProfilePage() {
                 disabled={uploading}
               />
 
-              <CardTitle className="text-base sm:text-lg font-extrabold mt-2">{profile.displayName}</CardTitle>
-              <CardDescription className="text-xs font-semibold text-muted-foreground">{profile.email}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5 p-5">
+              <h2 className="text-base sm:text-lg font-black text-foreground mt-3 leading-none">{profile.displayName}</h2>
+              <span className="text-[11px] font-semibold text-muted-foreground mt-1.5">{profile.email}</span>
+            </div>
+
+            <div className="space-y-4 pt-5">
               <div className="space-y-2">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Thông số thể hình</span>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
-                    <div className="text-[10px] text-muted-foreground font-bold uppercase">Chiều cao</div>
-                    <div className="text-base sm:text-lg font-black text-foreground mt-0.5">
+                    <span className="text-[9px] text-muted-foreground font-bold uppercase">Chiều cao</span>
+                    <div className="text-sm sm:text-base font-black text-foreground mt-0.5">
                       {profile.height ? `${profile.height} cm` : "Chưa cập nhật"}
                     </div>
                   </div>
                   <div className="bg-muted/30 p-3 rounded-2xl border border-border/50 text-center">
-                    <div className="text-[10px] text-muted-foreground font-bold uppercase">Cân nặng</div>
-                    <div className="text-base sm:text-lg font-black text-foreground mt-0.5">
+                    <span className="text-[9px] text-muted-foreground font-bold uppercase">Cân nặng</span>
+                    <div className="text-sm sm:text-base font-black text-foreground mt-0.5">
                       {profile.weight ? `${profile.weight} kg` : "Chưa cập nhật"}
                     </div>
                   </div>
@@ -330,162 +365,158 @@ export default function ProfilePage() {
 
               {profile.bmi && profile.bmi > 0 ? (
                 <div className="space-y-2.5 pt-4 border-t border-border/40">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Chỉ số BMI hiện tại</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Chỉ số khối cơ thể (BMI)</span>
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-black text-primary">{profile.bmi}</div>
                     {bmiCat && (
-                      <span className={`text-xs font-bold px-3 py-0.5 rounded-full ${bmiCat.color}`}>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${bmiCat.color}`}>
                         {bmiCat.label}
                       </span>
                     )}
                   </div>
-                  <div className="w-full bg-secondary/40 h-2.5 rounded-full overflow-hidden relative">
+                  <div className="w-full bg-secondary/40 h-2 rounded-full overflow-hidden relative">
                     <div 
-                      className="bg-primary h-full rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-primary to-accent h-full rounded-full transition-all duration-300"
                       style={{ width: `${Math.min((profile.bmi / 40) * 100, 100)}%` }}
                     ></div>
                   </div>
                   <p className="text-[10px] text-muted-foreground leading-relaxed font-semibold">
-                    * Chỉ số khối cơ thể (BMI) bình thường dao động từ 18.5 - 24.9.
+                    * Chỉ số BMI lý tưởng của phụ nữ trung niên là từ 18.5 đến 24.9.
                   </p>
                 </div>
               ) : null}
-            </CardContent>
+            </div>
           </Card>
 
-          {/* Card Quyên Góp - Đồng hành cùng dự án */}
-          <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden p-5 space-y-4">
+          {/* Card Quyên Góp đồng hành */}
+          <Card className="border-border shadow-sm bg-gradient-to-br from-primary/5 via-card to-secondary/15 overflow-hidden p-5 rounded-[24px] space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-pink-50 dark:bg-pink-950/20 text-primary flex items-center justify-center shadow-inner shrink-0">
                 <Heart className="w-4.5 h-4.5 fill-current text-primary animate-pulse" />
               </div>
               <div>
-                <h4 className="text-sm font-extrabold text-foreground">Đồng hành cùng dự án</h4>
-                <p className="text-[10px] text-muted-foreground font-bold">Duy trì chi phí máy chủ & API AI</p>
+                <h4 className="text-xs sm:text-sm font-extrabold text-foreground">Đồng hành cùng dự án</h4>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-wider">Hỗ trợ duy trì máy chủ & AI</p>
               </div>
             </div>
             
             <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
-              Ứng dụng hoạt động phi lợi nhuận. Sự đồng hành tự nguyện của bạn giúp chúng tôi trang trải tiền khóa API AI Coach và duy trì hệ thống ổn định.
+              Tiền Mãn Kinh là ứng dụng phi lợi nhuận. Sự đồng hành đóng góp tự nguyện từ các chị giúp chúng tôi duy trì máy chủ và tiền khóa API AI Coach ân cần mỗi ngày.
             </p>
 
             <DonateDialog trigger={
               <Button
                 variant="outline"
-                className="w-full h-11 rounded-xl justify-between border-dashed border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10 text-xs font-bold text-primary transition-all duration-300"
+                className="w-full h-11 rounded-xl justify-between border-dashed border-primary/30 hover:border-primary/60 bg-primary/5 hover:bg-primary/10 text-xs font-bold text-primary active:scale-98 transition-all cursor-pointer"
               >
                 <span className="flex items-center gap-2">
                   <Heart className="w-4 h-4 fill-current text-primary" />
                   Ủng hộ duy trì ứng dụng
                 </span>
-                <span className="text-[9px] bg-primary/15 text-primary px-2 py-0.5 rounded-full font-black uppercase tracking-wider">Tự nguyện</span>
+                <span className="text-[9px] bg-primary/15 text-primary px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider">Gửi tặng</span>
               </Button>
             } />
           </Card>
 
-          {/* Card 2: Reports & Settings */}
-          <Card className="border-border shadow-sm h-fit bg-card/75 backdrop-blur-sm overflow-hidden">
-            <CardHeader className="pb-3 bg-muted/10 border-b border-border/40 p-4">
-              <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
-                <FileText className="w-4 h-4 text-primary" /> Báo cáo & Thiết lập
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Xuất dữ liệu sức khỏe định kỳ và quản lý thông báo.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 p-4 sm:p-5">
-              {/* Nhắc nhở ghi log */}
-              <div className="flex items-center justify-between py-1 cursor-pointer">
-                <div className="space-y-0.5 max-w-[70%]">
-                  <Label htmlFor="notify-switch" className="text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer">
-                    <Bell className="w-4 h-4 text-primary" /> Nhắc nhở mỗi ngày
-                  </Label>
-                  <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
-                    Nhận thông báo nhắc nhở ghi nhật ký lúc 21:00 tối
-                  </p>
-                </div>
-                <Switch
-                  id="notify-switch"
-                  checked={notificationsEnabled}
-                  onCheckedChange={handleNotificationToggle}
-                  className="data-[state=checked]:bg-primary cursor-pointer"
-                />
-              </div>
+          {/* Cài đặt Nhắc nhở & Báo cáo */}
+          <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden rounded-[28px] p-5 space-y-5">
+            <div className="border-b border-border/40 pb-3">
+              <h3 className="text-sm font-extrabold flex items-center gap-2 text-foreground">
+                <Bell className="w-4.5 h-4.5 text-primary" /> Thiết lập nhắc nhở
+              </h3>
+            </div>
 
-              {/* Xuất báo cáo */}
-              <div className="space-y-2.5 pt-4 border-t border-border/40">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Xuất báo cáo sức khỏe</span>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => router.push("/report?range=3")}
-                    variant="outline"
-                    className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-primary" /> Báo cáo 3 tháng qua
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-                  
-                  <Button
-                    onClick={() => router.push("/report?range=6")}
-                    variant="outline"
-                    className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-primary" /> Báo cáo 6 tháng qua
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-
-                  <Button
-                    onClick={() => router.push("/report?range=12")}
-                    variant="outline"
-                    className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted"
-                  >
-                    <span className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-primary" /> Báo cáo 12 tháng qua
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-                </div>
+            {/* Nhắc nhở ghi log */}
+            <div className="flex items-center justify-between py-1 cursor-pointer">
+              <div className="space-y-0.5 max-w-[70%]">
+                <Label htmlFor="notify-switch" className="text-xs sm:text-sm font-extrabold flex items-center gap-1.5 cursor-pointer">
+                  Nhắc ghi nhật ký sức khỏe
+                </Label>
+                <p className="text-[10px] text-muted-foreground leading-normal font-semibold">
+                  Gửi thông báo nhắc nhở lúc 21:00 hàng tối
+                </p>
               </div>
+              <Switch
+                id="notify-switch"
+                checked={notificationsEnabled}
+                onCheckedChange={handleNotificationToggle}
+                className="data-[state=checked]:bg-primary cursor-pointer"
+              />
+            </div>
 
-              {/* Góp ý ứng dụng */}
-              <div className="space-y-2.5 pt-4 border-t border-border/40">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Góp ý & Phản hồi</span>
-                <FeedbackDialog trigger={
-                  <Button
-                    variant="outline"
-                    className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted cursor-pointer"
-                  >
-                    <span className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary" /> Gửi góp ý phản hồi
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  </Button>
-                } />
+            {/* Xuất báo cáo */}
+            <div className="space-y-2.5 pt-4 border-t border-border/40">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Báo cáo sức khỏe định kỳ</span>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => router.push("/report?range=3")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted active:scale-98 transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 3 tháng gần nhất
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+                
+                <Button
+                  onClick={() => router.push("/report?range=6")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted active:scale-98 transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 6 tháng gần nhất
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+
+                <Button
+                  onClick={() => router.push("/report?range=12")}
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted active:scale-98 transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" /> Báo cáo 12 tháng gần nhất
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
               </div>
-            </CardContent>
+            </div>
+
+            {/* Phản hồi góp ý */}
+            <div className="space-y-2.5 pt-4 border-t border-border/40">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Góp ý cải tiến</span>
+              <FeedbackDialog trigger={
+                <Button
+                  variant="outline"
+                  className="w-full h-10 rounded-xl justify-between border-border text-xs font-bold text-foreground hover:bg-muted cursor-pointer active:scale-98 transition-all"
+                >
+                  <span className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-primary" /> Gửi góp ý & Phản hồi
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              } />
+            </div>
           </Card>
         </div>
 
-        {/* Right side Form: Edit Profile (Chiếm 2 cột trên PC) */}
+        {/* Cột phải: Form cập nhật thông tin chi tiết */}
         <div className="lg:col-span-2">
-          <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden">
-            <CardHeader className="bg-muted/10 border-b border-border/40 p-4 sm:p-5">
-              <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
-                <User className="w-4 h-4 text-primary" /> Thông tin cá nhân
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Cập nhật thông tin sinh học chính xác giúp AI Coach phân tích chính xác nhất.
-              </CardDescription>
-            </CardHeader>
+          <Card className="border-border shadow-sm bg-card/75 backdrop-blur-sm overflow-hidden rounded-[28px]">
+            <div className="bg-muted/10 border-b border-border/40 p-4 sm:p-5">
+              <h2 className="text-sm sm:text-base font-extrabold flex items-center gap-2 text-foreground">
+                <User className="w-4.5 h-4.5 text-primary" /> Thông tin sinh học & Thể chất
+              </h2>
+              <p className="text-[11px] text-muted-foreground font-semibold mt-1">
+                Vui lòng điền đầy đủ và cập nhật khi có thay đổi để AI Coach học hỏi thể trạng của chị tốt nhất.
+              </p>
+            </div>
 
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-5 sm:p-6">
               <form onSubmit={handleSave} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Tên */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4.5">
+                  {/* Họ và Tên */}
                   <div className="space-y-1.5">
                     <Label htmlFor="displayName" className="text-xs font-bold text-muted-foreground uppercase">Họ và Tên</Label>
                     <Input
@@ -543,9 +574,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  {/* Tuổi có kinh */}
+                  {/* Tuổi bắt đầu có kinh */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="periodAge" className="text-xs font-bold text-muted-foreground uppercase">Tuổi có kinh lần đầu</Label>
+                    <Label htmlFor="periodAge" className="text-xs font-bold text-muted-foreground uppercase">Tuổi có kinh nguyệt đầu tiên</Label>
                     <div className="relative">
                       <Sparkles className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                       <Input
@@ -559,9 +590,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  {/* Số con */}
+                  {/* Số lượng con đã sinh */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="childrenCount" className="text-xs font-bold text-muted-foreground uppercase">Số con đã sinh</Label>
+                    <Label htmlFor="childrenCount" className="text-xs font-bold text-muted-foreground uppercase">Số lượng con đã sinh</Label>
                     <div className="relative">
                       <Baby className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                       <Input
@@ -577,32 +608,34 @@ export default function ProfilePage() {
                 </div>
 
                 {bmi > 0 && (
-                  <div className="p-3.5 bg-muted border border-border rounded-xl flex items-center justify-between text-xs font-bold shadow-inner">
+                  <div className="p-4 bg-muted border border-border rounded-2xl flex items-center justify-between text-xs font-bold shadow-inner">
                     <div>
                       <span className="text-muted-foreground">BMI ước tính: </span>
                       <span className="text-foreground text-sm font-black">{bmi}</span>
                     </div>
                     {bmiCat && (
-                      <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${bmiCat.color}`}>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${bmiCat.color}`}>
                         {bmiCat.label}
                       </span>
                     )}
                   </div>
                 )}
 
-                <Button
-                  type="submit"
-                  className="w-full sm:w-auto h-11 px-8 text-xs sm:text-sm font-bold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center transition-colors active:scale-98 cursor-pointer"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang cập nhật...
-                    </>
-                  ) : (
-                    "Lưu thay đổi"
-                  )}
-                </Button>
+                <div className="flex justify-end pt-3">
+                  <Button
+                    type="submit"
+                    className="w-full sm:w-auto h-11 px-8 text-xs sm:text-sm font-bold rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/25 active:scale-98 transition-transform cursor-pointer"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang lưu...
+                      </>
+                    ) : (
+                      "Lưu thay đổi"
+                    )}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>

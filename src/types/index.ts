@@ -11,6 +11,8 @@ export interface UserProfile {
   bmi?: number;
   isOnboarded: boolean;
   theme?: 'light' | 'dark';
+  todayChatCount?: number;
+  lastChatDate?: string;
   createdAt: string;
   updatedAt: string;
 }

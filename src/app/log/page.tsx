@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Smile, Frown, Meh, Mic, MicOff, Info, 
   Flame, Moon, Smile as MoodIcon, Save, Calendar, Loader2,
-  Check, Sparkles
+  Check, Sparkles, Heart
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ export default function LogPage() {
   const [sleep, setSleep] = useState(DEFAULT_SLEEP);
   const [mood, setMood] = useState(DEFAULT_MOOD);
   const [isSaved, setIsSaved] = useState(false);
+  const [recordSeconds, setRecordSeconds] = useState(0);
 
   // Sync local state chỉ khi người dùng chọn ngày khác
   useEffect(() => {
@@ -69,6 +70,26 @@ export default function LogPage() {
   };
 
   const { isListening, browserSupportsSpeech, startListening, stopListening } = useSpeech(handleTranscript);
+
+  // Đếm giây khi đang ghi âm
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isListening) {
+      setRecordSeconds(0);
+      interval = setInterval(() => {
+        setRecordSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setRecordSeconds(0);
+    }
+    return () => clearInterval(interval);
+  }, [isListening]);
+
+  const formatSeconds = (sec: number) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, "0");
+    const s = (sec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
   const toggleListening = () => {
     if (isListening) {
@@ -204,15 +225,18 @@ export default function LogPage() {
 
       {/* Main Forms Layout */}
       <Tabs defaultValue="symptoms" className="w-full">
-        <TabsList className="grid grid-cols-3 w-full max-w-md h-11 bg-muted/60 p-1 rounded-xl mb-6 shadow-inner">
-          <TabsTrigger value="symptoms" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+        <TabsList className="grid grid-cols-4 w-full max-w-lg h-11 bg-muted/60 p-1 rounded-xl mb-6 shadow-inner">
+          <TabsTrigger value="symptoms" className="rounded-lg font-bold text-[10px] sm:text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Flame className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Triệu chứng
           </TabsTrigger>
-          <TabsTrigger value="sleep" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="sleep" className="rounded-lg font-bold text-[10px] sm:text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Moon className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Giấc ngủ
           </TabsTrigger>
-          <TabsTrigger value="mood" className="rounded-lg font-bold text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="mood" className="rounded-lg font-bold text-[10px] sm:text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <MoodIcon className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Tâm trạng
+          </TabsTrigger>
+          <TabsTrigger value="voice" className="rounded-lg font-bold text-[10px] sm:text-xs md:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Mic className="w-3.5 h-3.5 mr-1.5 shrink-0" /> Ghi âm
           </TabsTrigger>
         </TabsList>
 
@@ -461,10 +485,105 @@ export default function LogPage() {
                 <p className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold leading-normal flex items-start gap-1 p-1 bg-muted/20 rounded-lg">
                   <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary" />
                   <span>
-                    Tính năng giọng nói sử dụng Web Speech API được tối ưu trên Google Chrome & Safari.
+                    Tính năng giọng nói sử dụng Web Speech API được tối ưu trên Google Chrome & Safari. Dữ liệu ghi nhận cũng sẽ xuất hiện trong tab "Ghi âm" kế bên.
                   </span>
                 </p>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* TAB 4: Voice Journaling Form (Mockup 4) */}
+        <TabsContent value="voice" className="outline-none animate-in fade-in slide-in-from-bottom-2 duration-300 min-h-[450px]">
+          <Card className="border-border shadow-sm w-full glass-card">
+            <CardHeader className="bg-muted/10 border-b border-border/40 p-4 pb-3">
+              <CardTitle className="text-sm sm:text-base font-extrabold flex items-center gap-2">
+                <Mic className="w-4.5 h-4.5 text-primary" /> Nhật ký giọng nói
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Ghi lại cảm xúc, triệu chứng hoặc bất cứ điều gì chị muốn chia sẻ ❤️
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="p-5 sm:p-6 space-y-6 flex flex-col items-center">
+              {/* Bảo mật alert banner */}
+              <div className="w-full flex items-center gap-2.5 p-3.5 bg-secondary/20 border border-secondary/50 rounded-2xl text-xs font-semibold leading-relaxed text-[#7A4E6D] dark:text-[#E587B3] shadow-inner select-none text-left">
+                <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Heart className="w-3.5 h-3.5 fill-current" />
+                </div>
+                <span>Dữ liệu của chị được bảo mật tuyệt đối và chỉ chị có thể nghe lại.</span>
+              </div>
+
+              {/* Vòng tròn ghi âm khổng lồ ở giữa */}
+              <div className="relative flex flex-col items-center justify-center py-6 w-full">
+                
+                {/* Voice Ripple effect waves */}
+                {isListening && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+                    <div className="w-48 h-48 rounded-full border-2 border-primary/20 animate-ping absolute" />
+                    <div className="w-56 h-56 rounded-full border-2 border-primary/10 animate-ping absolute [animation-delay:0.5s]" />
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full flex flex-col items-center justify-center transition-all duration-300 shadow-xl border relative z-10 active:scale-95 cursor-pointer ${
+                    isListening
+                      ? "bg-red-500 border-red-400 text-white shadow-red-500/20"
+                      : "bg-gradient-to-br from-primary to-[#B05581] border-primary/30 text-white shadow-primary/20 hover:shadow-primary/35 hover:scale-[1.02]"
+                  }`}
+                  style={{ WebkitTapHighlightColor: "transparent" }}
+                >
+                  {isListening ? (
+                    <MicOff className="w-10 h-10 sm:w-12 h-12 stroke-[1.75]" />
+                  ) : (
+                    <Mic className="w-10 h-10 sm:w-12 h-12 stroke-[1.75]" />
+                  )}
+                  <span className="text-[10px] font-bold mt-2.5 uppercase tracking-widest">
+                    {isListening ? "Dừng ghi âm" : "Nhấn để nói"}
+                  </span>
+                </button>
+
+                {/* Bộ đếm giây */}
+                <div className="mt-5 text-center space-y-1 relative z-10">
+                  <span className="text-2xl sm:text-3xl font-black text-primary font-mono">{formatSeconds(recordSeconds)}</span>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground font-bold tracking-wide">
+                    {isListening ? "Đang ghi âm..." : "Nhấn nút để bắt đầu nói"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Gợi ý nội dung Card */}
+              <div className="w-full bg-muted/20 border border-border/70 p-4.5 rounded-2xl text-left space-y-3">
+                <h4 className="text-xs font-black text-foreground flex items-center gap-1.5">
+                  ✨ Gợi ý nội dung
+                </h4>
+                <ul className="space-y-2.5 text-xs text-muted-foreground font-bold leading-normal">
+                  <li className="flex items-center gap-2">
+                    <span className="text-sm">😊</span> Hôm nay chị cảm thấy thế nào?
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-sm">🤒</span> Các triệu chứng chị gặp phải là gì?
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-sm">🌙</span> Chất lượng giấc ngủ đêm qua ra sao?
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-sm">❤️</span> Có điều gì khiến chị lo lắng hoặc căng thẳng không?
+                  </li>
+                </ul>
+              </div>
+
+              {/* Ô hiển thị bản dịch text */}
+              {mood.note && (
+                <div className="w-full space-y-1.5 text-left border-t border-border/40 pt-4 animate-in fade-in">
+                  <Label className="text-xs font-bold text-muted-foreground uppercase">Văn bản đã ghi chép</Label>
+                  <div className="p-3.5 bg-background border border-border/80 rounded-2xl text-xs sm:text-sm font-semibold leading-relaxed text-foreground min-h-[60px] max-h-[140px] overflow-y-auto shadow-inner">
+                    {mood.note}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -171,28 +171,28 @@ export default function OnboardingPage() {
   const progressPercentage = (step / 3) * 100;
 
   return (
-    <div className="flex-1 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 bg-background max-w-md mx-auto w-full">
+    <div className="flex-1 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-tr from-secondary/20 via-background to-primary/5 min-h-screen max-w-md mx-auto w-full page-transition">
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary text-primary mb-4 shadow-sm">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary text-primary mb-3 shadow-inner">
           <Heart className="w-8 h-8 fill-current" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">Thiết lập sức khỏe</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Hãy giúp chúng tôi cá nhân hóa trải nghiệm theo dõi sức khỏe của bạn.
+        <h1 className="text-2xl font-black text-foreground tracking-tight">Thiết lập sức khỏe</h1>
+        <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground font-semibold">
+          Hãy giúp chúng tôi cá nhân hóa lộ trình chăm sóc sức khỏe của chị.
         </p>
       </div>
 
       {/* Progress Bar */}
       {step > 0 && (
-        <div className="mb-8">
-          <div className="flex justify-between text-xs text-muted-foreground mb-2 font-medium">
+        <div className="mb-6">
+          <div className="flex justify-between text-[11px] text-muted-foreground mb-2 font-bold">
             <span>Bước {step} trên 3</span>
             <span>{Math.round(progressPercentage)}% Hoàn thành</span>
           </div>
-          <div className="w-full bg-secondary h-2.5 rounded-full overflow-hidden">
+          <div className="w-full bg-secondary/60 h-2.5 rounded-full overflow-hidden">
             <div
-              className="bg-primary h-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-primary to-accent h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
@@ -200,50 +200,50 @@ export default function OnboardingPage() {
       )}
 
       {/* Steps Content */}
-      <div className="bg-card border border-border rounded-2xl shadow-sm p-6 sm:p-8 flex flex-col gap-6">
+      <div className="bg-card/95 backdrop-blur-md border border-border/80 rounded-[28px] shadow-lg p-6 sm:p-8 flex flex-col gap-5">
         {/* STEP 0: Disclaimer */}
         {step === 0 && (
-          <div className="flex flex-col gap-5">
-            <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-xl text-amber-800 dark:text-amber-300">
-              <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
-              <div className="text-sm leading-relaxed font-medium">
-                <span className="font-bold">TUYÊN BỐ MIỄN TRỪ TRÁCH NHIỆM Y TẾ:</span>
-                <p className="mt-1">
-                  Mọi phân tích, chỉ số PeriScore và lời khuyên từ AI Coach trong ứng dụng chỉ mang tính chất tham khảo, giáo dục và hỗ trợ cải thiện lối sống. Ứng dụng <span className="underline font-bold">không thay thế</span> các chẩn đoán, khám bệnh y khoa hoặc can thiệp lâm sàng từ bác sĩ chuyên khoa.
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start gap-3 p-4 bg-amber-500/5 dark:bg-amber-950/20 border border-amber-500/10 rounded-2xl text-amber-800 dark:text-amber-300">
+              <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-500" />
+              <div className="text-xs leading-relaxed font-semibold">
+                <span className="font-bold text-[10px] uppercase tracking-wider block mb-1">Tuyên bố miễn trách nhiệm y khoa:</span>
+                <p>
+                  Mọi phân tích sức khỏe, chỉ số PeriScore và tư vấn lối sống của trợ lý AI Coach chỉ mang tính chất tham khảo và hỗ trợ cải thiện lối sống. Ứng dụng <span className="underline font-black">không thay thế</span> chẩn đoán chuyên khoa hoặc can thiệp lâm sàng từ bác sĩ.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-muted border border-border rounded-xl">
+            <div className="flex items-center gap-3 p-4 bg-muted/40 border border-border/60 rounded-2xl">
               <Switch
                 id="disclaimer-check"
                 checked={acceptedDisclaimer}
                 onCheckedChange={setAcceptedDisclaimer}
-                className="data-[state=checked]:bg-primary"
+                className="data-[state=checked]:bg-primary cursor-pointer"
               />
               <Label
                 htmlFor="disclaimer-check"
-                className="text-sm leading-relaxed text-foreground cursor-pointer font-medium select-none"
+                className="text-xs sm:text-sm leading-relaxed text-foreground cursor-pointer font-bold select-none"
               >
-                Tôi hiểu rằng ứng dụng chỉ mang tính chất tham khảo, không thay thế chẩn đoán y khoa.
+                Tôi đã hiểu ứng dụng chỉ mang tính chất tham khảo dưỡng sinh, không thay thế bác sĩ.
               </Label>
             </div>
 
             <Button
               onClick={handleNextStep}
-              className="w-full h-12 text-base font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm transition-colors mt-2"
+              className="w-full h-12 text-xs sm:text-sm font-black rounded-xl bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:opacity-95 shadow-md shadow-primary/20 transition-all mt-2 active:scale-98"
             >
-              Tôi đồng ý và tiếp tục <ArrowRight className="w-5 h-5 ml-2" />
+              Tôi đồng ý và tiếp tục <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </div>
         )}
 
         {/* STEP 1: Physical Data */}
         {step === 1 && (
-          <div className="flex flex-col gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="birthYear" className="text-sm font-semibold text-foreground">
-                Năm sinh của bạn
+          <div className="flex flex-col gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="birthYear" className="text-xs font-bold text-muted-foreground uppercase">
+                Năm sinh của chị
               </Label>
               <Input
                 id="birthYear"
@@ -253,14 +253,14 @@ export default function OnboardingPage() {
                 placeholder="Ví dụ: 1975"
                 value={birthYear}
                 onChange={(e) => setBirthYear(e.target.value)}
-                className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
               />
-              <p className="text-xs text-muted-foreground">Ứng dụng hỗ trợ tốt nhất cho phụ nữ tuổi từ 40–55.</p>
+              <p className="text-[10px] text-muted-foreground font-semibold">Ứng dụng được tối ưu hóa cho phụ nữ tuổi từ 40–55.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="height" className="text-sm font-semibold text-foreground">
+              <div className="space-y-1.5">
+                <Label htmlFor="height" className="text-xs font-bold text-muted-foreground uppercase">
                   Chiều cao (cm)
                 </Label>
                 <Input
@@ -269,12 +269,12 @@ export default function OnboardingPage() {
                   placeholder="Ví dụ: 158"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                  className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="weight" className="text-sm font-semibold text-foreground">
+              <div className="space-y-1.5">
+                <Label htmlFor="weight" className="text-xs font-bold text-muted-foreground uppercase">
                   Cân nặng (kg)
                 </Label>
                 <Input
@@ -283,21 +283,21 @@ export default function OnboardingPage() {
                   placeholder="Ví dụ: 54"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                  className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
                 />
               </div>
             </div>
 
             {bmi > 0 && (
-              <div className="p-4 bg-muted/50 border border-border rounded-xl flex items-center justify-between">
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Chỉ số BMI dự kiến: </span>
-                  <span className="font-bold text-foreground">{bmi}</span>
+              <div className="p-3.5 bg-muted border border-border/80 rounded-2xl flex items-center justify-between text-xs font-bold">
+                <div>
+                  <span className="text-muted-foreground">BMI ước tính: </span>
+                  <span className="text-foreground font-black">{bmi}</span>
                 </div>
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  bmi < 18.5 ? "bg-blue-100 text-blue-800" :
-                  bmi < 25 ? "bg-green-100 text-green-800" :
-                  bmi < 30 ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800"
+                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                  bmi < 18.5 ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" :
+                  bmi < 25 ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" :
+                  bmi < 30 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
                 }`}>
                   {bmi < 18.5 ? "Gầy" :
                    bmi < 25 ? "Bình thường" :
@@ -306,19 +306,19 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-3">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 h-12 font-semibold rounded-xl border-border"
+                className="flex-1 h-11 text-xs rounded-xl font-bold border-border hover:bg-muted"
               >
                 Quay lại
               </Button>
               <Button
                 onClick={handleNextStep}
-                className="flex-1 h-12 font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95"
+                className="flex-1 h-11 text-xs rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 active:scale-98 shadow-sm"
               >
-                Tiếp tục <ArrowRight className="w-4 h-4 ml-1.5" />
+                Tiếp tục <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -326,9 +326,9 @@ export default function OnboardingPage() {
 
         {/* STEP 2: Reproduction Data */}
         {step === 2 && (
-          <div className="flex flex-col gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="periodAge" className="text-sm font-semibold text-foreground">
+          <div className="flex flex-col gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="periodAge" className="text-xs font-bold text-muted-foreground uppercase">
                 Tuổi bắt đầu có kinh nguyệt lần đầu
               </Label>
               <Input
@@ -339,12 +339,12 @@ export default function OnboardingPage() {
                 placeholder="Ví dụ: 13"
                 value={periodAge}
                 onChange={(e) => setPeriodAge(e.target.value)}
-                className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="childrenCount" className="text-sm font-semibold text-foreground">
+            <div className="space-y-1.5">
+              <Label htmlFor="childrenCount" className="text-xs font-bold text-muted-foreground uppercase">
                 Số lượng con đã sinh
               </Label>
               <Input
@@ -355,23 +355,23 @@ export default function OnboardingPage() {
                 placeholder="Ví dụ: 2"
                 value={childrenCount}
                 onChange={(e) => setChildrenCount(e.target.value)}
-                className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
               />
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-3">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 h-12 font-semibold rounded-xl border-border"
+                className="flex-1 h-11 text-xs rounded-xl font-bold border-border hover:bg-muted"
               >
                 Quay lại
               </Button>
               <Button
                 onClick={handleNextStep}
-                className="flex-1 h-12 font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95"
+                className="flex-1 h-11 text-xs rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/95 active:scale-98 shadow-sm"
               >
-                Tiếp tục <ArrowRight className="w-4 h-4 ml-1.5" />
+                Tiếp tục <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
           </div>
@@ -379,9 +379,9 @@ export default function OnboardingPage() {
 
         {/* STEP 3: Period tracking info */}
         {step === 3 && (
-          <div className="flex flex-col gap-5">
-            <div className="space-y-2">
-              <Label htmlFor="lastPeriodDate" className="text-sm font-semibold text-foreground">
+          <div className="flex flex-col gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="lastPeriodDate" className="text-xs font-bold text-muted-foreground uppercase">
                 Ngày bắt đầu kỳ kinh gần nhất
               </Label>
               <Input
@@ -390,16 +390,16 @@ export default function OnboardingPage() {
                 max={new Date().toISOString().split("T")[0]}
                 value={lastPeriodDate}
                 onChange={(e) => setLastPeriodDate(e.target.value)}
-                className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
               />
-              <p className="text-xs text-muted-foreground">
-                Mốc quan trọng để chúng tôi dự báo kỳ kinh tiếp theo của bạn.
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                Mốc quan trọng giúp AI dự báo chuẩn xác vòng kinh tiếp theo.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="cycleLength" className="text-sm font-semibold text-foreground">
-                Độ dài chu kỳ kinh nguyệt trung bình (ngày)
+            <div className="space-y-1.5">
+              <Label htmlFor="cycleLength" className="text-xs font-bold text-muted-foreground uppercase">
+                Vòng chu kỳ kinh nguyệt trung bình (ngày)
               </Label>
               <Input
                 id="cycleLength"
@@ -409,34 +409,34 @@ export default function OnboardingPage() {
                 placeholder="Thông thường là 28-30 ngày"
                 value={cycleLength}
                 onChange={(e) => setCycleLength(e.target.value)}
-                className="h-12 text-lg rounded-xl border-border bg-background focus:ring-primary"
+                className="h-11 rounded-xl border-border bg-background focus:ring-primary font-semibold text-sm"
               />
-              <p className="text-xs text-muted-foreground">
-                Số ngày từ khi bắt đầu kỳ kinh này đến khi bắt đầu kỳ kinh tiếp theo.
+              <p className="text-[10px] text-muted-foreground font-semibold">
+                Số ngày tính từ khi bắt đầu kỳ kinh này đến khi bắt đầu kỳ tiếp theo.
               </p>
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3 mt-3">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 h-12 font-semibold rounded-xl border-border"
+                className="flex-1 h-11 text-xs rounded-xl font-bold border-border hover:bg-muted"
                 disabled={submitting}
               >
                 Quay lại
               </Button>
               <Button
                 onClick={handleSubmit}
-                className="flex-1 h-12 font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center"
+                className="flex-1 h-11 text-xs rounded-xl font-bold bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:opacity-95 flex items-center justify-center shadow-md active:scale-98"
                 disabled={submitting}
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin mr-2" /> Đang lưu...
+                    <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> Đang lưu...
                   </>
                 ) : (
                   <>
-                    Hoàn tất <Sparkles className="w-4 h-4 ml-1.5 fill-current" />
+                    Hoàn tất <Sparkles className="w-4 h-4 ml-1.5 fill-current text-white animate-pulse" />
                   </>
                 )}
               </Button>
