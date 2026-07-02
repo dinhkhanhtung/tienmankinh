@@ -115,7 +115,7 @@ export function FeedbackDialog({ trigger, open: controlledOpen, onOpenChange: co
         <div className="w-11 h-11 rounded-full bg-pink-50 dark:bg-pink-950/20 text-primary flex items-center justify-center shadow-inner">
           <MessageSquare className="w-5.5 h-5.5 text-primary" />
         </div>
-        <DialogTitle className="text-lg font-black tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-2">
+        <DialogTitle className="text-lg font-black tracking-tight text-primary mt-2">
           Góp ý & Phản hồi
         </DialogTitle>
         <DialogDescription className="text-xs text-muted-foreground font-semibold px-4 text-center leading-relaxed">

@@ -324,7 +324,7 @@ function ReportContent() {
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
-              <span className="text-2xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-none">{avgPeriScore}</span>
+              <span className="text-2xl font-black text-primary leading-none">{avgPeriScore}</span>
               <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">/100</span>
             </div>
           </div>

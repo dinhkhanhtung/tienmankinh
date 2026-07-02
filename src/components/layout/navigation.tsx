@@ -83,7 +83,7 @@ export function Navigation({ children }: { children: React.ReactNode }) {
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-primary/20 text-primary flex items-center justify-center shadow-inner group cursor-pointer">
             <Heart className="w-5 h-5 fill-current group-hover:scale-110 transition-transform duration-300" />
           </div>
-          <span className="font-black text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-tight">Tiền Mãn Kinh</span>
+          <span className="font-black text-lg text-primary tracking-tight">Tiền Mãn Kinh</span>
         </div>
 
         {/* Menu Items */}

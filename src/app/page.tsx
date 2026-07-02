@@ -169,7 +169,7 @@ export default function Home() {
             <div className="w-9 h-9 rounded-full bg-secondary/80 text-primary flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
               <Heart className="w-5 h-5 fill-current" />
             </div>
-            <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="font-extrabold text-base sm:text-lg tracking-tight text-primary">
               Tiền Mãn Kinh
             </span>
           </Link>
@@ -257,7 +257,7 @@ export default function Home() {
           <span>Giải pháp chăm sóc sức khỏe phụ nữ tuổi 40+</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-3xl mx-auto mb-6 bg-gradient-to-br from-foreground via-foreground to-accent/90 bg-clip-text text-transparent">
+        <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-3xl mx-auto mb-6 text-foreground">
           Đồng hành cùng sức khỏe & sự an tâm của bạn
         </h1>
 

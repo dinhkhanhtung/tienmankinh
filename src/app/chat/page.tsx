@@ -353,7 +353,7 @@ export default function ChatPage() {
               type="button"
               size="icon"
               onClick={() => scrollToBottom("smooth")}
-              className="absolute bottom-4 right-4 h-9.5 w-9.5 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/95 border border-primary/20 active:scale-90 transition-all z-20 animate-bounce"
+              className="absolute bottom-4 right-4 h-9.5 w-9.5 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/95 border border-primary/20 active:scale-90 transition-all z-20"
             >
               <ArrowDown className="w-4.5 h-4.5" />
             </Button>

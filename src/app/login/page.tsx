@@ -160,7 +160,7 @@ export default function LoginPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary text-primary mb-4 shadow-inner ring-4 ring-primary/10">
           <Heart className="w-8 h-8 fill-current text-primary animate-pulse" />
         </div>
-        <h1 className="text-3xl font-black text-foreground tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Tiền Mãn Kinh</h1>
+        <h1 className="text-3xl font-black text-primary tracking-tight">Tiền Mãn Kinh</h1>
         <p className="mt-2 text-xs sm:text-sm text-muted-foreground font-semibold">
           Đồng hành cùng sức khỏe & sự an tâm của phụ nữ trung niên
         </p>

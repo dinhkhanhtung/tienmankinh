@@ -170,13 +170,13 @@
 }
 
 /* Typing indicator for chatbot */
-@keyframes typing-bounce {
+@keyframes typing-indicator {
   0%, 100% {
     transform: translateY(0);
     opacity: 0.4;
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
     opacity: 1;
   }
 }
@@ -187,7 +187,7 @@
   height: 6px;
   border-radius: 50%;
   background-color: var(--primary);
-  animation: typing-bounce 1.2s infinite ease-in-out;
+  animation: typing-indicator 1.2s infinite cubic-bezier(0.16, 1, 0.3, 1);
 }
 .typing-dot:nth-child(1) {
   animation-delay: 0s;

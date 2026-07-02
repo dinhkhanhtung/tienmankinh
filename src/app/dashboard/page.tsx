@@ -435,7 +435,7 @@ export default function DashboardPage() {
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-none">{currentPeriScore}</span>
+                <span className="text-3xl sm:text-4xl font-black text-primary leading-none">{currentPeriScore}</span>
                 <span className="text-[10px] sm:text-[11px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 sm:mt-1">/100</span>
                 <span className={`text-[8px] sm:text-[10px] font-extrabold mt-1 sm:mt-1.5 px-2 py-0.5 rounded-full border leading-none ${periScoreCat.color}`}>
                   {periScoreCat.label}

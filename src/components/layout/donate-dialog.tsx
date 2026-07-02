@@ -135,7 +135,7 @@ export function DonateDialog({ trigger, open, onOpenChange }: DonateDialogProps)
         <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-pink-50 dark:bg-pink-950/20 text-primary flex items-center justify-center shadow-inner animate-pulse">
           <Heart className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 fill-current text-primary" />
         </div>
-        <DialogTitle className="text-base sm:text-lg font-black tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mt-1">
+        <DialogTitle className="text-base sm:text-lg font-black tracking-tight text-primary mt-1">
           Đồng hành cùng dự án
         </DialogTitle>
         <DialogDescription className="text-[11px] sm:text-xs text-muted-foreground font-semibold px-2 sm:px-4 text-center leading-relaxed">

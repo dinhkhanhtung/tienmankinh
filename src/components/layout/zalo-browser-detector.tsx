@@ -30,7 +30,7 @@ export function ZaloBrowserDetector() {
     <div className="fixed inset-0 z-[9999] bg-background/85 dark:bg-background/95 backdrop-blur-lg flex items-center justify-center p-4 overflow-hidden select-none animate-in fade-in duration-200">
       {/* Mũi tên chỉ dẫn hướng lên góc trên cùng bên phải */}
       <div className="absolute top-4 right-4 sm:right-8 flex flex-col items-end gap-1 animate-pulse z-20">
-        <ArrowUpRight className="w-10 h-10 text-primary animate-bounce" />
+        <ArrowUpRight className="w-10 h-10 text-primary" />
         <span className="text-[10px] font-bold bg-primary text-primary-foreground px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
           Bấm vào đây trước
         </span>
